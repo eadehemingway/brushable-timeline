@@ -23,7 +23,8 @@ function App() {
     // create x scale (linear)
     const xScale = d3
       .scaleTime()
-      .domain([min, max])
+      // .domain([min, max])
+      .domain([new Date(min, 0, 0), new Date(max, 0, 0)])
       // .domain([d3.timeParse('%Y')(`${min}`), d3.timeParse('%Y')(`${max}`)])
       .range([sidePadding, svgWidth - sidePadding])
 
@@ -49,8 +50,8 @@ function App() {
       .data(data, (d: any) => d.id)
       .enter()
       .append('line')
-      .attr('x1', (d) => xScale(d.startYear))
-      .attr('x2', (d) => xScale(d.startYear))
+      .attr('x1', (d) => xScale(new Date(d.startYear, 0, 0)))
+      .attr('x2', (d) => xScale(new Date(d.startYear, 0, 0)))
       .attr('y1', (d) => yScale(d.level))
       .attr('y2', (d) => yScale(d.level) + 10 * d.level)
       .attr('stroke-width', 2)

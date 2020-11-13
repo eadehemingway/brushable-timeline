@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { data } from './data'
 import * as d3 from 'd3'
-import { textwrap } from 'd3-textwrap'
+// import { textwrap } from 'd3-textwrap'
 import './styles.css'
 
 function App() {
@@ -83,15 +83,14 @@ function App() {
       .attr('class', 'big-timeline-labels')
       .text((d) => d.title)
       .attr('x', (d) => xScale(new Date(d.startYear, 0, 0)))
-      .attr('y', (d) => yScale(d.level) + 10 * d.level + 5)
+      .attr('y', (d) => yScale(d.level) + 15 * d.level + 5)
       .attr('fill', 'linen')
       .attr('text-anchor', 'middle')
       .attr('font-size', 8)
 
-    // var wrap = textwrap().bounds({ height: 100, width: 100 })
-
-    // wrap all text
-    // d3.selectAll('text').call(wrap)
+    // wrap text
+    // const wrap = textwrap().bounds({ height: 100, width: 100 })
+    // d3.selectAll('.big-timeline-labels').call(wrap)
     // d3.selectAll('foreignObject').attr('transform', 'translate(-50,0)')
   }, [])
 

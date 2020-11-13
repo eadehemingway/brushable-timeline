@@ -13,22 +13,31 @@ function App() {
   const [yearMin, setYearMin] = useState<number>(1950)
   const [yearMax, setYearMax] = useState<number>(1930)
 
-  useEffect(() => {
-    const newxscale = d3
-      .scaleTime()
-      .domain([new Date(yearMin, 0, 0), new Date(yearMax, 0, 0)])
-      .range([sidePadding, svgWidth - sidePadding])
+  const getXScale = useCallback(
+    (min, max) =>
+      d3
+        .scaleTime()
+        .domain([new Date(min, 0, 0), new Date(max, 0, 0)])
+        .range([sidePadding, svgWidth - sidePadding]),
+    []
+  )
 
+  useEffect(() => {
+    // update timeline
+    const newxscale = getXScale(yearMin, yearMax)
+    // upate axis
     d3.select('.big-axis').call(d3.axisBottom(newxscale))
 
+    // update lines
     d3.selectAll('.big-timeline-line')
       .attr('x1', (d: any) => newxscale(new Date(d.startYear, 0, 0)))
       .attr('x2', (d: any) => newxscale(new Date(d.startYear, 0, 0)))
 
+    // update labels
     d3.selectAll('.big-timeline-labels').attr('x', (d: any) =>
       newxscale(new Date(d.startYear, 0, 0))
     )
-  }, [yearMin, yearMax])
+  }, [yearMin, yearMax, getXScale])
 
   const drawTimeline = useCallback(() => {
     const bigTimelineGroup = d3
@@ -38,12 +47,7 @@ function App() {
       .append('g')
       .attr('class', 'big-timeline')
 
-    // create x scale (linear)
-
-    const xScale = d3
-      .scaleTime()
-      .domain([new Date(1930, 0, 0), new Date(1950, 0, 0)])
-      .range([sidePadding, svgWidth - sidePadding])
+    const xScale = getXScale(1930, 1950)
 
     // create y scale (three levels? discreet) (need scale but dont need axis)
     var yScale = d3
@@ -95,34 +99,22 @@ function App() {
   }, [])
 
   const drawBrushableTimeline = useCallback(() => {
-    // get min/max years of data
     const startYears = data.map((d) => d.startYear)
     const min = Math.min(...startYears)
     const max = Math.max(...startYears)
-    // draw mini timeline
+
     const svg = d3.select('svg')
-
-    // svg.append('g').attr('brushable-group')
-    // create x scale (linear)
-    const xScale = d3
-      .scaleTime()
-      .domain([new Date(min, 0, 0), new Date(max, 0, 0)])
-      .range([sidePadding, svgWidth - sidePadding])
-
-    // create y scale (three levels? discreet) (need scale but dont need axis)
+    const xScale = getXScale(min, max)
     var mini_yScale = d3
       .scaleLinear()
       .domain([0, 3])
       .range([svgHeight - 50, svgHeight - 100])
-
-    // draw the x axis
     svg
       .append('g')
       .attr('class', 'axis')
       .attr('transform', 'translate(0,' + (svgHeight - 50) + ')')
       .call(d3.axisBottom(xScale))
 
-    // then plot lines (as if scatter graph)
     svg
       .selectAll('.brush-lines')
       .data(data, (d: any) => d.id)
@@ -134,8 +126,6 @@ function App() {
       .attr('y2', (d) => mini_yScale(d.level) + 10 * d.level)
       .attr('stroke-width', 2)
       .attr('stroke', 'linen')
-
-    // draw box that you can drag along the timeline
 
     const brush = d3
       .brushX()

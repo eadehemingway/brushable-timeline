@@ -2,6 +2,7 @@ import React, { useEffect } from 'react'
 import styled from 'styled-components'
 import { data } from './data'
 import * as d3 from 'd3'
+import { textwrap } from 'd3-textwrap'
 import './styles.css'
 
 function App() {
@@ -39,7 +40,7 @@ function App() {
       .attr('transform', 'translate(0,' + svgHeight / 2 + ')')
       .call(d3.axisBottom(xScale))
 
-    // then plot points (as if scatter graph)
+    // then plot lines (as if scatter graph)
     svg
       .selectAll('line')
       .data(data, (d: any) => d.id)
@@ -51,6 +52,24 @@ function App() {
       .attr('y2', (d) => yScale(d.level) + 10 * d.level)
       .attr('stroke-width', 2)
       .attr('stroke', 'linen')
+
+    // labels
+    svg
+      .selectAll('text')
+      .data(data, (d: any) => d.id)
+      .enter()
+      .append('text')
+      .text((d) => d.title)
+      .attr('x', (d) => xScale(new Date(d.startYear, 0, 0)))
+      .attr('y', (d) => yScale(d.level))
+      .attr('fill', 'linen')
+      .attr('text-anchor', 'middle')
+      .attr('font-size', 8)
+
+    var wrap = textwrap().bounds({ height: 100, width: 100 })
+
+    // wrap all text
+    d3.selectAll('text').call(wrap).attr('class', 'EADE')
   }
 
   useEffect(() => {

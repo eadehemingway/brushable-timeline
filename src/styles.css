@@ -9,3 +9,10 @@
 .axis text {
   fill: linen;
 }
+
+foreignObject {
+  color: linen;
+}
+foreignObject > * {
+  font-size: 10px;
+}

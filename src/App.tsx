@@ -29,10 +29,7 @@ function App() {
   const moveTimeline = useCallback(() => {
     const x = getXScale()(new Date(xTranslate, 0, 0))
 
-    d3.select('.big-axis').attr(
-      'transform',
-      `translate(-${x}, ${svgHeight / 2})`
-    )
+    d3.select('.big-timeline').attr('transform', `translate(-${x}, 0)`)
   }, [xTranslate, max, min])
 
   useEffect(() => {
@@ -44,6 +41,8 @@ function App() {
       .select('svg')
       .attr('height', svgHeight)
       .attr('width', svgWidth)
+      .append('g')
+      .attr('class', 'big-timeline')
 
     // create x scale (linear)
     const xScale = getXScale()

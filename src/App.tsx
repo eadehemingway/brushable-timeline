@@ -9,37 +9,20 @@ function App() {
   const sidePadding = 100
   const svgWidth = 1000
   const svgHeight = 500
-  // get min/max years of data
-  const startYears = data.map((d) => d.startYear)
-  const min = Math.min(...startYears)
-  console.log('min:', min)
-  const max = Math.max(...startYears)
 
-  const [xTranslate, setXTranslate] = useState(0)
-
-  const getXScale = useCallback(
-    () =>
-      d3
-        .scaleTime()
-        .domain([new Date(min, 0, 0), new Date(max, 0, 0)])
-        .range([sidePadding, svgWidth * 3]),
-    [max, min]
-  )
-
-  const moveTimeline = useCallback(() => {
-    const x = getXScale()(new Date(xTranslate, 0, 0))
-
-    d3.select('.big-timeline').attr(
-      'transform',
-      `translate(-${x - sidePadding}, 0)`
-    )
-  }, [xTranslate, max, min])
+  const [yearMin, setYearMin] = useState<number>(1950)
+  const [yearMax, setYearMax] = useState<number>(1930)
 
   useEffect(() => {
-    moveTimeline()
-  }, [moveTimeline])
+    const newxscale = d3
+      .scaleTime()
+      .domain([new Date(yearMin, 0, 0), new Date(yearMax, 0, 0)])
+      .range([sidePadding, svgWidth - sidePadding])
 
-  function drawTimeline() {
+    d3.select('.big-axis').call(d3.axisBottom(newxscale))
+  }, [yearMin, yearMax])
+
+  const drawTimeline = useCallback(() => {
     const bigTimelineGroup = d3
       .select('svg')
       .attr('height', svgHeight)
@@ -48,7 +31,11 @@ function App() {
       .attr('class', 'big-timeline')
 
     // create x scale (linear)
-    const xScale = getXScale()
+
+    const xScale = d3
+      .scaleTime()
+      .domain([new Date(1930, 0, 0), new Date(1950, 0, 0)])
+      .range([sidePadding, svgWidth - sidePadding])
 
     // create y scale (three levels? discreet) (need scale but dont need axis)
     var yScale = d3
@@ -94,14 +81,13 @@ function App() {
     // wrap all text
     d3.selectAll('text').call(wrap)
     d3.selectAll('foreignObject').attr('transform', 'translate(-50,0)')
-  }
-
-  useEffect(() => {
-    drawTimeline()
-    drawBrushableTimeline()
   }, [])
 
-  function drawBrushableTimeline() {
+  const drawBrushableTimeline = useCallback(() => {
+    // get min/max years of data
+    const startYears = data.map((d) => d.startYear)
+    const min = Math.min(...startYears)
+    const max = Math.max(...startYears)
     // draw mini timeline
     const svg = d3.select('svg')
 
@@ -147,37 +133,24 @@ function App() {
         [svgWidth - sidePadding, svgHeight - 10], //[x1, y1] is the bottom-right corner
       ])
       .on('brush', brushed)
-      .on('end', brushended)
+      .on('end', () => 1)
 
     const defaultSelection = [svgWidth / 2 - 50, svgWidth / 2 + 50] // on page load what it selects
 
     svg.append('g').call(brush).call(brush.move, defaultSelection)
 
-    function brushended({ selection }) {
-      // if (!selection) {
-      //   gb.call(brush.move, defaultSelection)
-      // }
-    }
-
     function brushed({ selection }) {
-      // this is where the graph should get updated...
-      // selection gets the coordinates of what the brush is covering
-      const xTranslate = xScale.invert(selection[0]).getFullYear()
-      // const newMax = xScale.invert(selection[1]).getFullYear()
-
-      setXTranslate(xTranslate)
-      // setNewMax(newMax)
-      // if (selection) {
-      //   svg.property(
-      //     'value',
-      //     selection.map(xScale.invert, xScale).map(d3.utcDay.round)
-      //   )
-      //   svg.dispatch('input')
-      // }
+      const xYearMin = xScale.invert(selection[0]).getFullYear()
+      const xYearMax = xScale.invert(selection[1]).getFullYear()
+      setYearMin(xYearMin)
+      setYearMax(xYearMax)
     }
-    // draw a window below
-    // make the window display whats in the box more zoomed in...
-  }
+  }, [])
+
+  useEffect(() => {
+    drawTimeline()
+    drawBrushableTimeline()
+  }, [drawTimeline, drawBrushableTimeline])
 
   return (
     <Container>

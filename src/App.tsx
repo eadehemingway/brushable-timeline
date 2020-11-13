@@ -21,7 +21,7 @@ function App() {
     // create x scale (linear)
     const xScale = d3
       .scaleTime()
-      .domain([min, max])
+      .domain([d3.timeParse('%Y')(`${min}`), d3.timeParse('%Y')(`${max}`)])
       .range([sidePadding, svgWidth - sidePadding])
 
     // create y scale (three levels? discreet) (need scale but dont need axis)

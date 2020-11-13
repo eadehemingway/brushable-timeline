@@ -29,7 +29,10 @@ function App() {
   const moveTimeline = useCallback(() => {
     const x = getXScale()(new Date(xTranslate, 0, 0))
 
-    d3.select('.big-timeline').attr('transform', `translate(-${x}, 0)`)
+    d3.select('.big-timeline').attr(
+      'transform',
+      `translate(-${x - sidePadding}, 0)`
+    )
   }, [xTranslate, max, min])
 
   useEffect(() => {
@@ -37,7 +40,7 @@ function App() {
   }, [moveTimeline])
 
   function drawTimeline() {
-    const svg = d3
+    const bigTimelineGroup = d3
       .select('svg')
       .attr('height', svgHeight)
       .attr('width', svgWidth)
@@ -54,14 +57,14 @@ function App() {
       .range([svgHeight / 2, 0])
 
     // draw the x axis
-    svg
+    bigTimelineGroup
       .append('g')
       .attr('class', 'big-axis')
-      .attr('transform', 'translate(0,' + svgHeight / 2 + ')')
+      .attr('transform', `translate(0,${svgHeight / 2})`)
       .call(d3.axisBottom(xScale))
 
     // then plot lines (as if scatter graph)
-    svg
+    bigTimelineGroup
       .selectAll('line')
       .data(data, (d: any) => d.id)
       .enter()
@@ -74,7 +77,7 @@ function App() {
       .attr('stroke', 'linen')
 
     // labels
-    svg
+    bigTimelineGroup
       .selectAll('text')
       .data(data, (d: any) => d.id)
       .enter()
@@ -101,7 +104,6 @@ function App() {
   function drawBrushableTimeline() {
     // draw mini timeline
     const svg = d3.select('svg')
-    console.log('svg:', svg)
 
     // svg.append('g').attr('brushable-group')
     // create x scale (linear)

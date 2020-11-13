@@ -14,22 +14,17 @@ function App() {
       .select('svg')
       .attr('height', svgHeight)
       .attr('width', svgWidth)
+
     // get min/max years of data
     const startYears = data.map((d) => d.startYear)
     const min = Math.min(...startYears)
-    console.log('min:', min)
     const max = Math.max(...startYears)
 
     // create x scale (linear)
     const xScale = d3
       .scaleTime()
-      // .domain([min, max])
       .domain([new Date(min, 0, 0), new Date(max, 0, 0)])
-      // .domain([d3.timeParse('%Y')(`${min}`), d3.timeParse('%Y')(`${max}`)])
       .range([sidePadding, svgWidth - sidePadding])
-
-    const test = xScale(min)
-    console.log('should equal 100:', test)
 
     // create y scale (three levels? discreet) (need scale but dont need axis)
     var yScale = d3

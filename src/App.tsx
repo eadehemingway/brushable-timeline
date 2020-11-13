@@ -20,6 +20,14 @@ function App() {
       .range([sidePadding, svgWidth - sidePadding])
 
     d3.select('.big-axis').call(d3.axisBottom(newxscale))
+
+    d3.selectAll('.big-timeline-line')
+      .attr('x1', (d: any) => newxscale(new Date(d.startYear, 0, 0)))
+      .attr('x2', (d: any) => newxscale(new Date(d.startYear, 0, 0)))
+
+    d3.selectAll('.big-timeline-labels').attr('x', (d: any) =>
+      newxscale(new Date(d.startYear, 0, 0))
+    )
   }, [yearMin, yearMax])
 
   const drawTimeline = useCallback(() => {
@@ -52,10 +60,13 @@ function App() {
 
     // then plot lines (as if scatter graph)
     bigTimelineGroup
+      .append('g')
+      .attr('class', 'big-timeline-line-group')
       .selectAll('line')
       .data(data, (d: any) => d.id)
       .enter()
       .append('line')
+      .attr('class', 'big-timeline-line')
       .attr('x1', (d) => xScale(new Date(d.startYear, 0, 0)))
       .attr('x2', (d) => xScale(new Date(d.startYear, 0, 0)))
       .attr('y1', (d) => yScale(d.level))
@@ -65,10 +76,11 @@ function App() {
 
     // labels
     bigTimelineGroup
-      .selectAll('text')
+      .selectAll('.big-timeline-labels')
       .data(data, (d: any) => d.id)
       .enter()
       .append('text')
+      .attr('class', 'big-timeline-labels')
       .text((d) => d.title)
       .attr('x', (d) => xScale(new Date(d.startYear, 0, 0)))
       .attr('y', (d) => yScale(d.level) + 10 * d.level + 5)
@@ -76,11 +88,11 @@ function App() {
       .attr('text-anchor', 'middle')
       .attr('font-size', 8)
 
-    var wrap = textwrap().bounds({ height: 100, width: 100 })
+    // var wrap = textwrap().bounds({ height: 100, width: 100 })
 
     // wrap all text
-    d3.selectAll('text').call(wrap)
-    d3.selectAll('foreignObject').attr('transform', 'translate(-50,0)')
+    // d3.selectAll('text').call(wrap)
+    // d3.selectAll('foreignObject').attr('transform', 'translate(-50,0)')
   }, [])
 
   const drawBrushableTimeline = useCallback(() => {

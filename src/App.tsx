@@ -6,8 +6,9 @@ import './styles.css'
 
 function App() {
   const sidePadding = 100
-  const svgWidth = 800
+  const svgWidth = 1000
   const svgHeight = 500
+
   function drawTimeline() {
     const svg = d3
       .select('svg')
@@ -16,13 +17,18 @@ function App() {
     // get min/max years of data
     const startYears = data.map((d) => d.startYear)
     const min = Math.min(...startYears)
+    console.log('min:', min)
     const max = Math.max(...startYears)
 
     // create x scale (linear)
     const xScale = d3
       .scaleTime()
-      .domain([d3.timeParse('%Y')(`${min}`), d3.timeParse('%Y')(`${max}`)])
+      .domain([min, max])
+      // .domain([d3.timeParse('%Y')(`${min}`), d3.timeParse('%Y')(`${max}`)])
       .range([sidePadding, svgWidth - sidePadding])
+
+    const test = xScale(min)
+    console.log('should equal 100:', test)
 
     // create y scale (three levels? discreet) (need scale but dont need axis)
     var yScale = d3
@@ -38,6 +44,17 @@ function App() {
       .call(d3.axisBottom(xScale))
 
     // then plot points (as if scatter graph)
+    svg
+      .selectAll('line')
+      .data(data, (d: any) => d.id)
+      .enter()
+      .append('line')
+      .attr('x1', (d) => xScale(d.startYear))
+      .attr('x2', (d) => xScale(d.startYear))
+      .attr('y1', (d) => yScale(d.level))
+      .attr('y2', (d) => yScale(d.level) + 10 * d.level)
+      .attr('stroke-width', 2)
+      .attr('stroke', 'linen')
   }
 
   useEffect(() => {

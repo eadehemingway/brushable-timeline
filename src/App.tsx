@@ -4,6 +4,7 @@ import { data } from './data'
 import * as d3 from 'd3'
 import { textwrap } from 'd3-textwrap'
 import './styles.css'
+import { transform } from 'typescript'
 
 function App() {
   const sidePadding = 100
@@ -61,7 +62,7 @@ function App() {
       .append('text')
       .text((d) => d.title)
       .attr('x', (d) => xScale(new Date(d.startYear, 0, 0)))
-      .attr('y', (d) => yScale(d.level))
+      .attr('y', (d) => yScale(d.level) + 10 * d.level + 5)
       .attr('fill', 'linen')
       .attr('text-anchor', 'middle')
       .attr('font-size', 8)
@@ -69,7 +70,8 @@ function App() {
     var wrap = textwrap().bounds({ height: 100, width: 100 })
 
     // wrap all text
-    d3.selectAll('text').call(wrap).attr('class', 'EADE')
+    d3.selectAll('text').call(wrap)
+    d3.selectAll('foreignObject').attr('transform', 'translate(-50,0)')
   }
 
   useEffect(() => {

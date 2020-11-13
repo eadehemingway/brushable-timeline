@@ -1,0 +1,11 @@
+.axis line {
+  stroke: linen;
+}
+
+.axis path {
+  stroke: linen;
+}
+
+.axis text {
+  fill: linen;
+}

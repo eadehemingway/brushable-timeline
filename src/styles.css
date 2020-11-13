@@ -1,3 +1,14 @@
+.big-axis line {
+  stroke: linen;
+}
+
+.big-axis path {
+  stroke: linen;
+}
+
+.big-axis text {
+  fill: linen;
+}
 .axis line {
   stroke: linen;
 }

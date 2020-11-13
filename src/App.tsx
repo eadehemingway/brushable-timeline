@@ -1,10 +1,9 @@
-import React, { useEffect } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { data } from './data'
 import * as d3 from 'd3'
 import { textwrap } from 'd3-textwrap'
 import './styles.css'
-import { transform } from 'typescript'
 
 function App() {
   const sidePadding = 100
@@ -13,7 +12,32 @@ function App() {
   // get min/max years of data
   const startYears = data.map((d) => d.startYear)
   const min = Math.min(...startYears)
+  console.log('min:', min)
   const max = Math.max(...startYears)
+
+  const [xTranslate, setXTranslate] = useState(0)
+
+  const getXScale = useCallback(
+    () =>
+      d3
+        .scaleTime()
+        .domain([new Date(min, 0, 0), new Date(max, 0, 0)])
+        .range([sidePadding, svgWidth * 3]),
+    [max, min]
+  )
+
+  const moveTimeline = useCallback(() => {
+    const x = getXScale()(new Date(xTranslate, 0, 0))
+
+    d3.select('.big-axis').attr(
+      'transform',
+      `translate(-${x}, ${svgHeight / 2})`
+    )
+  }, [xTranslate, max, min])
+
+  useEffect(() => {
+    moveTimeline()
+  }, [moveTimeline])
 
   function drawTimeline() {
     const svg = d3
@@ -22,10 +46,7 @@ function App() {
       .attr('width', svgWidth)
 
     // create x scale (linear)
-    const xScale = d3
-      .scaleTime()
-      .domain([new Date(min, 0, 0), new Date(max, 0, 0)])
-      .range([sidePadding, svgWidth - sidePadding])
+    const xScale = getXScale()
 
     // create y scale (three levels? discreet) (need scale but dont need axis)
     var yScale = d3
@@ -36,7 +57,7 @@ function App() {
     // draw the x axis
     svg
       .append('g')
-      .attr('class', 'axis')
+      .attr('class', 'big-axis')
       .attr('transform', 'translate(0,' + svgHeight / 2 + ')')
       .call(d3.axisBottom(xScale))
 
@@ -138,7 +159,13 @@ function App() {
     }
 
     function brushed({ selection }) {
-      // console.log('selection:', selection)
+      // this is where the graph should get updated...
+      // selection gets the coordinates of what the brush is covering
+      const xTranslate = xScale.invert(selection[0]).getFullYear()
+      // const newMax = xScale.invert(selection[1]).getFullYear()
+
+      setXTranslate(xTranslate)
+      // setNewMax(newMax)
       // if (selection) {
       //   svg.property(
       //     'value',

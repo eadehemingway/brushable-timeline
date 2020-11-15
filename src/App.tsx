@@ -2,14 +2,18 @@ import React, { useCallback, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { data } from './data'
 import * as d3 from 'd3'
+import textures from 'textures'
 // import { textwrap } from 'd3-textwrap'
+import { annotation, annotationLabel } from 'd3-svg-annotation'
 import './styles.css'
+import _ from 'lodash'
 
 function App() {
   const sidePadding = 100
   const svgWidth = 1000
   const svgHeight = 500
 
+  // this min and max year refers to the big timeline
   const [yearMin, setYearMin] = useState<number>(1950)
   const [yearMax, setYearMax] = useState<number>(1930)
 
@@ -79,6 +83,33 @@ function App() {
     // const wrap = textwrap().bounds({ height: 100, width: 100 })
     // d3.selectAll('.big-timeline-labels').call(wrap)
     // d3.selectAll('foreignObject').attr('transform', 'translate(-50,0)')
+
+    // const margin = { left: 50, top: 50, right: 200, bottom: 20 }
+    // const annotationData = _.chain(data)
+    //   .filter((d) => d.level == 1)
+    //   .map((d, i) => {
+    //     return {
+    //       data: { startYear: d.startYear },
+    //       note: { title: d.title, align: 'middle', orientation: 'leftright' },
+    //       x: xScale(d.startDate),
+    //       y:
+    //         i % 2 == 0
+    //           ? margin.top + (svgHeight - margin.top - margin.bottom) / 2
+    //           : margin.top,
+    //       dx: 20,
+    //       dy: 0,
+    //     }
+    //   })
+    //   .value()
+
+    // const makeAnnotations = annotation()
+    //   .type(annotationLabel)
+    //   .annotations(annotationData)
+
+    // d3.select('svg')
+    //   .append('g')
+    //   .attr('class', 'annotation-group')
+    //   .call(makeAnnotations as any)
   }, [getXScale])
 
   const drawBrushableTimeline = useCallback(() => {
@@ -117,7 +148,6 @@ function App() {
         [svgWidth - sidePadding, svgHeight - 10], //[x1, y1] is the bottom-right corner
       ])
       .on('brush', brushed)
-      .on('end', () => 1)
 
     const defaultSelection = [svgWidth / 2 - 50, svgWidth / 2 + 50] // on page load what it selects
 
@@ -147,10 +177,17 @@ function App() {
       .attr('x1', (d: any) => newxscale(new Date(d.startYear, 0, 0)))
       .attr('x2', (d: any) => newxscale(new Date(d.startYear, 0, 0)))
 
-    // update labels
+    // // update labels
     d3.selectAll('.big-timeline-labels').attr('x', (d: any) =>
       newxscale(new Date(d.startYear, 0, 0))
     )
+    // const red = textures.lines().lighter().size(8).stroke('#EB6A5B')
+
+    // d3.select('svg').call(red)
+    // // update labels
+    // d3.selectAll('.annotation-note-bg')
+    //   .attr('fill', red.url())
+    //   .attr('fill-opacity', 1)
   }, [yearMin, yearMax, getXScale])
 
   useEffect(() => {

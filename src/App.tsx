@@ -22,23 +22,6 @@ function App() {
     []
   )
 
-  useEffect(() => {
-    // update timeline
-    const newxscale = getXScale(yearMin, yearMax)
-    // upate axis
-    d3.select('.big-axis').call(d3.axisBottom(newxscale))
-
-    // update lines
-    d3.selectAll('.big-timeline-line')
-      .attr('x1', (d: any) => newxscale(new Date(d.startYear, 0, 0)))
-      .attr('x2', (d: any) => newxscale(new Date(d.startYear, 0, 0)))
-
-    // update labels
-    d3.selectAll('.big-timeline-labels').attr('x', (d: any) =>
-      newxscale(new Date(d.startYear, 0, 0))
-    )
-  }, [yearMin, yearMax, getXScale])
-
   const drawTimeline = useCallback(() => {
     const bigTimelineGroup = d3
       .select('svg')
@@ -96,7 +79,7 @@ function App() {
     // const wrap = textwrap().bounds({ height: 100, width: 100 })
     // d3.selectAll('.big-timeline-labels').call(wrap)
     // d3.selectAll('foreignObject').attr('transform', 'translate(-50,0)')
-  }, [])
+  }, [getXScale])
 
   const drawBrushableTimeline = useCallback(() => {
     const startYears = data.map((d) => d.startYear)
@@ -146,12 +129,33 @@ function App() {
       setYearMin(xYearMin)
       setYearMax(xYearMax)
     }
-  }, [])
+  }, [getXScale])
 
   useEffect(() => {
     drawTimeline()
     drawBrushableTimeline()
   }, [drawTimeline, drawBrushableTimeline])
+
+  const updateTimeline = useCallback(() => {
+    // update timeline
+    const newxscale = getXScale(yearMin, yearMax)
+    // upate axis
+    d3.select('.big-axis').call(d3.axisBottom(newxscale))
+
+    // update lines
+    d3.selectAll('.big-timeline-line')
+      .attr('x1', (d: any) => newxscale(new Date(d.startYear, 0, 0)))
+      .attr('x2', (d: any) => newxscale(new Date(d.startYear, 0, 0)))
+
+    // update labels
+    d3.selectAll('.big-timeline-labels').attr('x', (d: any) =>
+      newxscale(new Date(d.startYear, 0, 0))
+    )
+  }, [yearMin, yearMax, getXScale])
+
+  useEffect(() => {
+    updateTimeline()
+  }, [updateTimeline])
 
   return (
     <Container>

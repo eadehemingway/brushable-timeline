@@ -180,8 +180,11 @@ function App() {
     svg.append('g').call(brush).call(brush.move, defaultSelection)
 
     function brushed({ selection }) {
-      const xYearMin = mini_xScale.invert(selection[0]).getFullYear()
-      const xYearMax = mini_xScale.invert(selection[1]).getFullYear()
+      // the value we get from the inverse xscale is for example Sat Dec 31 1864 00:00:00
+      // when the year should be 1865 should try and work out why but for now, just adding one
+      const xYearMin = mini_xScale.invert(selection[0]).getFullYear() + 1
+      const xYearMax = mini_xScale.invert(selection[1]).getFullYear() + 1
+
       setYearMin(xYearMin)
       setYearMax(xYearMax)
     }

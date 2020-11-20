@@ -232,3 +232,14 @@ export const data = [
     level: 2,
   },
 ]
+
+export const periodChunks = [
+  { name: 'Reconstruction', startYear: 1865, endYear: 1877 },
+  { name: 'Jim crow era', startYear: 1877, endYear: 1968 },
+  { name: 'Civil rights movement', startYear: 1954, endYear: 1968 },
+  {
+    name: 'Post civil rights and era of mass encarceration',
+    startYear: 1968,
+    endYear: 2015, // just saying that year because taht is the end year of timeline
+  },
+]

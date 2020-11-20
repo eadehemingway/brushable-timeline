@@ -9,7 +9,7 @@ import './styles.css'
 import _ from 'lodash'
 
 function App() {
-  const sidePadding = 100
+  const sidePadding = 0
   const svgWidth = 1000
   const svgHeight = 500
   const textureColors = ['#EB6A5B', '#4d5382', '#813405', '#f9a03f']
@@ -34,6 +34,8 @@ function App() {
       .attr('width', svgWidth)
       .append('g')
       .attr('class', 'big-timeline')
+      .attr('overflow', 'hidden')
+      .attr('width', 100)
 
     // ---------BIG TIMELINE create scales-----------------------------------------------------------------
 
@@ -242,6 +244,5 @@ const Container = styled.div`
   justify-items: center;
 `
 const Svg = styled.svg`
-  border: 2px solid linen;
   margin-top: 100px;
 `

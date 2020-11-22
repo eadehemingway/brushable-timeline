@@ -14,8 +14,8 @@ function App() {
   const svgHeight = 500
 
   // this min and max year refers to the big timeline
-  const [yearMin, setYearMin] = useState<number>(1950)
-  const [yearMax, setYearMax] = useState<number>(1930)
+  const [yearMin, setYearMin] = useState<number>(1980)
+  const [yearMax, setYearMax] = useState<number>(1950)
 
   const getXScale = useCallback(
     (min, max) =>
@@ -34,7 +34,7 @@ function App() {
       .append('g')
       .attr('class', 'big-timeline')
 
-    const xScale = getXScale(1930, 1950)
+    const xScale = getXScale(1950, 1980)
 
     // create y scale (three levels? discreet) (need scale but dont need axis)
     var yScale = d3
@@ -84,32 +84,40 @@ function App() {
     // d3.selectAll('.big-timeline-labels').call(wrap)
     // d3.selectAll('foreignObject').attr('transform', 'translate(-50,0)')
 
-    // const margin = { left: 50, top: 50, right: 200, bottom: 20 }
-    // const annotationData = _.chain(data)
-    //   .filter((d) => d.level == 1)
-    //   .map((d, i) => {
-    //     return {
-    //       data: { startYear: d.startYear },
-    //       note: { title: d.title, align: 'middle', orientation: 'leftright' },
-    //       x: xScale(d.startDate),
-    //       y:
-    //         i % 2 == 0
-    //           ? margin.top + (svgHeight - margin.top - margin.bottom) / 2
-    //           : margin.top,
-    //       dx: 20,
-    //       dy: 0,
-    //     }
-    //   })
-    //   .value()
+    const annotationData = _.chain(data)
+      .filter((d) => d.level == 1)
+      .map((d, i) => {
+        console.log(new Date(d.startYear, 0, 0))
+        console.log(xScale(new Date(d.startYear, 0, 0)))
+        return {
+          data: { startYear: d.startYear },
+          note: { title: d.title, align: 'middle', orientation: 'leftright' },
+          x: xScale(new Date(d.startYear, 0, 0)),
+          y:
+            i % 2 == 0
+              ? svgHeight / 3
+              : svgHeight / 5,
+          dx: 20,
+          dy: 0,
+        }
+      })
+      .value()
 
-    // const makeAnnotations = annotation()
-    //   .type(annotationLabel)
-    //   .annotations(annotationData)
+      console.log(data)
+      console.log(annotationData)
 
-    // d3.select('svg')
-    //   .append('g')
-    //   .attr('class', 'annotation-group')
-    //   .call(makeAnnotations as any)
+    const makeAnnotations = annotation()
+      .type(annotationLabel)
+      .annotations(annotationData)
+      //need to update makeAnnotations below, so must make this variable accessible
+
+
+    d3.select('svg')
+      .append('g')
+      .attr('class', 'annotation-group')
+      .call(makeAnnotations as any)
+
+    d3.selectAll('.annotation text').attr("fill","white").attr("font-size","10px");
   }, [getXScale])
 
   const drawBrushableTimeline = useCallback(() => {
@@ -177,10 +185,20 @@ function App() {
       .attr('x1', (d: any) => newxscale(new Date(d.startYear, 0, 0)))
       .attr('x2', (d: any) => newxscale(new Date(d.startYear, 0, 0)))
 
-    // // update labels
+    // update labels
     d3.selectAll('.big-timeline-labels').attr('x', (d: any) =>
       newxscale(new Date(d.startYear, 0, 0))
     )
+
+    d3.selectAll('.label').attr('x', (d: any) =>
+      newxscale(new Date(d.startYear, 0, 0))
+      //update annotation data here
+    )
+
+    // d3.select(".annotation-group")
+    // .call(makeAnnotations)
+
+
     // const red = textures.lines().lighter().size(8).stroke('#EB6A5B')
 
     // d3.select('svg').call(red)

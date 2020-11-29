@@ -107,7 +107,7 @@ export function Timeline() {
             label: d.description,
             align: 'middle',
             orientation: 'leftright',
-            wrap: 240,
+            wrap: 260,
             padding: 0,
             bgPadding: { top: 0, bottom: 0, left: 0, right: 0 },
           },
@@ -164,7 +164,8 @@ export function Timeline() {
       .attr('stroke', '#f9a03f')
       .attr('fill-opacity', 1)
 
-    // d3.selectAll('.annotation-note-label').attr('display', 'none')
+    d3.selectAll('.annotation-note-label').attr('display', 'none')
+    d3.selectAll('.annotation-note-bg').attr('height', '50')
   }, [getXScale])
 
   const drawBrushableTimeline = useCallback(() => {
@@ -285,15 +286,26 @@ export function Timeline() {
     d3.selectAll('.label').attr('transform', (d: any) => {
       return `translate(${newxscale(new Date(d.data.startYear, 0, 0))}, ${d.y})`
     })
-    d3.selectAll('.annotation-note-content').attr('cursor', 'pointer')
-    // .on('mouseover', function (d) {
-    //   d3.select(this)
-    //     .select('.annotation-note-label')
-    //     .attr('display', 'block')
-    // })
-    // .on('mouseout', function (d) {
-    //   d3.select(this).select('.annotation-note-label').attr('display', 'none')
-    // })
+    d3.selectAll('.annotation-note-content')
+      .attr('cursor', 'pointer')
+      .on('mouseover', function (d) {
+        d3.select(this)
+          .select('.annotation-note-label')
+          .attr('display', (d) => 'block')
+        d3.select((this as any).parentNode)
+          .selectAll('.annotation-note-bg')
+          .attr('height', (d: any) => {
+            const descriptionLength = d.note.label.length
+            const descriptionHeight = descriptionLength / 1.9 + 20 // bit hacky...
+            return Math.max(descriptionHeight, 50)
+          })
+      })
+      .on('mouseout', function (d) {
+        d3.select(this).select('.annotation-note-label').attr('display', 'none')
+        d3.select((this as any).parentNode)
+          .selectAll('.annotation-note-bg')
+          .attr('height', '50')
+      })
   }, [yearMin, yearMax, getXScale])
 
   useEffect(() => {

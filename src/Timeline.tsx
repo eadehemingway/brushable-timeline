@@ -42,7 +42,7 @@ export function Timeline() {
 
     const xScale = getXScale(1950, 1980)
 
-    var yScale = d3.scaleLinear().domain([0, 3]).range([bigTimelineHeight, 0])
+    var yScale = d3.scaleLinear().domain([-1, 5]).range([bigTimelineHeight, 0])
 
     // ---------BIG TIMELINE draw textured bgs-----------------------------------------------------------------
 
@@ -295,10 +295,8 @@ export function Timeline() {
       .on('mouseleave', function () {
         const selection = d3.select(this)
         selection.transition().attr('transform', (d: any) => {
-          const hasDescription = d.note.label.trim().length > 0
-          const yOffset = hasDescription ? 50 : 0
           return `translate(${newxscale(new Date(d.data.startYear, 0, 0))}, ${
-            d.translation.y + yOffset
+            d.translation.y
           })`
         })
         selection.style('cursor', 'auto')

@@ -15,7 +15,7 @@ export const data = [
     title: 'African Americans arrested on mass',
     description:
       'The loophole in the ammendment allowing the incarceration as a form of punishment was immediately exploited. \n        African Americans arrested on mass for minor crimes such as loitering or being unemployed. \n        Once arrested, forced to provide labour to rebuild economy of the south. \n        As many as 200,000 African Americans used for forced labour in this way.',
-    level: 2,
+    level: 3,
   },
   {
     id: 2,
@@ -33,7 +33,7 @@ export const data = [
     title: 'The Birth of a Nation released in cinemas.',
     description:
       'One of the first big blockbuster films. Painted the picture of the civil war that the whites wanted to see.\n      Every black person in it portrayed as animal like and canibalistic. Almost directly responsible for the rebirth of the KKK\n      which it had made look heroic. The KKK started burning crosses as a result of this film.\n      ',
-    level: 2,
+    level: 3,
   },
   {
     id: 4,
@@ -84,7 +84,7 @@ export const data = [
     title: "Nixon's Southern Strategy aims to recruit racist voters",
     description:
       '\n  Nixon begins to recruit Southern whites by speaking to thinly veiled racist issues. He talks about crime, \n  law and order, chaos of urban cities unleashed by Civil Rights movement.\n      ',
-    level: 2,
+    level: 4,
   },
   {
     id: 10,
@@ -103,7 +103,7 @@ export const data = [
       '"War on Drugs" and the Era of dealing with drug addiction as a crime',
     description:
       '\n      Hundreds of thousands of people start being sent to jail for posession of marijuana. Nixon advisor John Ehrlichman \n      has admitted that the \'War on Drugs\' was about throwing black people in jail. \n      He says "by getting people to associate marijuana with hippies and blacks with heroin and then criminalising\n      them both heavily, we could disrupt those communities, could arrest their leaders, raid their homes, break up \n      their meetings and vilify them night after night after night on the evening news. Did we know we were lying \n      about the drugs? Of course we did"\n      ',
-    level: 1,
+    level: 2,
   },
   {
     id: 12,
@@ -138,7 +138,7 @@ export const data = [
     title: 'Crack cocain arrives',
     description:
       '\n  Crack cocain is much cheaper and therefore more profitable than cocain. It is \n  also much more addictive. \n      ',
-    level: 2,
+    level: 3,
   },
   {
     id: 16,
@@ -147,7 +147,7 @@ export const data = [
     title: 'Anti Drug Abuse Act',
     description:
       '\n  Reagan establises mandatory where the same amount of time in prison for once ounce of crack cocaine was given for \n  one hundred ounces of powdered cocaine. Powdered cocaine was seen as the white persons drug. \n      ',
-    level: 2,
+    level: 4,
   },
   {
     id: 17,
@@ -156,7 +156,7 @@ export const data = [
     title: 'Black people being portrayed as criminals',
     description:
       "\n  News and tv shows show black people as criminals at a disproportionate rate. The term 'Super predator' starts being used. \n  Black and White people both being trained to see black people as criminals.\n      ",
-    level: 2,
+    level: 3,
   },
   {
     id: 18,
@@ -175,7 +175,7 @@ export const data = [
       "Bush's election campaign focuses on creating fear of black criminals",
     description:
       '\n  As part of his election campaign Bush had adverts focusing Willie Horton a black murderer the opponent had allowed\n  a weekend pass from prison. Horton kidnapped a white couple, stabbing man and raping his girlfriend the same image \n  portrayed in A Birth of a Nation. \n      ',
-    level: 2,
+    level: 3,
   },
   {
     id: 20,
@@ -184,7 +184,7 @@ export const data = [
     title: 'Politicians compete on how tough they are going to be on crime',
     description:
       "\n  Once the fear of crime has been created it becomes almost impossible for a politician to appear 'soft on crime', so \n  Democrats also start talking about being tough on crime.\n      ",
-    level: 2,
+    level: 4,
   },
   {
     id: 21,
@@ -210,7 +210,7 @@ export const data = [
     title: 'CCA leave ALEC',
     description:
       '\n      ALEC is a private club with politicians and corporations as members. \n  CCA (one of the largest private prison corporations) was a member of ALEC until it left in 2010 after a big NPR \n  story came out accusing ALEC of pushing SB1070, a law that gave police the right to stop anyone that looked like \n  an immigrant. Since CCA has left ALEC they no longer have an incentive to increase incarceration, however the \n  American bail coalition is still part of ALEC and predictably ALEC is now focusing on this area of interest.\n      ',
-    level: 2,
+    level: 3,
   },
   {
     id: 24,
@@ -229,7 +229,7 @@ export const data = [
       'March in Selma Alabama to mark the 50th anniversary of the Civil Rights March in 1965',
     description:
       '\n  There was a march to honour the sacrifice and bravery of the men and women who bled there in 1965 in support of voting \n  rights for African Americans. But nearly 30% of black male population of Alabama today has permanently lost the right\n  to vote as a result of a criminal conviction. So many of the Jim Crow laws are still acceptable if you are branded\n  a felon.\n      ',
-    level: 2,
+    level: 3,
   },
 ]
 

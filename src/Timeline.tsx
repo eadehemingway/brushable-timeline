@@ -133,24 +133,42 @@ export function Timeline() {
     d3.selectAll('.label')
       .on('mouseenter', function () {
         const selection = d3.select(this)
+        selection.style('cursor', 'pointer')
         selection.raise()
         selection
           .select('.annotation-note-bg')
           .transition()
           .duration(300)
           .attr('fill-opacity', 1)
-        selection.style('cursor', 'pointer')
+          .attr('height', (d: any) => {
+            const descriptionLength = d.note.label.length
+            const descriptionHeight = descriptionLength / 2 + 30 // bit hacky...
+            return Math.max(descriptionHeight, 50)
+          })
+
+        selection
+          .select('.annotation-note-label')
+          .transition()
+          .duration(750)
+          .attr('opacity', 1)
       })
       .on('mouseleave', function () {
         const selection = d3.select(this)
+        selection.style('cursor', 'auto')
         selection
           .select('.annotation-note-bg')
           .transition()
           .duration(300)
           .attr('fill-opacity', 0.7)
-        selection.style('cursor', 'auto')
-      })
 
+        selection
+          .select('.annotation-note-label')
+          .transition()
+          .attr('opacity', 0)
+        d3.select((this as any).parentNode)
+          .selectAll('.annotation-note-bg')
+          .attr('height', '50')
+      })
     d3.selectAll('.annotation text')
       .attr('fill', 'linen')
       .attr('font-size', '10px')
@@ -158,13 +176,11 @@ export function Timeline() {
 
     d3.selectAll('.annotation-note-bg')
       .attr('fill', '#282c34')
-      .attr('stroke', 'white')
       .attr('stroke-dasharray', 2)
-      .attr('fill-opacity', 0.7)
       .attr('stroke', '#f9a03f')
       .attr('fill-opacity', 1)
 
-    d3.selectAll('.annotation-note-label').attr('display', 'none')
+    d3.selectAll('.annotation-note-label').attr('opacity', 0)
     d3.selectAll('.annotation-note-bg').attr('height', '50')
   }, [getXScale])
 
@@ -286,26 +302,6 @@ export function Timeline() {
     d3.selectAll('.label').attr('transform', (d: any) => {
       return `translate(${newxscale(new Date(d.data.startYear, 0, 0))}, ${d.y})`
     })
-    d3.selectAll('.annotation-note-content')
-      .attr('cursor', 'pointer')
-      .on('mouseover', function (d) {
-        d3.select(this)
-          .select('.annotation-note-label')
-          .attr('display', (d) => 'block')
-        d3.select((this as any).parentNode)
-          .selectAll('.annotation-note-bg')
-          .attr('height', (d: any) => {
-            const descriptionLength = d.note.label.length
-            const descriptionHeight = descriptionLength / 1.9 + 20 // bit hacky...
-            return Math.max(descriptionHeight, 50)
-          })
-      })
-      .on('mouseout', function (d) {
-        d3.select(this).select('.annotation-note-label').attr('display', 'none')
-        d3.select((this as any).parentNode)
-          .selectAll('.annotation-note-bg')
-          .attr('height', '50')
-      })
   }, [yearMin, yearMax, getXScale])
 
   useEffect(() => {

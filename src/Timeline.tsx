@@ -107,6 +107,9 @@ export function Timeline() {
             label: d.description,
             align: 'middle',
             orientation: 'leftright',
+            wrap: 240,
+            padding: 0,
+            bgPadding: { top: 0, bottom: 0, left: 0, right: 0 },
           },
           x: xScale(new Date(d.startYear, 0, 0)),
           // y: yScale(d.level),
@@ -151,13 +154,7 @@ export function Timeline() {
     d3.selectAll('.annotation text')
       .attr('fill', 'linen')
       .attr('font-size', '10px')
-      .attr('transform', 'translate(10,3)')
-
-    d3.selectAll('.annotation-note-title tspan').attr('x', 3)
-    d3.selectAll('.annotation-note-title tspan:first-of-type').attr(
-      'dy',
-      '1.2em'
-    )
+      .attr('transform', 'translate(10,10)')
 
     d3.selectAll('.annotation-note-bg')
       .attr('fill', '#282c34')
@@ -167,7 +164,7 @@ export function Timeline() {
       .attr('stroke', '#f9a03f')
       .attr('fill-opacity', 1)
 
-    d3.selectAll('.annotation-note-label').attr('display', 'none')
+    // d3.selectAll('.annotation-note-label').attr('display', 'none')
   }, [getXScale])
 
   const drawBrushableTimeline = useCallback(() => {
@@ -288,16 +285,15 @@ export function Timeline() {
     d3.selectAll('.label').attr('transform', (d: any) => {
       return `translate(${newxscale(new Date(d.data.startYear, 0, 0))}, ${d.y})`
     })
-    d3.selectAll('.annotation-note-content')
-      .attr('cursor', 'pointer')
-      .on('mouseover', function (d) {
-        d3.select(this)
-          .select('.annotation-note-label')
-          .attr('display', 'block')
-      })
-      .on('mouseout', function (d) {
-        d3.select(this).select('.annotation-note-label').attr('display', 'none')
-      })
+    d3.selectAll('.annotation-note-content').attr('cursor', 'pointer')
+    // .on('mouseover', function (d) {
+    //   d3.select(this)
+    //     .select('.annotation-note-label')
+    //     .attr('display', 'block')
+    // })
+    // .on('mouseout', function (d) {
+    //   d3.select(this).select('.annotation-note-label').attr('display', 'none')
+    // })
   }, [yearMin, yearMax, getXScale])
 
   useEffect(() => {

@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import styled from 'styled-components'
-import { data } from './data'
+import { data, periodChunks } from './data'
 import * as d3 from 'd3'
 import textures from 'textures'
 // import { textwrap } from 'd3-textwrap'
@@ -9,20 +9,22 @@ import './styles.css'
 import _ from 'lodash'
 
 function App() {
-  const sidePadding = 100
+  const sidePadding = 0
   const svgWidth = 1000
   const svgHeight = 500
+  const textureColors = ['#EB6A5B', '#4d5382', '#813405', '#f9a03f']
+  const bigTimelineHeight = 250
 
   // this min and max year refers to the big timeline
-  const [yearMin, setYearMin] = useState<number>(1980)
-  const [yearMax, setYearMax] = useState<number>(1950)
+  const [yearMin, setYearMin] = useState<number>(1950)
+  const [yearMax, setYearMax] = useState<number>(1980)
 
   const getXScale = useCallback(
     (min, max) =>
       d3
         .scaleTime()
         .domain([new Date(min, 0, 0), new Date(max, 0, 0)])
-        .range([sidePadding, svgWidth - sidePadding]),
+        .range([sidePadding, svgWidth - 10]), //I added 10 here so the last annotation doesn't get cut off
     []
   )
 
@@ -33,23 +35,46 @@ function App() {
       .attr('width', svgWidth)
       .append('g')
       .attr('class', 'big-timeline')
+      .attr('overflow', 'hidden')
+      .attr('width', 100)
+
+    // ---------BIG TIMELINE create scales-----------------------------------------------------------------
 
     const xScale = getXScale(1950, 1980)
 
-    // create y scale (three levels? discreet) (need scale but dont need axis)
-    var yScale = d3
-      .scaleLinear()
-      .domain([0, 3])
-      .range([svgHeight / 2, 0])
+    var yScale = d3.scaleLinear().domain([0, 3]).range([svgHeight, 0])
 
-    // draw the x axis
+    // ---------BIG TIMELINE draw textured bgs-----------------------------------------------------------------
+
+    bigTimelineGroup
+      .selectAll('.big-tm-textured-bg')
+      .data(periodChunks)
+      .enter()
+      .append('rect')
+      .attr('class', 'big-tm-textured-bg')
+      .attr('x', (d: any) => xScale(new Date(d.startYear, 0, 0)))
+      .attr('y', 0)
+      .attr('height', bigTimelineHeight)
+      .attr(
+        'width',
+        (d: any) =>
+          xScale(new Date(d.endYear, 0, 0)) -
+          xScale(new Date(d.startYear, 0, 0))
+      )
+      .attr('fill', (d, i) => {
+        const red = textures.lines().lighter().size(8).stroke(textureColors[i])
+        d3.select('svg').call(red)
+        return red.url()
+      })
+
+    // ---------BIG TIMELINE draw the x axis-----------------------------------------------------------------
     bigTimelineGroup
       .append('g')
       .attr('class', 'big-axis')
       .attr('transform', `translate(0,${svgHeight / 2})`)
       .call(d3.axisBottom(xScale))
 
-    // then plot lines (as if scatter graph)
+    // ---------BIG TIMELINE plot lines-----------------------------------------------------------------
     bigTimelineGroup
       .append('g')
       .attr('class', 'big-timeline-line-group')
@@ -60,94 +85,159 @@ function App() {
       .attr('class', 'big-timeline-line')
       .attr('x1', (d) => xScale(new Date(d.startYear, 0, 0)))
       .attr('x2', (d) => xScale(new Date(d.startYear, 0, 0)))
-      .attr('y1', (d) => yScale(d.level))
-      .attr('y2', (d) => yScale(d.level) + 10 * d.level)
+      .attr('y1', 0)
+      .attr('y2', (d) =>
+        d.level == 1 ? bigTimelineHeight / 3 : bigTimelineHeight / 2
+      )
       .attr('stroke-width', 2)
       .attr('stroke', 'linen')
 
-    // labels
-    bigTimelineGroup
-      .selectAll('.big-timeline-labels')
-      .data(data, (d: any) => d.id)
-      .enter()
-      .append('text')
-      .attr('class', 'big-timeline-labels')
-      .text((d) => d.title)
-      .attr('x', (d) => xScale(new Date(d.startYear, 0, 0)))
-      .attr('y', (d) => yScale(d.level) + 15 * d.level + 5)
-      .attr('fill', 'linen')
-      .attr('text-anchor', 'middle')
-      .attr('font-size', 8)
-
-    // wrap text
-    // const wrap = textwrap().bounds({ height: 100, width: 100 })
-    // d3.selectAll('.big-timeline-labels').call(wrap)
-    // d3.selectAll('foreignObject').attr('transform', 'translate(-50,0)')
+    // ---------BIG TIMELINE draw labels-----------------------------------------------------------------
 
     const annotationData = _.chain(data)
-      .filter((d) => d.level == 1)
+      // .filter((d) => d.level == 1)
       .map((d, i) => {
-        console.log(new Date(d.startYear, 0, 0))
-        console.log(xScale(new Date(d.startYear, 0, 0)))
         return {
-          data: { startYear: d.startYear },
+          data: {
+            startYear: d.startYear,
+            description: d.description,
+            title: d.title,
+          },
           note: { title: d.title, align: 'middle', orientation: 'leftright' },
           x: xScale(new Date(d.startYear, 0, 0)),
-          y:
-            i % 2 == 0
-              ? svgHeight / 3
-              : svgHeight / 5,
+          y: d.level == 1 ? bigTimelineHeight / 3 : bigTimelineHeight / 2,
           dx: 20,
           dy: 0,
         }
       })
       .value()
 
-      console.log(data)
-      console.log(annotationData)
-
     const makeAnnotations = annotation()
       .type(annotationLabel)
       .annotations(annotationData)
-      //need to update makeAnnotations below, so must make this variable accessible
-
+    //need to update makeAnnotations below, so must make this variable accessible
 
     d3.select('svg')
       .append('g')
       .attr('class', 'annotation-group')
       .call(makeAnnotations as any)
 
-    d3.selectAll('.annotation text').attr("fill","white").attr("font-size","10px");
+    d3.selectAll('.label').on('click', function (d) {
+      const selection = d3.select(this)
+      d3.select(this).raise()
+      const title = selection.data()[0]['data']['title']
+      const description = selection.data()[0]['data']['description']
+      d3.selectAll('.popup .title').html(title)
+      d3.selectAll('.popup .content').html(description)
+      console.log(selection.data()[0]['data']['title'])
+      d3.selectAll('.overlay')
+        .style('visibility', 'visible')
+        .style('opacity', 1)
+    })
+
+    d3.selectAll('.button').on('click', function (d) {
+      d3.selectAll('.overlay').style('visibility', 'hidden').style('opacity', 0)
+    })
+
+    d3.selectAll('.label')
+      .on('mouseenter', function () {
+        const selection = d3.select(this)
+        selection.raise()
+        selection
+          .select('.annotation-note-bg')
+          .transition()
+          .duration(300)
+          .attr('fill-opacity', 1)
+        selection.style('cursor', 'pointer')
+      })
+      .on('mouseleave', function () {
+        const selection = d3.select(this)
+        selection
+          .select('.annotation-note-bg')
+          .transition()
+          .duration(300)
+          .attr('fill-opacity', 0.7)
+        selection.style('cursor', 'auto')
+      })
+
+    d3.selectAll('.annotation text')
+      .attr('fill', 'white')
+      .attr('font-size', '10px')
+
+    d3.selectAll('.annotation-note-title tspan').attr('x', 3)
+    d3.selectAll('.annotation-note-title tspan:first-of-type').attr(
+      'dy',
+      '1.2em'
+    )
+
+    d3.selectAll('.annotation-note-bg')
+      .attr('fill', '#282c34')
+      .attr('stroke', 'white')
+      .attr('stroke-dasharray', 2)
+      .attr('fill-opacity', 0.7)
   }, [getXScale])
 
   const drawBrushableTimeline = useCallback(() => {
     const startYears = data.map((d) => d.startYear)
+    // console.log(startYears);
     const min = Math.min(...startYears)
     const max = Math.max(...startYears)
 
     const svg = d3.select('svg')
-    const xScale = getXScale(min, max)
+    // ---------SMALL TIMELINE create scales-----------------------------------------------------------------
+
+    const mini_xScale = getXScale(min, max)
     var mini_yScale = d3
       .scaleLinear()
       .domain([0, 3])
       .range([svgHeight - 50, svgHeight - 100])
+
+    // ---------SMALL TIMELINE draw axis-----------------------------------------------------------------
+
     svg
       .append('g')
       .attr('class', 'axis')
       .attr('transform', 'translate(0,' + (svgHeight - 50) + ')')
-      .call(d3.axisBottom(xScale))
+      .call(d3.axisBottom(mini_xScale))
+
+    // ---------SMALL TIMELINE draw textured bgs-----------------------------------------------------------------
+
+    svg
+      .selectAll('.textured-bg-rects')
+      .data(periodChunks)
+      .enter()
+      .append('rect')
+      .attr('class', 'textured-bg-rects')
+      .attr('x', (d: any) => mini_xScale(new Date(d.startYear, 0, 0)))
+      .attr('y', 350)
+      .attr('height', 100)
+      .attr(
+        'width',
+        (d: any) =>
+          mini_xScale(new Date(d.endYear, 0, 0)) -
+          mini_xScale(new Date(d.startYear, 0, 0))
+      )
+      .attr('fill', (d, i) => {
+        const red = textures.lines().lighter().size(8).stroke(textureColors[i])
+        svg.call(red)
+        return red.url()
+      })
+
+    // ---------SMALL TIMELINE draw lines-----------------------------------------------------------------
 
     svg
       .selectAll('.brush-lines')
       .data(data, (d: any) => d.id)
       .enter()
       .append('line')
-      .attr('x1', (d) => xScale(new Date(d.startYear, 0, 0)))
-      .attr('x2', (d) => xScale(new Date(d.startYear, 0, 0)))
+      .attr('x1', (d) => mini_xScale(new Date(d.startYear, 0, 0)))
+      .attr('x2', (d) => mini_xScale(new Date(d.startYear, 0, 0)))
       .attr('y1', (d) => mini_yScale(d.level))
       .attr('y2', (d) => mini_yScale(d.level) + 10 * d.level)
       .attr('stroke-width', 2)
       .attr('stroke', 'linen')
+
+    // ---------SMALL TIMELINE draw brush-----------------------------------------------------------------
 
     const brush = d3
       .brushX()
@@ -157,13 +247,19 @@ function App() {
       ])
       .on('brush', brushed)
 
-    const defaultSelection = [svgWidth / 2 - 50, svgWidth / 2 + 50] // on page load what it selects
+    const defaultSelection = [
+      mini_xScale(new Date(1950, 0, 0)),
+      mini_xScale(new Date(1980, 0, 0)),
+    ] // on page load what it selects
 
     svg.append('g').call(brush).call(brush.move, defaultSelection)
 
     function brushed({ selection }) {
-      const xYearMin = xScale.invert(selection[0]).getFullYear()
-      const xYearMax = xScale.invert(selection[1]).getFullYear()
+      // the value we get from the inverse xscale is for example Sat Dec 31 1864 00:00:00
+      // when the year should be 1865 should try and work out why but for now, just adding one
+      const xYearMin = mini_xScale.invert(selection[0]).getFullYear() + 1
+      const xYearMax = mini_xScale.invert(selection[1]).getFullYear() + 1
+
       setYearMin(xYearMin)
       setYearMax(xYearMax)
     }
@@ -185,27 +281,20 @@ function App() {
       .attr('x1', (d: any) => newxscale(new Date(d.startYear, 0, 0)))
       .attr('x2', (d: any) => newxscale(new Date(d.startYear, 0, 0)))
 
-    // update labels
-    d3.selectAll('.big-timeline-labels').attr('x', (d: any) =>
-      newxscale(new Date(d.startYear, 0, 0))
-    )
+    // update backgrounds
+    d3.selectAll('.big-tm-textured-bg')
+      .attr('x', (d: any) => newxscale(new Date(d.startYear, 0, 0)))
+      .attr('width', (d: any) => {
+        const initialVal =
+          newxscale(new Date(d.endYear, 0, 0)) -
+          newxscale(new Date(d.startYear, 0, 0))
+        return Math.max(initialVal, 100)
+      })
 
-    d3.selectAll('.label').attr('x', (d: any) =>
-      newxscale(new Date(d.startYear, 0, 0))
-      //update annotation data here
-    )
-
-    // d3.select(".annotation-group")
-    // .call(makeAnnotations)
-
-
-    // const red = textures.lines().lighter().size(8).stroke('#EB6A5B')
-
-    // d3.select('svg').call(red)
-    // // update labels
-    // d3.selectAll('.annotation-note-bg')
-    //   .attr('fill', red.url())
-    //   .attr('fill-opacity', 1)
+    //update labels
+    d3.selectAll('.label').attr('transform', (d: any) => {
+      return `translate(${newxscale(new Date(d.data.startYear, 0, 0))}, ${d.y})`
+    })
   }, [yearMin, yearMax, getXScale])
 
   useEffect(() => {
@@ -215,6 +304,20 @@ function App() {
   return (
     <Container>
       <Svg />
+      <div id="popup" className="overlay">
+        <div className="popup">
+          <h2 className="title">Here i am</h2> <a className="close"></a>
+          <div className="content">
+            {' '}
+            Thank to pop me out of that button, but now i'm done so you can
+            close this window.{' '}
+          </div>
+          <div className="box">
+            {' '}
+            <a className="button">Close</a>{' '}
+          </div>
+        </div>
+      </div>
     </Container>
   )
 }
@@ -228,6 +331,5 @@ const Container = styled.div`
   justify-items: center;
 `
 const Svg = styled.svg`
-  border: 2px solid linen;
   margin-top: 100px;
 `

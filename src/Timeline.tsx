@@ -42,7 +42,7 @@ export function Timeline() {
 
     const xScale = getXScale(1950, 1980)
 
-    var yScale = d3.scaleLinear().domain([0, 3]).range([svgHeight, 0])
+    var yScale = d3.scaleLinear().domain([0, 3]).range([bigTimelineHeight, 0])
 
     // ---------BIG TIMELINE draw textured bgs-----------------------------------------------------------------
 
@@ -85,10 +85,8 @@ export function Timeline() {
       .attr('class', 'big-timeline-line')
       .attr('x1', (d) => xScale(new Date(d.startYear, 0, 0)))
       .attr('x2', (d) => xScale(new Date(d.startYear, 0, 0)))
-      .attr('y1', 0)
-      .attr('y2', (d) =>
-        d.level == 1 ? bigTimelineHeight / 3 : bigTimelineHeight / 2
-      )
+      .attr('y1', (d) => yScale(d.level))
+      .attr('y2', (d) => yScale(d.level) + 10)
       .attr('stroke-width', 2)
       .attr('stroke', 'linen')
 
@@ -113,7 +111,7 @@ export function Timeline() {
           },
           x: xScale(new Date(d.startYear, 0, 0)),
           // y: yScale(d.level),
-          y: d.level === 1 ? bigTimelineHeight / 3 : bigTimelineHeight / 2,
+          y: yScale(d.level),
           dx: 20,
           dy: 0,
         }
@@ -271,9 +269,9 @@ export function Timeline() {
           const hasDescription = d.note.label.trim().length > 0
           const yOffset = hasDescription ? -50 : 0
 
-          return `translate(${
-            newxscale(new Date(d.data.startYear, 0, 0)) - 20
-          }, ${d.translation.y + yOffset})`
+          return `translate(${newxscale(new Date(d.data.startYear, 0, 0))}, ${
+            d.translation.y + yOffset
+          })`
         })
         selection.style('cursor', 'pointer')
         selection.raise()
@@ -299,9 +297,9 @@ export function Timeline() {
         selection.transition().attr('transform', (d: any) => {
           const hasDescription = d.note.label.trim().length > 0
           const yOffset = hasDescription ? 50 : 0
-          return `translate(${
-            newxscale(new Date(d.data.startYear, 0, 0)) - 20
-          }, ${d.translation.y + yOffset})`
+          return `translate(${newxscale(new Date(d.data.startYear, 0, 0))}, ${
+            d.translation.y + yOffset
+          })`
         })
         selection.style('cursor', 'auto')
         selection

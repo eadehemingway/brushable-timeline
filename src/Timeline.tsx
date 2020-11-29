@@ -130,45 +130,6 @@ export function Timeline() {
       .attr('class', 'annotation-group')
       .call(makeAnnotations as any)
 
-    d3.selectAll('.label')
-      .on('mouseenter', function () {
-        const selection = d3.select(this)
-        selection.style('cursor', 'pointer')
-        selection.raise()
-        selection
-          .select('.annotation-note-bg')
-          .transition()
-          .duration(300)
-          .attr('fill-opacity', 1)
-          .attr('height', (d: any) => {
-            const descriptionLength = d.note.label.length
-            const descriptionHeight = descriptionLength / 2 + 30 // bit hacky...
-            return Math.max(descriptionHeight, 50)
-          })
-
-        selection
-          .select('.annotation-note-label')
-          .transition()
-          .duration(750)
-          .attr('opacity', 1)
-      })
-      .on('mouseleave', function () {
-        const selection = d3.select(this)
-        selection.style('cursor', 'auto')
-        selection
-          .select('.annotation-note-bg')
-          .transition()
-          .duration(300)
-          .attr('fill-opacity', 0.7)
-
-        selection
-          .select('.annotation-note-label')
-          .transition()
-          .attr('opacity', 0)
-        d3.select((this as any).parentNode)
-          .selectAll('.annotation-note-bg')
-          .attr('height', '50')
-      })
     d3.selectAll('.annotation text')
       .attr('fill', 'linen')
       .attr('font-size', '10px')
@@ -302,6 +263,61 @@ export function Timeline() {
     d3.selectAll('.label').attr('transform', (d: any) => {
       return `translate(${newxscale(new Date(d.data.startYear, 0, 0))}, ${d.y})`
     })
+
+    d3.selectAll('.label')
+      .on('mouseenter', function () {
+        const selection = d3.select(this)
+        selection.transition().attr('transform', (d: any) => {
+          const hasDescription = d.note.label.trim().length > 0
+          const yOffset = hasDescription ? -50 : 0
+
+          return `translate(${
+            newxscale(new Date(d.data.startYear, 0, 0)) - 20
+          }, ${d.translation.y + yOffset})`
+        })
+        selection.style('cursor', 'pointer')
+        selection.raise()
+        selection
+          .select('.annotation-note-bg')
+          .transition()
+          .duration(300)
+          .attr('fill-opacity', 1)
+          .attr('height', (d: any) => {
+            const descriptionLength = d.note.label.trim().length
+            const descriptionHeight = descriptionLength / 2 + 30 // bit hacky...
+            return Math.max(descriptionHeight, 50)
+          })
+
+        selection
+          .select('.annotation-note-label')
+          .transition()
+          .duration(750)
+          .attr('opacity', 1)
+      })
+      .on('mouseleave', function () {
+        const selection = d3.select(this)
+        selection.transition().attr('transform', (d: any) => {
+          const hasDescription = d.note.label.trim().length > 0
+          const yOffset = hasDescription ? 50 : 0
+          return `translate(${
+            newxscale(new Date(d.data.startYear, 0, 0)) - 20
+          }, ${d.translation.y + yOffset})`
+        })
+        selection.style('cursor', 'auto')
+        selection
+          .select('.annotation-note-bg')
+          .transition()
+          .duration(300)
+          .attr('fill-opacity', 0.7)
+
+        selection
+          .select('.annotation-note-label')
+          .transition()
+          .attr('opacity', 0)
+        d3.select((this as any).parentNode)
+          .selectAll('.annotation-note-bg')
+          .attr('height', '50')
+      })
   }, [yearMin, yearMax, getXScale])
 
   useEffect(() => {

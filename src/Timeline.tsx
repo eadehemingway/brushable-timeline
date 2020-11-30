@@ -17,7 +17,7 @@ export function Timeline() {
 
   // this min and max year refers to the big timeline
   const [yearMin, setYearMin] = useState<number>(1950)
-  const [yearMax, setYearMax] = useState<number>(1980)
+  const [yearMax, setYearMax] = useState<number>(1960)
 
   const getXScale = useCallback(
     (min, max) =>
@@ -40,7 +40,8 @@ export function Timeline() {
 
     // ---------BIG TIMELINE create scales-----------------------------------------------------------------
 
-    const xScale = getXScale(1950, 1980)
+    const xScale = getXScale(yearMin, yearMax)
+    const yearIntoXScale = (year) => xScale(new Date(year, 0, 0))
 
     var yScale = d3.scaleLinear().domain([-1, 5]).range([bigTimelineHeight, 0])
 
@@ -52,14 +53,12 @@ export function Timeline() {
       .enter()
       .append('rect')
       .attr('class', 'big-tm-textured-bg')
-      .attr('x', (d: any) => xScale(new Date(d.startYear, 0, 0)))
+      .attr('x', (d: any) => yearIntoXScale(d.startYear))
       .attr('y', 0)
       .attr('height', bigTimelineHeight)
       .attr(
         'width',
-        (d: any) =>
-          xScale(new Date(d.endYear, 0, 0)) -
-          xScale(new Date(d.startYear, 0, 0))
+        (d: any) => yearIntoXScale(d.endYear) - yearIntoXScale(d.startYear)
       )
       .attr('fill', (d, i) => {
         const red = textures.lines().lighter().size(8).stroke(textureColors[i])
@@ -83,8 +82,8 @@ export function Timeline() {
       .enter()
       .append('line')
       .attr('class', 'big-timeline-line')
-      .attr('x1', (d) => xScale(new Date(d.startYear, 0, 0)))
-      .attr('x2', (d) => xScale(new Date(d.startYear, 0, 0)))
+      .attr('x1', (d) => yearIntoXScale(d.startYear))
+      .attr('x2', (d) => yearIntoXScale(d.startYear))
       .attr('y1', (d) => yScale(d.level))
       .attr('y2', (d) => yScale(d.level) + 15)
       .attr('stroke-width', 3)
@@ -101,7 +100,7 @@ export function Timeline() {
             title: d.title,
           },
           note: {
-            title: d.title,
+            title: `${d.title}. (${d.startYear})`,
             label: d.description,
             align: 'middle',
             orientation: 'leftright',
@@ -109,7 +108,7 @@ export function Timeline() {
             padding: 0,
             bgPadding: { top: 0, bottom: 0, left: 0, right: 0 },
           },
-          x: xScale(new Date(d.startYear, 0, 0)),
+          x: yearIntoXScale(d.startYear),
           // y: yScale(d.level),
           y: yScale(d.level),
           dx: 20,
@@ -232,7 +231,9 @@ export function Timeline() {
     // ---------SMALL TIMELINE create scales-----------------------------------------------------------------
 
     const mini_xScale = getXScale(min, max)
-    var mini_yScale = d3
+    const miniYearIntoXScale = (year) => mini_xScale(new Date(year, 0, 0))
+
+    const mini_yScale = d3
       .scaleLinear()
       .domain([0, 3])
       .range([svgHeight - 50, svgHeight - 100])
@@ -253,14 +254,13 @@ export function Timeline() {
       .enter()
       .append('rect')
       .attr('class', 'textured-bg-rects')
-      .attr('x', (d: any) => mini_xScale(new Date(d.startYear, 0, 0)))
+      .attr('x', (d: any) => miniYearIntoXScale(d.startYear))
       .attr('y', 350)
       .attr('height', 100)
       .attr(
         'width',
         (d: any) =>
-          mini_xScale(new Date(d.endYear, 0, 0)) -
-          mini_xScale(new Date(d.startYear, 0, 0))
+          miniYearIntoXScale(d.endYear) - miniYearIntoXScale(d.startYear)
       )
       .attr('fill', (d, i) => {
         const red = textures.lines().lighter().size(8).stroke(textureColors[i])
@@ -275,8 +275,8 @@ export function Timeline() {
       .data(data, (d: any) => d.id)
       .enter()
       .append('line')
-      .attr('x1', (d) => mini_xScale(new Date(d.startYear, 0, 0)))
-      .attr('x2', (d) => mini_xScale(new Date(d.startYear, 0, 0)))
+      .attr('x1', (d) => miniYearIntoXScale(d.startYear))
+      .attr('x2', (d) => miniYearIntoXScale(d.startYear))
       .attr('y1', (d) => mini_yScale(d.level))
       .attr('y2', (d) => mini_yScale(d.level) + 10 * d.level)
       .attr('stroke-width', 2)
@@ -293,8 +293,8 @@ export function Timeline() {
       .on('brush', brushed)
 
     const defaultSelection = [
-      mini_xScale(new Date(1950, 0, 0)),
-      mini_xScale(new Date(1980, 0, 0)),
+      miniYearIntoXScale(yearMin),
+      miniYearIntoXScale(yearMax),
     ] // on page load what it selects
 
     svg.append('g').call(brush).call(brush.move, defaultSelection)
@@ -317,28 +317,28 @@ export function Timeline() {
 
   const updateTimeline = useCallback(() => {
     const newxscale = getXScale(yearMin, yearMax)
+    const newYearIntoXScale = (year) => newxscale(new Date(year, 0, 0))
 
     // upate axis
     d3.select('.big-axis').call(d3.axisBottom(newxscale))
 
     // update lines
     d3.selectAll('.big-timeline-line')
-      .attr('x1', (d: any) => newxscale(new Date(d.startYear, 0, 0)))
-      .attr('x2', (d: any) => newxscale(new Date(d.startYear, 0, 0)))
+      .attr('x1', (d: any) => newYearIntoXScale(d.startYear))
+      .attr('x2', (d: any) => newYearIntoXScale(d.startYear))
 
     // update backgrounds
     d3.selectAll('.big-tm-textured-bg')
-      .attr('x', (d: any) => newxscale(new Date(d.startYear, 0, 0)))
+      .attr('x', (d: any) => newYearIntoXScale(d.startYear))
       .attr('width', (d: any) => {
         const initialVal =
-          newxscale(new Date(d.endYear, 0, 0)) -
-          newxscale(new Date(d.startYear, 0, 0))
+          newYearIntoXScale(d.endYear) - newYearIntoXScale(d.startYear)
         return Math.max(initialVal, 100)
       })
 
     // update labels
     d3.selectAll('.label').attr('transform', (d: any) => {
-      return `translate(${newxscale(new Date(d.data.startYear, 0, 0))}, ${d.y})`
+      return `translate(${newYearIntoXScale(d.startYear)}, ${d.y})`
     })
   }, [yearMin, yearMax, getXScale])
 

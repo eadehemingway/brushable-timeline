@@ -147,8 +147,14 @@ export function Timeline() {
     backgroundRects
       .attr('fill', '#282c34')
       .attr('fill-opacity', 0.7)
-      .attr('stroke-dasharray', 2)
-      .attr('stroke', '#f9a03f')
+      .attr('stroke-dasharray', (d: any) => {
+        const description = d.note.label.trim()
+        return description.length ? 2 : null
+      })
+      .attr('stroke', (d: any) => {
+        const description = d.note.label.trim()
+        return description.length ? '#f9a03f' : '#956025'
+      })
       .attr('height', '50')
       .style('cursor', 'pointer')
 
@@ -175,9 +181,10 @@ export function Timeline() {
       textOrRectSelection?.parentNode?.parentNode?.parentNode
     )
     labelParentGroup.raise()
-    // make bg rects bigger height
-    labelParentGroup
-      .select('.annotation-note-bg')
+
+    const backgroundRects = labelParentGroup.select('.annotation-note-bg')
+
+    backgroundRects
       .transition()
       .duration(300)
       .attr('fill-opacity', 1)
@@ -187,12 +194,8 @@ export function Timeline() {
         return Math.max(descriptionHeight, 50)
       })
 
-    // make label text visible
-    labelParentGroup
-      .select('.annotation-note-label')
-      .transition()
-      .duration(750)
-      .attr('opacity', 1)
+    const descriptions = labelParentGroup.select('.annotation-note-label')
+    descriptions.transition().duration(750).attr('opacity', 1)
   }, [])
 
   const closeAnnotation = useCallback((parentGroup) => {

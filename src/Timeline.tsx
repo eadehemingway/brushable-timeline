@@ -119,7 +119,7 @@ export function Timeline() {
       .value()
 
     // ANNOTATIONS -----------------------------------------------
-
+    // draw annotations
     const makeAnnotations = annotation()
       .type(annotationLabel)
       .annotations(annotationData)
@@ -129,16 +129,35 @@ export function Timeline() {
       .attr('class', 'annotation-group')
       .call(makeAnnotations as any)
 
-    d3.selectAll('.annotation text')
+    const allAnnotationText = d3.selectAll('.annotation text')
+    const wholeLabels = d3.selectAll('.label')
+    const backgroundRects = d3.selectAll('.annotation-note-bg')
+    const titles = d3.selectAll('.annotation-note-title')
+    const descriptions = d3.selectAll('.annotation-note-label')
+
+    // annotation styles ==========
+    allAnnotationText
       .attr('fill', 'linen')
       .attr('font-size', '10px')
       .attr('transform', 'translate(10,10)')
 
-    // set descriptions to be invisible as default
-    d3.selectAll('.annotation-note-label').attr('opacity', 0)
+    descriptions.attr('opacity', 0)
 
-    d3.selectAll('.label')
+    wholeLabels.style('cursor', 'pointer')
+
+    backgroundRects
+      .attr('fill', '#282c34')
+      .attr('fill-opacity', 0.7)
+      .attr('stroke-dasharray', 2)
+      .attr('stroke', '#f9a03f')
+      .attr('height', '50')
       .style('cursor', 'pointer')
+
+    titles.style('cursor', 'pointer')
+
+    // annotation mouse overs ========
+
+    wholeLabels
       .on('mouseover', function () {
         d3.select(this).raise()
       })
@@ -147,24 +166,15 @@ export function Timeline() {
         closeAnnotation(parentGroup)
       })
 
-    d3.selectAll('.annotation-note-bg')
-      .attr('fill', '#282c34')
-      .attr('fill-opacity', 0.7)
-      .attr('stroke-dasharray', 2)
-      .attr('stroke', '#f9a03f')
-      .attr('height', '50')
-      .style('cursor', 'pointer')
-      .on('mouseover', function () {
-        const parentGroup = d3.select((this as any).parentNode)
-        openAnnotation(parentGroup)
-      })
+    backgroundRects.on('mouseover', function () {
+      const parentGroup = d3.select((this as any).parentNode)
+      openAnnotation(parentGroup)
+    })
 
-    d3.selectAll('.annotation-note-title')
-      .style('cursor', 'pointer')
-      .on('mouseover', function () {
-        const parentGroup = d3.select((this as any).parentNode)
-        openAnnotation(parentGroup)
-      })
+    titles.on('mouseover', function () {
+      const parentGroup = d3.select((this as any).parentNode)
+      openAnnotation(parentGroup)
+    })
   }, [getXScale])
 
   const openAnnotation = useCallback((parentGroup) => {
@@ -198,6 +208,7 @@ export function Timeline() {
 
     parentGroup.select('.annotation-note-label').transition().attr('opacity', 0)
   }, [])
+
   const drawBrushableTimeline = useCallback(() => {
     const startYears = data.map((d) => d.startYear)
     // console.log(startYears);
@@ -292,8 +303,8 @@ export function Timeline() {
   }, [drawTimeline, drawBrushableTimeline])
 
   const updateTimeline = useCallback(() => {
-    // update timeline
     const newxscale = getXScale(yearMin, yearMax)
+
     // upate axis
     d3.select('.big-axis').call(d3.axisBottom(newxscale))
 

@@ -190,9 +190,13 @@ export function Timeline() {
       .duration(300)
       .attr('fill-opacity', 1)
       .attr('height', (d: any) => {
+        const titleLength = d.note.title.trim().length
         const descriptionLength = d.note.label.trim().length
-        const descriptionHeight = descriptionLength / 2 + 30 // bit hacky...
-        return Math.max(descriptionHeight, 50)
+
+        if (!descriptionLength) return 50
+        const textHeight = titleLength + descriptionLength
+        const rectHeight = textHeight / 2.6 + 50 // bit hacky - using the text length to try to calculate the rect height
+        return Math.max(rectHeight, 50)
       })
 
     const descriptions = labelParentGroup.select('.annotation-note-label')

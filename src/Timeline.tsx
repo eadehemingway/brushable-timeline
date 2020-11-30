@@ -140,7 +140,7 @@ export function Timeline() {
       .attr('font-size', '10px')
       .attr('transform', 'translate(10,10)')
 
-    descriptions.attr('opacity', 0)
+    descriptions.attr('display', 'none').attr('opacity', 0)
 
     wholeLabels.style('cursor', 'pointer')
 
@@ -195,7 +195,11 @@ export function Timeline() {
       })
 
     const descriptions = labelParentGroup.select('.annotation-note-label')
-    descriptions.transition().duration(750).attr('opacity', 1)
+    descriptions
+      .transition()
+      .duration(750)
+      .attr('opacity', 1)
+      .attr('display', 'block')
   }, [])
 
   const closeAnnotation = useCallback((parentGroup) => {

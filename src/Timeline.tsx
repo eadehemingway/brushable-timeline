@@ -86,9 +86,9 @@ export function Timeline() {
       .attr('x1', (d) => xScale(new Date(d.startYear, 0, 0)))
       .attr('x2', (d) => xScale(new Date(d.startYear, 0, 0)))
       .attr('y1', (d) => yScale(d.level))
-      .attr('y2', (d) => yScale(d.level) + 10)
-      .attr('stroke-width', 2)
-      .attr('stroke', 'linen')
+      .attr('y2', (d) => yScale(d.level) + 15)
+      .attr('stroke-width', 3)
+      .attr('stroke', 'lightgray')
 
     // ---------BIG TIMELINE draw labels-----------------------------------------------------------------
     // get annotation data ======
@@ -133,13 +133,16 @@ export function Timeline() {
     const backgroundRects = d3.selectAll('.annotation-note-bg')
     const titles = d3.selectAll('.annotation-note-title')
     const descriptions = d3.selectAll('.annotation-note-label')
+    const connectors = d3.selectAll('.connector')
 
     // annotation styles ==========
     allAnnotationText
-      .attr('fill', 'linen')
+      .attr('fill', 'lightgray')
       .attr('font-size', '10px')
       .attr('font-family', 'JosefinSans')
       .attr('transform', 'translate(15,15)')
+
+    connectors.attr('stroke', 'lightgray')
 
     descriptions.attr('display', 'none').attr('opacity', 0)
 
@@ -156,7 +159,7 @@ export function Timeline() {
         const description = d.note.label.trim()
         return description.length ? '#f9a03f' : '#956025'
       })
-      .attr('width', 200) // hard coding this because the wrap above seems to make the rect too big
+      .attr('width', 210) // hard coding this because the wrap above seems to make the rect too big
       .attr('height', '50') // hard coding this (estimating the height of a title)
       .style('cursor', 'pointer')
 
@@ -277,7 +280,7 @@ export function Timeline() {
       .attr('y1', (d) => mini_yScale(d.level))
       .attr('y2', (d) => mini_yScale(d.level) + 10 * d.level)
       .attr('stroke-width', 2)
-      .attr('stroke', 'linen')
+      .attr('stroke', 'lightgray')
 
     // ---------SMALL TIMELINE draw brush-----------------------------------------------------------------
 

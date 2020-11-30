@@ -155,7 +155,8 @@ export function Timeline() {
         const description = d.note.label.trim()
         return description.length ? '#f9a03f' : '#956025'
       })
-      .attr('height', '50')
+      .attr('width', 200) // hard coding this because the wrap above seems to make the rect too big
+      .attr('height', '50') // hard coding this (estimating the height of a title)
       .style('cursor', 'pointer')
 
     titles.style('cursor', 'pointer')

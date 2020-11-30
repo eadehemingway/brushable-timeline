@@ -91,7 +91,7 @@ export function Timeline() {
       .attr('stroke', 'linen')
 
     // ---------BIG TIMELINE draw labels-----------------------------------------------------------------
-
+    // get annotation data ======
     const annotationData = _.chain(data)
       .map((d, i) => {
         return {
@@ -118,8 +118,7 @@ export function Timeline() {
       })
       .value()
 
-    // ANNOTATIONS -----------------------------------------------
-    // draw annotations
+    // draw annotations ======
     const makeAnnotations = annotation()
       .type(annotationLabel)
       .annotations(annotationData)

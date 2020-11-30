@@ -156,29 +156,27 @@ export function Timeline() {
 
     // annotation mouse overs ========
 
-    wholeLabels
-      .on('mouseover', function () {
-        d3.select(this).raise()
-      })
-      .on('mouseleave', function () {
-        const parentGroup = d3.select(this)
-        closeAnnotation(parentGroup)
-      })
+    wholeLabels.on('mouseleave', function () {
+      const parentGroup = d3.select(this)
+      closeAnnotation(parentGroup)
+    })
 
     backgroundRects.on('mouseover', function () {
-      const parentGroup = d3.select((this as any).parentNode)
-      openAnnotation(parentGroup)
+      openAnnotation(this)
     })
 
     titles.on('mouseover', function () {
-      const parentGroup = d3.select((this as any).parentNode)
-      openAnnotation(parentGroup)
+      openAnnotation(this)
     })
   }, [getXScale])
 
-  const openAnnotation = useCallback((parentGroup) => {
+  const openAnnotation = useCallback((textOrRectSelection) => {
+    const labelParentGroup = d3.select(
+      textOrRectSelection?.parentNode?.parentNode?.parentNode
+    )
+    labelParentGroup.raise()
     // make bg rects bigger height
-    parentGroup
+    labelParentGroup
       .select('.annotation-note-bg')
       .transition()
       .duration(300)
@@ -190,7 +188,7 @@ export function Timeline() {
       })
 
     // make label text visible
-    parentGroup
+    labelParentGroup
       .select('.annotation-note-label')
       .transition()
       .duration(750)

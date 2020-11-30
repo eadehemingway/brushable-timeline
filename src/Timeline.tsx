@@ -257,11 +257,6 @@ export function Timeline() {
         return Math.max(initialVal, 100)
       })
 
-    //update labels
-    d3.selectAll('.label').attr('transform', (d: any) => {
-      return `translate(${newxscale(new Date(d.data.startYear, 0, 0))}, ${d.y})`
-    })
-
     // label
     //   - annotation-connector
     //   - annotation-note
@@ -269,26 +264,17 @@ export function Timeline() {
     //       - annotation-note-bg (right size)
     //       - annotation-note-label
 
-    d3.selectAll('.label')
-      .on('mouseenter', function () {
-        const label = d3.select(this)
-        label.style('cursor', 'pointer')
+    d3.selectAll('.annotation-note-bg')
+      .style('cursor', 'pointer')
+      .on('mouseover', function () {
+        const backgroundRect = d3.select(this)
+        const noteContentGroup = d3.select((this as any).parentNode)
+
         // raises label to top
-        label.raise()
-
-        // moves label up to expand
-        label.transition().attr('transform', (d: any) => {
-          const hasDescription = d.note.label.trim().length > 0
-          const yOffset = hasDescription ? -50 : 0
-
-          return `translate(${newxscale(new Date(d.data.startYear, 0, 0))}, ${
-            d.translation.y + yOffset
-          })`
-        })
+        noteContentGroup.raise()
 
         // make bg rects bigger height
-        label
-          .select('.annotation-note-bg')
+        backgroundRect
           .transition()
           .duration(300)
           .attr('fill-opacity', 1)
@@ -299,33 +285,33 @@ export function Timeline() {
           })
 
         // make label text visible
-        label
+        noteContentGroup
           .select('.annotation-note-label')
           .transition()
           .duration(750)
           .attr('opacity', 1)
       })
+
+    d3.selectAll('.label')
+      .attr('transform', (d: any) => {
+        return `translate(${newxscale(new Date(d.data.startYear, 0, 0))}, ${
+          d.y
+        })`
+      })
+      .style('cursor', 'pointer')
+      .on('mouseover', function () {
+        d3.select(this).raise()
+      })
       .on('mouseleave', function () {
-        const selection = d3.select(this)
-        selection.transition().attr('transform', (d: any) => {
-          return `translate(${newxscale(new Date(d.data.startYear, 0, 0))}, ${
-            d.translation.y
-          })`
-        })
-        selection.style('cursor', 'auto')
-        selection
+        const label = d3.select(this)
+
+        label
           .select('.annotation-note-bg')
           .transition()
           .duration(300)
-          .attr('fill-opacity', 0.7)
-
-        selection
-          .select('.annotation-note-label')
-          .transition()
-          .attr('opacity', 0)
-        d3.select((this as any).parentNode)
-          .selectAll('.annotation-note-bg')
           .attr('height', '50')
+          .attr('fill-opacity', 0.7)
+        label.select('.annotation-note-label').transition().attr('opacity', 0)
       })
   }, [yearMin, yearMax, getXScale])
 

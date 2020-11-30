@@ -262,10 +262,22 @@ export function Timeline() {
       return `translate(${newxscale(new Date(d.data.startYear, 0, 0))}, ${d.y})`
     })
 
+    // label
+    //   - annotation-connector
+    //   - annotation-note
+    //     - annotation-note-content (still big)
+    //       - annotation-note-bg (right size)
+    //       - annotation-note-label
+
     d3.selectAll('.label')
       .on('mouseenter', function () {
-        const selection = d3.select(this)
-        selection.transition().attr('transform', (d: any) => {
+        const label = d3.select(this)
+        label.style('cursor', 'pointer')
+        // raises label to top
+        label.raise()
+
+        // moves label up to expand
+        label.transition().attr('transform', (d: any) => {
           const hasDescription = d.note.label.trim().length > 0
           const yOffset = hasDescription ? -50 : 0
 
@@ -273,9 +285,9 @@ export function Timeline() {
             d.translation.y + yOffset
           })`
         })
-        selection.style('cursor', 'pointer')
-        selection.raise()
-        selection
+
+        // make bg rects bigger height
+        label
           .select('.annotation-note-bg')
           .transition()
           .duration(300)
@@ -286,7 +298,8 @@ export function Timeline() {
             return Math.max(descriptionHeight, 50)
           })
 
-        selection
+        // make label text visible
+        label
           .select('.annotation-note-label')
           .transition()
           .duration(750)

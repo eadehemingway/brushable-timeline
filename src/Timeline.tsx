@@ -135,9 +135,9 @@ export function Timeline() {
 
     d3.selectAll('.annotation-note-bg')
       .attr('fill', '#282c34')
+      .attr('fill-opacity', 0.7)
       .attr('stroke-dasharray', 2)
       .attr('stroke', '#f9a03f')
-      .attr('fill-opacity', 1)
 
     d3.selectAll('.annotation-note-label').attr('opacity', 0)
     d3.selectAll('.annotation-note-bg').attr('height', '50')
@@ -267,6 +267,7 @@ export function Timeline() {
     d3.selectAll('.annotation-note-bg')
       .style('cursor', 'pointer')
       .on('mouseover', function () {
+        console.log('RECT OVER')
         const backgroundRect = d3.select(this)
         const noteContentGroup = d3.select((this as any).parentNode)
 
@@ -292,7 +293,8 @@ export function Timeline() {
     d3.selectAll('.annotation-note-title')
       .style('cursor', 'pointer')
       .on('mouseover', function () {
-        const title = d3.select(this)
+        console.log('TITLE OVER')
+
         const noteContentGroup = d3.select((this as any).parentNode)
 
         // make bg rects bigger height
@@ -300,6 +302,7 @@ export function Timeline() {
           .select('.annotation-note-bg')
           .transition()
           .duration(300)
+          .attr('fill-opacity', 1)
           .attr('height', (d: any) => {
             const descriptionLength = d.note.label.trim().length
             const descriptionHeight = descriptionLength / 2 + 30 // bit hacky...

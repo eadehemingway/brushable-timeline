@@ -27,6 +27,14 @@ export function Timeline() {
         .range([sidePadding, svgWidth - 10]), //I added 10 here so the last annotation doesn't get cut off
     []
   )
+  const getClosedLabelHeight = useCallback((title) => {
+    const lines = title.trim().length / 30
+    const lineHeight = 18
+    const textHeight = lineHeight * lines
+    const padding = 30
+    const closedLabelHeight = textHeight + padding
+    return Math.max(closedLabelHeight, 50)
+  }, [])
 
   const drawTimeline = useCallback(() => {
     const bigTimelineGroup = d3
@@ -159,7 +167,9 @@ export function Timeline() {
         return description.length ? '#f9a03f' : '#956025'
       })
       .attr('width', 210) // hard coding this because the wrap above seems to make the rect too big
-      .attr('height', '50') // hard coding this (estimating the height of a title)
+      .attr('height', (d: any) => {
+        return getClosedLabelHeight(d.note.title)
+      }) // hard coding this (estimating the height of a title)
       .style('cursor', 'pointer')
 
     titles.style('cursor', 'pointer')
@@ -193,10 +203,11 @@ export function Timeline() {
       .duration(300)
       .attr('fill-opacity', 1)
       .attr('height', (d: any) => {
-        const titleLength = d.note.title.trim().length
+        const title = d.note.title
+        const titleLength = title.trim().length
         const descriptionLength = d.note.label.trim().length
 
-        if (!descriptionLength) return 50
+        if (!descriptionLength) return getClosedLabelHeight(title)
         const textHeight = titleLength + descriptionLength
         const rectHeight = textHeight / 2.7 + 60 // bit hacky - using the text length to try to calculate the rect height
         return Math.max(rectHeight, 50)
@@ -215,7 +226,9 @@ export function Timeline() {
       .select('.annotation-note-bg')
       .transition()
       .duration(300)
-      .attr('height', '50')
+      .attr('height', (d) => {
+        return getClosedLabelHeight(d.note.title)
+      })
       .attr('fill-opacity', 0.7)
 
     parentGroup.select('.annotation-note-label').transition().attr('opacity', 0)

@@ -308,8 +308,8 @@ export function Timeline() {
   }, [getXScale])
 
   useEffect(() => {
-    drawTimeline()
     drawBrushableTimeline()
+    drawTimeline()
   }, [drawTimeline, drawBrushableTimeline])
 
   const updateTimeline = useCallback(() => {

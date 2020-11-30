@@ -139,7 +139,7 @@ export function Timeline() {
       .attr('fill', 'linen')
       .attr('font-size', '10px')
       .attr('font-family', 'JosefinSans')
-      .attr('transform', 'translate(10,10)')
+      .attr('transform', 'translate(15,15)')
 
     descriptions.attr('display', 'none').attr('opacity', 0)
 
@@ -196,7 +196,7 @@ export function Timeline() {
 
         if (!descriptionLength) return 50
         const textHeight = titleLength + descriptionLength
-        const rectHeight = textHeight / 2.6 + 50 // bit hacky - using the text length to try to calculate the rect height
+        const rectHeight = textHeight / 2.7 + 60 // bit hacky - using the text length to try to calculate the rect height
         return Math.max(rectHeight, 50)
       })
 

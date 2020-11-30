@@ -138,6 +138,7 @@ export function Timeline() {
     allAnnotationText
       .attr('fill', 'linen')
       .attr('font-size', '10px')
+      .attr('font-family', 'JosefinSans')
       .attr('transform', 'translate(10,10)')
 
     descriptions.attr('display', 'none').attr('opacity', 0)

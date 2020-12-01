@@ -9,12 +9,14 @@ import './styles.css'
 import _ from 'lodash'
 
 export function Timeline() {
-  const sidePadding = 0
   const svgWidth = 1000
   const svgHeight = 500
   const textureColors = ['#EB6A5B', '#4d5382', '#813405', '#f9a03f']
   const bigTimelineHeight = 250
+  const startYears = data.map((d) => d.startYear)
 
+  const minYearInData = Math.min(...startYears)
+  const maxYearInData = Math.max(...startYears)
   // this min and max year refers to the big timeline
   const [yearMin, setYearMin] = useState<number>(1950)
   const [yearMax, setYearMax] = useState<number>(1960)
@@ -24,7 +26,7 @@ export function Timeline() {
       d3
         .scaleTime()
         .domain([new Date(min, 0, 0), new Date(max, 0, 0)])
-        .range([sidePadding, svgWidth - 10]), //I added 10 here so the last annotation doesn't get cut off
+        .range([0, svgWidth - 10]), //I added 10 here so the last annotation doesn't get cut off
     []
   )
   const getClosedLabelHeight = useCallback((title) => {
@@ -98,9 +100,143 @@ export function Timeline() {
       .attr('stroke', 'lightgray')
 
     // ---------BIG TIMELINE draw labels-----------------------------------------------------------------
+    drawAnnotations(yearIntoXScale, yScale)
+  }, [getXScale])
+
+  const openAnnotation = useCallback((textOrRectSelection) => {
+    const labelParentGroup = d3.select(
+      textOrRectSelection?.parentNode?.parentNode?.parentNode
+    )
+    labelParentGroup.raise()
+
+    const backgroundRects = labelParentGroup.select('.annotation-note-bg')
+
+    backgroundRects
+      .transition()
+      .duration(300)
+      .attr('fill-opacity', 1)
+      .attr('height', (d: any) => {
+        const title = d.note.title
+        const titleLength = title.trim().length
+        const descriptionLength = d.note.label.trim().length
+
+        if (!descriptionLength) return getClosedLabelHeight(title)
+        const textHeight = titleLength + descriptionLength
+        const rectHeight = textHeight / 2.7 + 60 // bit hacky - using the text length to try to calculate the rect height
+        return Math.max(rectHeight, 50)
+      })
+
+    const descriptions = labelParentGroup.select('.annotation-note-label')
+    descriptions
+      .transition()
+      .duration(750)
+      .attr('opacity', 1)
+      .attr('display', 'block')
+  }, [])
+
+  const closeAnnotation = useCallback((parentGroup) => {
+    parentGroup
+      .select('.annotation-note-bg')
+      .transition()
+      .duration(300)
+      .attr('height', (d) => {
+        return getClosedLabelHeight(d.note.title)
+      })
+      .attr('fill-opacity', 0.7)
+
+    parentGroup.select('.annotation-note-label').transition().attr('opacity', 0)
+  }, [])
+
+  const drawBrushableTimeline = useCallback(() => {
+    const svg = d3.select('svg')
+    // ---------SMALL TIMELINE create scales-----------------------------------------------------------------
+
+    const mini_xScale = getXScale(minYearInData, maxYearInData)
+    const miniYearIntoXScale = (year) => mini_xScale(new Date(year, 0, 0))
+
+    const mini_yScale = d3
+      .scaleLinear()
+      .domain([0, 3])
+      .range([svgHeight - 50, svgHeight - 100])
+
+    // ---------SMALL TIMELINE draw axis-----------------------------------------------------------------
+
+    svg
+      .append('g')
+      .attr('class', 'axis')
+      .attr('transform', 'translate(0,' + (svgHeight - 50) + ')')
+      .call(d3.axisBottom(mini_xScale))
+
+    // ---------SMALL TIMELINE draw textured bgs-----------------------------------------------------------------
+
+    svg
+      .selectAll('.textured-bg-rects')
+      .data(periodChunks)
+      .enter()
+      .append('rect')
+      .attr('class', 'textured-bg-rects')
+      .attr('x', (d: any) => miniYearIntoXScale(d.startYear))
+      .attr('y', 350)
+      .attr('height', 100)
+      .attr(
+        'width',
+        (d: any) =>
+          miniYearIntoXScale(d.endYear) - miniYearIntoXScale(d.startYear)
+      )
+      .attr('fill', (d, i) => {
+        const red = textures.lines().lighter().size(8).stroke(textureColors[i])
+        svg.call(red)
+        return red.url()
+      })
+
+    // ---------SMALL TIMELINE draw lines-----------------------------------------------------------------
+
+    svg
+      .selectAll('.brush-lines')
+      .data(data, (d: any) => d.id)
+      .enter()
+      .append('line')
+      .attr('x1', (d) => miniYearIntoXScale(d.startYear))
+      .attr('x2', (d) => miniYearIntoXScale(d.startYear))
+      .attr('y1', (d) => mini_yScale(d.level))
+      .attr('y2', (d) => mini_yScale(d.level) + 10 * d.level)
+      .attr('stroke-width', 2)
+      .attr('stroke', 'lightgray')
+
+    // ---------SMALL TIMELINE draw brush-----------------------------------------------------------------
+
+    const brush = d3
+      .brushX()
+      .extent([
+        [0, svgHeight - 150], // [x0, y0] is the top-left corner and
+        [svgWidth - 10, svgHeight - 10], //[x1, y1] is the bottom-right corner (the -10 makes it stop at end, not sure why 10)
+      ])
+      .on('brush', brushed)
+
+    const defaultSelection = [
+      miniYearIntoXScale(yearMin),
+      miniYearIntoXScale(yearMax),
+    ] // on page load what it selects
+
+    svg.append('g').call(brush).call(brush.move, defaultSelection)
+
+    function brushed({ selection }) {
+      // the value we get from the inverse xscale is for example Sat Dec 31 1864 00:00:00
+      // when the year should be 1865 should try and work out why but for now, just adding one
+      const xYearMin = mini_xScale.invert(selection[0]).getFullYear() + 1
+      const xYearMax = mini_xScale.invert(selection[1]).getFullYear() + 1
+
+      setYearMin(xYearMin)
+      setYearMax(xYearMax)
+    }
+  }, [getXScale])
+
+  const drawAnnotations = useCallback((yearIntoXScale, yScale) => {
     // get annotation data ======
+
     const annotationData = _.chain(data)
       .map((d, i) => {
+        const dx = d.startYear === maxYearInData ? -250 : 20
         return {
           data: {
             startYear: d.startYear,
@@ -119,7 +255,7 @@ export function Timeline() {
           x: yearIntoXScale(d.startYear),
           // y: yScale(d.level),
           y: yScale(d.level),
-          dx: 20,
+          dx: dx,
           dy: 0,
         }
       })
@@ -188,141 +324,7 @@ export function Timeline() {
     titles.on('mouseover', function () {
       openAnnotation(this)
     })
-  }, [getXScale])
-
-  const openAnnotation = useCallback((textOrRectSelection) => {
-    const labelParentGroup = d3.select(
-      textOrRectSelection?.parentNode?.parentNode?.parentNode
-    )
-    labelParentGroup.raise()
-
-    const backgroundRects = labelParentGroup.select('.annotation-note-bg')
-
-    backgroundRects
-      .transition()
-      .duration(300)
-      .attr('fill-opacity', 1)
-      .attr('height', (d: any) => {
-        const title = d.note.title
-        const titleLength = title.trim().length
-        const descriptionLength = d.note.label.trim().length
-
-        if (!descriptionLength) return getClosedLabelHeight(title)
-        const textHeight = titleLength + descriptionLength
-        const rectHeight = textHeight / 2.7 + 60 // bit hacky - using the text length to try to calculate the rect height
-        return Math.max(rectHeight, 50)
-      })
-
-    const descriptions = labelParentGroup.select('.annotation-note-label')
-    descriptions
-      .transition()
-      .duration(750)
-      .attr('opacity', 1)
-      .attr('display', 'block')
   }, [])
-
-  const closeAnnotation = useCallback((parentGroup) => {
-    parentGroup
-      .select('.annotation-note-bg')
-      .transition()
-      .duration(300)
-      .attr('height', (d) => {
-        return getClosedLabelHeight(d.note.title)
-      })
-      .attr('fill-opacity', 0.7)
-
-    parentGroup.select('.annotation-note-label').transition().attr('opacity', 0)
-  }, [])
-
-  const drawBrushableTimeline = useCallback(() => {
-    const startYears = data.map((d) => d.startYear)
-    // console.log(startYears);
-    const min = Math.min(...startYears)
-    const max = Math.max(...startYears)
-
-    const svg = d3.select('svg')
-    // ---------SMALL TIMELINE create scales-----------------------------------------------------------------
-
-    const mini_xScale = getXScale(min, max)
-    const miniYearIntoXScale = (year) => mini_xScale(new Date(year, 0, 0))
-
-    const mini_yScale = d3
-      .scaleLinear()
-      .domain([0, 3])
-      .range([svgHeight - 50, svgHeight - 100])
-
-    // ---------SMALL TIMELINE draw axis-----------------------------------------------------------------
-
-    svg
-      .append('g')
-      .attr('class', 'axis')
-      .attr('transform', 'translate(0,' + (svgHeight - 50) + ')')
-      .call(d3.axisBottom(mini_xScale))
-
-    // ---------SMALL TIMELINE draw textured bgs-----------------------------------------------------------------
-
-    svg
-      .selectAll('.textured-bg-rects')
-      .data(periodChunks)
-      .enter()
-      .append('rect')
-      .attr('class', 'textured-bg-rects')
-      .attr('x', (d: any) => miniYearIntoXScale(d.startYear))
-      .attr('y', 350)
-      .attr('height', 100)
-      .attr(
-        'width',
-        (d: any) =>
-          miniYearIntoXScale(d.endYear) - miniYearIntoXScale(d.startYear)
-      )
-      .attr('fill', (d, i) => {
-        const red = textures.lines().lighter().size(8).stroke(textureColors[i])
-        svg.call(red)
-        return red.url()
-      })
-
-    // ---------SMALL TIMELINE draw lines-----------------------------------------------------------------
-
-    svg
-      .selectAll('.brush-lines')
-      .data(data, (d: any) => d.id)
-      .enter()
-      .append('line')
-      .attr('x1', (d) => miniYearIntoXScale(d.startYear))
-      .attr('x2', (d) => miniYearIntoXScale(d.startYear))
-      .attr('y1', (d) => mini_yScale(d.level))
-      .attr('y2', (d) => mini_yScale(d.level) + 10 * d.level)
-      .attr('stroke-width', 2)
-      .attr('stroke', 'lightgray')
-
-    // ---------SMALL TIMELINE draw brush-----------------------------------------------------------------
-
-    const brush = d3
-      .brushX()
-      .extent([
-        [sidePadding, svgHeight - 150], // [x0, y0] is the top-left corner and
-        [svgWidth - sidePadding, svgHeight - 10], //[x1, y1] is the bottom-right corner
-      ])
-      .on('brush', brushed)
-
-    const defaultSelection = [
-      miniYearIntoXScale(yearMin),
-      miniYearIntoXScale(yearMax),
-    ] // on page load what it selects
-
-    svg.append('g').call(brush).call(brush.move, defaultSelection)
-
-    function brushed({ selection }) {
-      // the value we get from the inverse xscale is for example Sat Dec 31 1864 00:00:00
-      // when the year should be 1865 should try and work out why but for now, just adding one
-      const xYearMin = mini_xScale.invert(selection[0]).getFullYear() + 1
-      const xYearMax = mini_xScale.invert(selection[1]).getFullYear() + 1
-
-      setYearMin(xYearMin)
-      setYearMax(xYearMax)
-    }
-  }, [getXScale])
-
   useEffect(() => {
     drawBrushableTimeline()
     drawTimeline()

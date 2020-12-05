@@ -19,11 +19,16 @@ export function WorldContextMatrix() {
         prisoners are American, highest in the world)
       </p>
 
-      <Matrix percentage={5} svgId={svgId} x1={0} matrixId={'world-pop'} />
+      <Matrix
+        percentage={5}
+        svgId={svgId}
+        x1={quarterSvgWidth - 200}
+        matrixId={'world-pop'}
+      />
       <Matrix
         percentage={25}
         svgId={svgId}
-        x1={quarterSvgWidth * 2}
+        x1={quarterSvgWidth * 3 - 200}
         matrixId={'world-prison-pop'}
       />
       <Svg ref={(ref) => setSvgRef(ref)} id={svgId} />

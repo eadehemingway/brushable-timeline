@@ -11,6 +11,7 @@ function App() {
   return (
     <Container>
       <Timeline />
+      {/* would be good to add in a bar chart or soemthing that compares us incarceration rate to other countries... cant seem to get data in right structure (only in pdfs) */}
       <WorldContextMatrix />
       <TimeContext />
       <RaceContext />

@@ -5,13 +5,13 @@ import './styles.css'
 import './index.css'
 import { TimeContext } from './TimeContext'
 import { Timeline } from './Timeline'
-import { WorldContext } from './WorldContext'
+import { WorldContextMatrix } from './WorldContextTwo'
 
 function App() {
   return (
     <Container>
       <Timeline />
-      <WorldContext />
+      <WorldContextMatrix />
       <TimeContext />
       <RaceContext />
     </Container>

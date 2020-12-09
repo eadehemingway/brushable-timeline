@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import styled from 'styled-components'
-import { data, periodChunks } from './data'
+import { data, periodChunks, incarcerations } from './data'
 import * as d3 from 'd3'
 import textures from 'textures'
 // import { textwrap } from 'd3-textwrap'
@@ -9,11 +9,15 @@ import './styles.css'
 import _ from 'lodash'
 
 export function Timeline() {
+
+  const marginLeft = 100
   const svgWidth = 1000
   const svgHeight = 500
   const textureColors = ['#EB6A5B', '#4d5382', '#813405', '#f9a03f']
   const bigTimelineHeight = 250
   const startYears = data.map((d) => d.startYear)
+  const yScaleCount = d3.scaleLinear().domain(d3.extent(incarcerations, d=> +d.total)).range([bigTimelineHeight, 0]);
+
 
   const minYearInData = Math.min(...startYears)
   const maxYearInData = Math.max(...startYears)
@@ -26,7 +30,7 @@ export function Timeline() {
       d3
         .scaleTime()
         .domain([new Date(min, 0, 0), new Date(max, 0, 0)])
-        .range([0, svgWidth - 10]), //I added 10 here so the last annotation doesn't get cut off
+        .range([0, svgWidth]), //I added 10 here so the last annotation doesn't get cut off
     []
   )
   const getClosedLabelHeight = useCallback((title) => {
@@ -53,7 +57,18 @@ export function Timeline() {
     const xScale = getXScale(yearMin, yearMax)
     const yearIntoXScale = (year) => xScale(new Date(year, 0, 0))
 
-    var yScale = d3.scaleLinear().domain([-1, 5]).range([bigTimelineHeight, 0])
+    const yScale = d3.scaleLinear().domain([-1, 5]).range([bigTimelineHeight, 0])
+
+    // const line = d3.line()
+    //           .x((d: any)=>yearIntoXScale(+d.year))
+    //           .y((d: any)=>yScaleCount(+d.total))
+    //           .curve(d3.curveCardinal);
+
+    const area = d3.area()
+              .x((d: any)=>yearIntoXScale(+d.year))
+              .y0(bigTimelineHeight)
+              .y1((d: any)=>yScaleCount(+d.total))
+              .curve(d3.curveCardinal);
 
     // ---------BIG TIMELINE draw textured bgs-----------------------------------------------------------------
 
@@ -83,6 +98,13 @@ export function Timeline() {
       .attr('transform', `translate(0,${svgHeight / 2})`)
       .call(d3.axisBottom(xScale))
 
+    bigTimelineGroup
+      .append('g')
+      .attr('class', 'big-axis-y')
+      .attr('transform', `translate(${svgWidth-35},0)`)
+      .call(d3.axisRight(yScaleCount).ticks(10, "s"));
+
+
     // ---------BIG TIMELINE plot lines-----------------------------------------------------------------
     bigTimelineGroup
       .append('g')
@@ -98,6 +120,19 @@ export function Timeline() {
       .attr('y2', (d) => yScale(d.level) + 15)
       .attr('stroke-width', 3)
       .attr('stroke', 'lightgray')
+
+    bigTimelineGroup
+      .append('g')
+      .attr('class','incarcerations-group')
+      .selectAll("path.area")
+      .data([incarcerations])
+      .join("path")
+      .attr("class","area")
+      .attr("d", (d: any)=> area(d))
+      .attr("fill", "white")
+      .attr("stroke", "white")
+      .attr("stroke-opacity",1)
+      .attr("fill-opacity",0.1)
 
     // ---------BIG TIMELINE draw labels-----------------------------------------------------------------
     drawAnnotations(yearIntoXScale, yScale)
@@ -159,6 +194,18 @@ export function Timeline() {
       .domain([0, 3])
       .range([svgHeight - 50, svgHeight - 100])
 
+    const mini_yScaleCount = d3.scaleLinear().domain(d3.extent(incarcerations, d=> +d.total)).range([svgHeight - 50, svgHeight - 150]);
+    // const mini_line = d3.line()
+    //           .x((d: any)=>miniYearIntoXScale(+d.year))
+    //           .y((d: any)=>mini_yScaleCount(+d.total))
+    //           .curve(d3.curveCardinal);
+
+    const mini_area = d3.area()
+              .x((d: any)=>miniYearIntoXScale(+d.year))
+              .y0(svgHeight - 50)
+              .y1((d: any)=>mini_yScaleCount(+d.total))
+              .curve(d3.curveCardinal);
+
     // ---------SMALL TIMELINE draw axis-----------------------------------------------------------------
 
     svg
@@ -203,13 +250,29 @@ export function Timeline() {
       .attr('stroke-width', 2)
       .attr('stroke', 'lightgray')
 
+
+    //
+
+    svg
+    .append('g')
+    .attr('class','mini-incarcerations-group')
+    .selectAll("path.miniarea")
+    .data([incarcerations])
+    .join("path")
+    .attr("class","miniarea")
+    .attr("d", (d: any)=> mini_area(d))
+    .attr("fill", "white")
+    .attr("stroke", "white")
+    .attr("stroke-opacity",1)
+    .attr("fill-opacity",0.1)
+
     // ---------SMALL TIMELINE draw brush-----------------------------------------------------------------
 
     const brush = d3
       .brushX()
       .extent([
         [0, svgHeight - 150], // [x0, y0] is the top-left corner and
-        [svgWidth - 10, svgHeight - 10], //[x1, y1] is the bottom-right corner (the -10 makes it stop at end, not sure why 10)
+        [svgWidth, svgHeight], //[x1, y1] is the bottom-right corner (the -10 makes it stop at end, not sure why 10)
       ])
       .on('brush', brushed)
 
@@ -333,6 +396,15 @@ export function Timeline() {
   const updateTimeline = useCallback(() => {
     const newxscale = getXScale(yearMin, yearMax)
     const newYearIntoXScale = (year) => newxscale(new Date(year, 0, 0))
+    // const selected_line = d3.line()
+    //           .x((d: any)=>newYearIntoXScale(+d.year))
+    //           .y((d: any)=>yScaleCount(+d.total))
+    //           .curve(d3.curveCardinal);
+    const selected_area = d3.area()
+              .x((d: any)=>newYearIntoXScale(+d.year))
+              .y0(bigTimelineHeight)
+              .y1((d: any)=>yScaleCount(+d.total))
+              .curve(d3.curveCardinal);
 
     // upate axis
     d3.select('.big-axis').call(d3.axisBottom(newxscale))
@@ -341,6 +413,10 @@ export function Timeline() {
     d3.selectAll('.big-timeline-line')
       .attr('x1', (d: any) => newYearIntoXScale(d.startYear))
       .attr('x2', (d: any) => newYearIntoXScale(d.startYear))
+
+      // update count path
+      d3.selectAll('path.area')
+        .attr("d", (d: any)=> selected_area(d));
 
     // update backgrounds
     d3.selectAll('.big-tm-textured-bg')

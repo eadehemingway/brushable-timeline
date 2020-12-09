@@ -2,13 +2,18 @@
   stroke: linen;
 }
 
-.big-axis path {
+.big-axis path, .big-axis-y path {
   stroke: linen;
 }
 
-.big-axis text {
+.big-axis text, .big-axis-y text {
   fill: linen;
 }
+
+.tick line{
+  stroke: linen;
+}
+
 .axis line {
   stroke: linen;
 }

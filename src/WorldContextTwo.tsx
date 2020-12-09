@@ -21,12 +21,14 @@ export function WorldContextMatrix() {
 
       <Matrix
         percentage={5}
+        range = {100}
         svgId={svgId}
         x1={quarterSvgWidth - 200}
         matrixId={'world-pop'}
       />
       <Matrix
         percentage={25}
+        range = {100}
         svgId={svgId}
         x1={quarterSvgWidth * 3 - 200}
         matrixId={'world-prison-pop'}

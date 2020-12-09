@@ -6,12 +6,13 @@ interface Props {
   matrixId: string
   svgId: string
   x1: number
+  range: number
 }
 
-export default function Matrix({ percentage, matrixId, svgId, x1 }: Props) {
+export default function Matrix({ percentage, matrixId, svgId, x1, range }: Props) {
   const [data, setData] = useState([])
   useEffect(() => {
-    const data = d3.range(100).map((n, i) => {
+    const data = d3.range(range).map((n, i) => {
       let fillColor
       if (n >= Math.ceil(percentage)) fillColor = 'coral'
       if (n < Math.floor(percentage)) fillColor = 'linen'
@@ -54,7 +55,7 @@ export default function Matrix({ percentage, matrixId, svgId, x1 }: Props) {
         const y = getY2Coordinate(i, dotsPerRow, radius) + topBoxPadding
         return 'translate(' + x + ',' + y + ')'
       })
-  }, [percentage, matrixId, svgId, x1, data])
+  }, [percentage, matrixId, svgId, x1, range, data])
 
   return null
 }

@@ -7,14 +7,46 @@ import textures from 'textures'
 import { annotation, annotationLabel } from 'd3-svg-annotation'
 import './styles.css'
 import _ from 'lodash'
+import ResizeObserver from 'resize-observer-polyfill';
+
 
 export function Timeline() {
 
-  // const [svgRef, setSvgRef] = useState<any>()
-  // const svgWidth = svgRef && svgRef?.clientWidth
 
+  const useResizeObserver = ref =>{
+    const [dimensions, setDimensions] = useState(null);
+    useEffect(() =>{
+      const observeTarget = ref.current;
+      const resizeObserver = new ResizeObserver((entries)=>{
+        console.log(entries);
+        //set resized dimensions here
+        entries.forEach(entry=>{
+          setDimensions(entry.contentRect);
+        })
+      })
+      resizeObserver.observe(observeTarget);
+      return () =>{
+        resizeObserver.unobserve(observeTarget);
+      }
+
+    },[ref]);
+    return dimensions;
+  }
+
+  // I need to put anything that uses svg width taken from the dimensions in a useEffect hook
+  //need help to do it
+
+  const wrapperRef = useRef();
   const marginLeft = 100
-  const svgWidth = 1330 //small timeline width is based on this but not big timeline, why? I can't get the big and small timelines to be the same width
+  const dimensions = useResizeObserver(wrapperRef)
+
+  // the next two lines should be in the useEffect hook
+  // if(!dimensions) return;
+  // const svgWidth = dimensions.width;
+  console.log(dimensions)//null for now since it's not in a useEffect hook so it doesn't update
+
+  const svgWidth = 1330;
+  //small timeline width is based on this but not big timeline, why? I can't get the big and small timelines to be the same width
   // bc one dataset was until 2015 and the other 2016, so I got rid of the 2016 data
   const svgHeight = 600
   const textureColors = ['#EB6A5B', '#4d5382', '#813405', '#f9a03f']
@@ -96,6 +128,7 @@ export function Timeline() {
         return color.url()
       })
 
+
     // ---------BIG TIMELINE draw the x axis-----------------------------------------------------------------
     bigTimelineGroup
       .append('g')
@@ -106,9 +139,8 @@ export function Timeline() {
     bigTimelineGroup
       .append('g')
       .attr('class', 'big-axis-y')
-      // .attr('transform', `translate(${svgWidth-35},0)`)
-      .call(d3.axisRight(yScaleCount).ticks(10, "s"));
-      // not sure why but when I use axisLeft then it doesn't show up
+      .attr('transform', `translate(${svgWidth},0)`)
+      .call(d3.axisLeft(yScaleCount).ticks(10, "s"));
 
 
     // ---------BIG TIMELINE plot lines-----------------------------------------------------------------
@@ -176,7 +208,7 @@ export function Timeline() {
         } // also hacky, I use the length of the title to calculate the height of the rect
         //originally I want to use the number of children (tspan) that corresponds to the number of rows the title takes up, but couldn't figure out how to select it
         //title.children().length >= 3
-        
+
         return Math.max(rectHeight, 70)
       })
 
@@ -260,6 +292,21 @@ export function Timeline() {
         svg.call(color)
         return color.url()
       })
+
+      svg
+      .append('g')
+      .attr('class','period-text')
+      .selectAll("text.period")
+      .data(periodChunks)
+      .join("text")
+      .attr("class","period")
+      .attr('x', (d: any) => miniYearIntoXScale(d.startYear))
+      .attr('y', yTop2-15) // move up a bit
+      .attr("text-anchor", "start")
+      .attr("fill", "white")
+      .attr("font-size", "11.5px")
+      .attr("font-weight",700)
+      .text((d: any) =>d.name);
 
     // ---------SMALL TIMELINE draw lines-----------------------------------------------------------------
 
@@ -466,7 +513,9 @@ export function Timeline() {
 
   return (
     <Container>
-      <Svg />
+      <div ref={wrapperRef}>
+        <Svg/>
+      </div>
     </Container>
   )
 }
@@ -479,7 +528,7 @@ const Container = styled.div`
 `
 const Svg = styled.svg`
   width: 80vw;
-  border: 1px solid #f9a03f;
   margin: 30px;
   margin-top:100px;
 `
+//width:100%

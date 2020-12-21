@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useRef, useCallback, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { data, periodChunks, incarcerations } from './data'
 import * as d3 from 'd3'
@@ -10,17 +10,23 @@ import _ from 'lodash'
 
 export function Timeline() {
 
+  // const [svgRef, setSvgRef] = useState<any>()
+  // const svgWidth = svgRef && svgRef?.clientWidth
+
   const marginLeft = 100
-  const svgWidth = 1000
-  const svgHeight = 500
+  const svgWidth = 1330 //small timeline width is based on this but not big timeline, why? I can't get the big and small timelines to be the same width
+  // bc one dataset was until 2015 and the other 2016, so I got rid of the 2016 data
+  const svgHeight = 600
   const textureColors = ['#EB6A5B', '#4d5382', '#813405', '#f9a03f']
-  const bigTimelineHeight = 250
+  const bigTimelineHeight = 300
   const startYears = data.map((d) => d.startYear)
   const yScaleCount = d3.scaleLinear().domain(d3.extent(incarcerations, d=> +d.total)).range([bigTimelineHeight, 0]);
 
 
   const minYearInData = Math.min(...startYears)
   const maxYearInData = Math.max(...startYears)
+  console.log(minYearInData)
+  console.log(maxYearInData)
   // this min and max year refers to the big timeline
   const [yearMin, setYearMin] = useState<number>(1950)
   const [yearMax, setYearMax] = useState<number>(1960)
@@ -30,7 +36,7 @@ export function Timeline() {
       d3
         .scaleTime()
         .domain([new Date(min, 0, 0), new Date(max, 0, 0)])
-        .range([0, svgWidth]), //I added 10 here so the last annotation doesn't get cut off
+        .range([0, svgWidth]),
     []
   )
   const getClosedLabelHeight = useCallback((title) => {
@@ -49,8 +55,7 @@ export function Timeline() {
       .attr('width', svgWidth)
       .append('g')
       .attr('class', 'big-timeline')
-      .attr('overflow', 'hidden')
-      .attr('width', 100)
+      // .attr('overflow', 'hidden')
 
     // ---------BIG TIMELINE create scales-----------------------------------------------------------------
 
@@ -86,9 +91,9 @@ export function Timeline() {
         (d: any) => yearIntoXScale(d.endYear) - yearIntoXScale(d.startYear)
       )
       .attr('fill', (d, i) => {
-        const red = textures.lines().lighter().size(8).stroke(textureColors[i])
-        d3.select('svg').call(red)
-        return red.url()
+        const color = textures.lines().lighter().size(8).stroke(textureColors[i])
+        d3.select('svg').call(color)
+        return color.url()
       })
 
     // ---------BIG TIMELINE draw the x axis-----------------------------------------------------------------
@@ -101,8 +106,9 @@ export function Timeline() {
     bigTimelineGroup
       .append('g')
       .attr('class', 'big-axis-y')
-      .attr('transform', `translate(${svgWidth-35},0)`)
+      // .attr('transform', `translate(${svgWidth-35},0)`)
       .call(d3.axisRight(yScaleCount).ticks(10, "s"));
+      // not sure why but when I use axisLeft then it doesn't show up
 
 
     // ---------BIG TIMELINE plot lines-----------------------------------------------------------------
@@ -155,10 +161,23 @@ export function Timeline() {
         const titleLength = title.trim().length
         const descriptionLength = d.note.label.trim().length
 
+        console.log(d.note.title.length)
+
         if (!descriptionLength) return getClosedLabelHeight(title)
         const textHeight = titleLength + descriptionLength
-        const rectHeight = textHeight / 2.7 + 60 // bit hacky - using the text length to try to calculate the rect height
-        return Math.max(rectHeight, 50)
+        let rectHeight = textHeight / 2.7 + 100; // bit hacky - using the text length to try to calculate the rect height
+
+        if ( title.length >= 60 ) {
+            rectHeight = textHeight / 2.7 + 100;
+        }else if(title.length >= 30 ){
+            rectHeight = textHeight / 2.7 + 90;
+        }else{
+            rectHeight = textHeight / 2.7 + 80;
+        } // also hacky, I use the length of the title to calculate the height of the rect
+        //originally I want to use the number of children (tspan) that corresponds to the number of rows the title takes up, but couldn't figure out how to select it
+        //title.children().length >= 3
+        
+        return Math.max(rectHeight, 70)
       })
 
     const descriptions = labelParentGroup.select('.annotation-note-label')
@@ -189,12 +208,16 @@ export function Timeline() {
     const mini_xScale = getXScale(minYearInData, maxYearInData)
     const miniYearIntoXScale = (year) => mini_xScale(new Date(year, 0, 0))
 
+    const yBottom= svgHeight - 50;
+    const yTop1 = svgHeight - 100;
+    const yTop2 = svgHeight - 150;
+
     const mini_yScale = d3
       .scaleLinear()
       .domain([0, 3])
-      .range([svgHeight - 50, svgHeight - 100])
+      .range([yBottom, yTop1])
 
-    const mini_yScaleCount = d3.scaleLinear().domain(d3.extent(incarcerations, d=> +d.total)).range([svgHeight - 50, svgHeight - 150]);
+    const mini_yScaleCount = d3.scaleLinear().domain(d3.extent(incarcerations, d=> +d.total)).range([yBottom, yTop2]);
     // const mini_line = d3.line()
     //           .x((d: any)=>miniYearIntoXScale(+d.year))
     //           .y((d: any)=>mini_yScaleCount(+d.total))
@@ -202,7 +225,7 @@ export function Timeline() {
 
     const mini_area = d3.area()
               .x((d: any)=>miniYearIntoXScale(+d.year))
-              .y0(svgHeight - 50)
+              .y0(yBottom)
               .y1((d: any)=>mini_yScaleCount(+d.total))
               .curve(d3.curveCardinal);
 
@@ -223,17 +246,19 @@ export function Timeline() {
       .append('rect')
       .attr('class', 'textured-bg-rects')
       .attr('x', (d: any) => miniYearIntoXScale(d.startYear))
-      .attr('y', 350)
-      .attr('height', 100)
+      .attr('y', yTop2)
+      .attr('height', 100) //y and height should have a 50px difference... y - height = 50
       .attr(
         'width',
         (d: any) =>
-          miniYearIntoXScale(d.endYear) - miniYearIntoXScale(d.startYear)
+          miniYearIntoXScale(d.endYear)
+          - miniYearIntoXScale(d.startYear)
+          // why is it when i take minus startYear out it still works but the final chunk becomes longer?
       )
       .attr('fill', (d, i) => {
-        const red = textures.lines().lighter().size(8).stroke(textureColors[i])
-        svg.call(red)
-        return red.url()
+        const color = textures.lines().lighter().size(8).stroke(textureColors[i])
+        svg.call(color)
+        return color.url()
       })
 
     // ---------SMALL TIMELINE draw lines-----------------------------------------------------------------
@@ -271,8 +296,8 @@ export function Timeline() {
     const brush = d3
       .brushX()
       .extent([
-        [0, svgHeight - 150], // [x0, y0] is the top-left corner and
-        [svgWidth, svgHeight], //[x1, y1] is the bottom-right corner (the -10 makes it stop at end, not sure why 10)
+        [0, yTop2], // [x0, y0] is the top-left corner and
+        [svgWidth, yBottom], //[x1, y1] is the bottom-right corner
       ])
       .on('brush', brushed)
 
@@ -311,7 +336,7 @@ export function Timeline() {
             label: d.description,
             align: 'middle',
             orientation: 'leftright',
-            wrap: 260,
+            wrap: 210, //change when change font size
             padding: 0,
             bgPadding: { top: 0, bottom: 0, left: 0, right: 0 },
           },
@@ -344,7 +369,7 @@ export function Timeline() {
     // annotation styles ==========
     allAnnotationText
       .attr('fill', 'lightgray')
-      .attr('font-size', '10px')
+      .attr('font-size', '11px')
       .attr('font-family', 'JosefinSans')
       .attr('transform', 'translate(15,15)')
 
@@ -372,6 +397,8 @@ export function Timeline() {
       .style('cursor', 'pointer')
 
     titles.style('cursor', 'pointer')
+    .attr('font-size', '12px')
+
 
     // annotation mouse overs ========
 
@@ -451,5 +478,8 @@ const Container = styled.div`
   justify-items: center;
 `
 const Svg = styled.svg`
-  margin-top: 100px;
+  width: 80vw;
+  border: 1px solid #f9a03f;
+  margin: 30px;
+  margin-top:100px;
 `

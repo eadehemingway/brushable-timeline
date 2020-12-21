@@ -881,12 +881,12 @@ export const incarcerations = [
     "Federal prisons": 178688,
     "Local jails": 727400,
     "total": 2204247
-  },
-  {
-    "year": 2016,
-    "State prisons": 1286691,
-    "Federal prisons": 171482,
-    "Local jails": 740700,
-    "total": 2198873
   }
+  // {
+  //   "year": 2016,
+  //   "State prisons": 1286691,
+  //   "Federal prisons": 171482,
+  //   "Local jails": 740700,
+  //   "total": 2198873
+  // }
 ]

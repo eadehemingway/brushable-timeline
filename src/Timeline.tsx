@@ -57,8 +57,8 @@ export function Timeline() {
 
   const minYearInData = Math.min(...startYears)
   const maxYearInData = Math.max(...startYears)
-  console.log(minYearInData)
-  console.log(maxYearInData)
+  // console.log(minYearInData)
+  // console.log(maxYearInData)
   // this min and max year refers to the big timeline
   const [yearMin, setYearMin] = useState<number>(1950)
   const [yearMax, setYearMax] = useState<number>(1960)
@@ -515,6 +515,15 @@ export function Timeline() {
     <Container>
       <div ref={wrapperRef}>
         <Svg/>
+      </div>
+      <div className="itemWrapper toggleWrapper">
+        <p className="item" id="absolute">Total Prison Population</p>
+        <div className='toggle item' id="filter">
+           <input id='' type="radio" value="on" name="toggle"/>
+           <input id='' type="radio" value="off" name="toggle"/>
+           <div className="toggle__pointer"></div>
+        </div>
+        <p className="item" id="rate">Incarceration Rate</p>
       </div>
     </Container>
   )

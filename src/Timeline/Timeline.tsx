@@ -7,6 +7,7 @@ import { drawBrushableTimeline } from './drawBrushableTimeline'
 import { getXScale } from './xScale'
 import { bigTimelineHeight } from './variables'
 import { getYScaleForArea } from './drawAreaGraph'
+import { incarcerations } from '../data'
 
 export function Timeline() {
   const [isRate, setIsRate] = useState(true)
@@ -45,7 +46,11 @@ export function Timeline() {
     })
 
     //update area graph
-    const yScaleForArea = getYScaleForArea(false)
+
+    const yScaleForArea = d3
+      .scaleLinear()
+      .domain(d3.extent(incarcerations, (d) => +d.total))
+      .range([bigTimelineHeight, 0])
 
     const selected_area = d3
       .area()
@@ -55,7 +60,7 @@ export function Timeline() {
         console.log(d)
 
         const data = isRate ? d.rate : d.total
-        return yScaleForArea(data)
+        return yScaleForArea(d.total)
       })
       .curve(d3.curveCardinal)
 

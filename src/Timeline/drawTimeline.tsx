@@ -76,10 +76,11 @@ export const drawTimeline = (yearMax, yearMin) => {
   drawAnnotations(yearIntoXScale, yScale)
 
   drawAreaGraph(
-    yearMin,
-    yearMax,
-    bigTimelineHeight,
     '.big-timeline',
-    'big-area'
+    'big-area',
+    bigTimelineHeight,
+    0,
+    yearMin,
+    yearMax
   )
 }

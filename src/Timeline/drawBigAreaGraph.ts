@@ -3,26 +3,27 @@ import * as d3 from 'd3'
 import { incarcerations } from '../data'
 
 export const drawAreaGraph = (
-  yearMin,
-  yearMax,
-  timelineHeight,
   timelineGroup,
-  areaName
+  areaName,
+  yBottom,
+  yTop,
+  minX,
+  maxX
 ) => {
-  const xScale = getXScale(yearMin, yearMax)
+  const xScale = getXScale(minX, maxX)
+
   const yearIntoXScale = (year) => xScale(new Date(year, 0, 0))
+
   const yScaleCount = d3
     .scaleLinear()
     .domain(d3.extent(incarcerations, (d) => +d.total))
-    .range([timelineHeight, 0])
+    .range([yBottom, yTop])
 
   const area = d3
     .area()
     .x((d: any) => yearIntoXScale(+d.year))
-    .y0(timelineHeight)
-    .y1((d: any) => {
-      return yScaleCount(d.total)
-    })
+    .y0(yBottom)
+    .y1((d: any) => yScaleCount(d.total))
     .curve(d3.curveCardinal)
 
   d3.select(timelineGroup)

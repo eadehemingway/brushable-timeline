@@ -119,11 +119,12 @@ export const drawBrushableTimeline = (
     setYearMax(xYearMax)
   }
 
-  drawMiniAreaGraph(
-    yearMin,
-    yearMax,
-    smallTimelineHeight,
+  drawAreaGraph(
     '.small-timeline',
-    'mini-area'
+    'mini-area',
+    yBottom,
+    yTop,
+    minYearInData,
+    maxYearInData
   )
 }

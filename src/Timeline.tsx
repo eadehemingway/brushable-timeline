@@ -1,23 +1,61 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useRef, useCallback, useEffect, useState } from 'react'
 import styled from 'styled-components'
-import { data, periodChunks } from './data'
+import { data, periodChunks, incarcerations } from './data'
 import * as d3 from 'd3'
 import textures from 'textures'
 // import { textwrap } from 'd3-textwrap'
 import { annotation, annotationLabel } from 'd3-svg-annotation'
 import './styles.css'
 import _ from 'lodash'
+import ResizeObserver from 'resize-observer-polyfill'
 
 export function Timeline() {
-  const svgWidth = 1000
-  const svgHeight = 500
+  const [lineData, setLineData] = useState('rate')
+
+  const useResizeObserver = (ref) => {
+    const [dimensions, setDimensions] = useState(null)
+    useEffect(() => {
+      const observeTarget = ref.current
+      const resizeObserver = new ResizeObserver((entries) => {
+        //set resized dimensions here
+        entries.forEach((entry) => {
+          setDimensions(entry.contentRect)
+        })
+      })
+      resizeObserver.observe(observeTarget)
+      return () => {
+        resizeObserver.unobserve(observeTarget)
+      }
+    }, [ref])
+    return dimensions
+  }
+
+  // I need to put anything that uses svg width taken from the dimensions in a useEffect hook
+  //need help to do it
+
+  const wrapperRef = useRef()
+  const dimensions = useResizeObserver(wrapperRef)
+
+  // the next two lines should be in the useEffect hook
+  // if(!dimensions) return;
+  // const svgWidth = dimensions.width;
+  console.log(dimensions) //null for now since it's not in a useEffect hook so it doesn't update
+
+  const svgWidth = 1330
+  //small timeline width is based on this but not big timeline, why? I can't get the big and small timelines to be the same width
+  // bc one dataset was until 2015 and the other 2016, so I got rid of the 2016 data
+  const svgHeight = 600
   const textureColors = ['#EB6A5B', '#4d5382', '#813405', '#f9a03f']
-  const bigTimelineHeight = 250
+  const bigTimelineHeight = 300
   const startYears = data.map((d) => d.startYear)
+  const yScaleCount = d3
+    .scaleLinear()
+    .domain(d3.extent(incarcerations, (d) => +d.total))
+    .range([bigTimelineHeight, 0])
 
   const minYearInData = Math.min(...startYears)
   const maxYearInData = Math.max(...startYears)
-  // this min and max year refers to the big timeline
+
   const [yearMin, setYearMin] = useState<number>(1950)
   const [yearMax, setYearMax] = useState<number>(1960)
 
@@ -26,7 +64,7 @@ export function Timeline() {
       d3
         .scaleTime()
         .domain([new Date(min, 0, 0), new Date(max, 0, 0)])
-        .range([0, svgWidth - 10]), //I added 10 here so the last annotation doesn't get cut off
+        .range([0, svgWidth]),
     []
   )
   const getClosedLabelHeight = useCallback((title) => {
@@ -45,15 +83,16 @@ export function Timeline() {
       .attr('width', svgWidth)
       .append('g')
       .attr('class', 'big-timeline')
-      .attr('overflow', 'hidden')
-      .attr('width', 100)
 
     // ---------BIG TIMELINE create scales-----------------------------------------------------------------
 
     const xScale = getXScale(yearMin, yearMax)
     const yearIntoXScale = (year) => xScale(new Date(year, 0, 0))
 
-    var yScale = d3.scaleLinear().domain([-1, 5]).range([bigTimelineHeight, 0])
+    const yScale = d3
+      .scaleLinear()
+      .domain([-1, 5])
+      .range([bigTimelineHeight, 0])
 
     // ---------BIG TIMELINE draw textured bgs-----------------------------------------------------------------
 
@@ -71,9 +110,13 @@ export function Timeline() {
         (d: any) => yearIntoXScale(d.endYear) - yearIntoXScale(d.startYear)
       )
       .attr('fill', (d, i) => {
-        const red = textures.lines().lighter().size(8).stroke(textureColors[i])
-        d3.select('svg').call(red)
-        return red.url()
+        const color = textures
+          .lines()
+          .lighter()
+          .size(8)
+          .stroke(textureColors[i])
+        d3.select('svg').call(color)
+        return color.url()
       })
 
     // ---------BIG TIMELINE draw the x axis-----------------------------------------------------------------
@@ -82,6 +125,12 @@ export function Timeline() {
       .attr('class', 'big-axis')
       .attr('transform', `translate(0,${svgHeight / 2})`)
       .call(d3.axisBottom(xScale))
+
+    bigTimelineGroup
+      .append('g')
+      .attr('class', 'big-axis-y')
+      .attr('transform', `translate(${svgWidth},0)`)
+      .call(d3.axisLeft(yScaleCount).ticks(10, 's'))
 
     // ---------BIG TIMELINE plot lines-----------------------------------------------------------------
     bigTimelineGroup
@@ -98,6 +147,27 @@ export function Timeline() {
       .attr('y2', (d) => yScale(d.level) + 15)
       .attr('stroke-width', 3)
       .attr('stroke', 'lightgray')
+
+    // ---------BIG TIMELINE draw area line-----------------------------------------------------------------
+    const area = d3
+      .area()
+      .x((d: any) => yearIntoXScale(+d.year))
+      .y0(bigTimelineHeight)
+      .y1((d: any) => yScaleCount(+d.total))
+      .curve(d3.curveCardinal)
+
+    bigTimelineGroup
+      .append('g')
+      .attr('class', 'incarcerations-group')
+      .selectAll('path.area')
+      .data([incarcerations])
+      .join('path')
+      .attr('class', 'area')
+      .attr('d', (d: any) => area(d))
+      .attr('fill', 'white')
+      .attr('stroke', 'white')
+      .attr('stroke-opacity', 1)
+      .attr('fill-opacity', 0.1)
 
     // ---------BIG TIMELINE draw labels-----------------------------------------------------------------
     drawAnnotations(yearIntoXScale, yScale)
@@ -120,10 +190,23 @@ export function Timeline() {
         const titleLength = title.trim().length
         const descriptionLength = d.note.label.trim().length
 
+        // console.log(d.note.title.length)
+
         if (!descriptionLength) return getClosedLabelHeight(title)
         const textHeight = titleLength + descriptionLength
-        const rectHeight = textHeight / 2.7 + 60 // bit hacky - using the text length to try to calculate the rect height
-        return Math.max(rectHeight, 50)
+        let rectHeight = textHeight / 2.7 + 100 // bit hacky - using the text length to try to calculate the rect height
+
+        if (title.length >= 60) {
+          rectHeight = textHeight / 2.7 + 100
+        } else if (title.length >= 30) {
+          rectHeight = textHeight / 2.7 + 90
+        } else {
+          rectHeight = textHeight / 2.7 + 80
+        } // also hacky, I use the length of the title to calculate the height of the rect
+        //originally I want to use the number of children (tspan) that corresponds to the number of rows the title takes up, but couldn't figure out how to select it
+        //title.children().length >= 3
+
+        return Math.max(rectHeight, 70)
       })
 
     const descriptions = labelParentGroup.select('.annotation-note-label')
@@ -152,12 +235,19 @@ export function Timeline() {
     // ---------SMALL TIMELINE create scales-----------------------------------------------------------------
 
     const mini_xScale = getXScale(minYearInData, maxYearInData)
+
     const miniYearIntoXScale = (year) => mini_xScale(new Date(year, 0, 0))
 
-    const mini_yScale = d3
+    const yBottom = svgHeight - 50
+    const yTop1 = svgHeight - 100
+    const yTop2 = svgHeight - 150
+
+    const mini_yScale = d3.scaleLinear().domain([0, 3]).range([yBottom, yTop1])
+
+    const mini_yScaleCount = d3
       .scaleLinear()
-      .domain([0, 3])
-      .range([svgHeight - 50, svgHeight - 100])
+      .domain(d3.extent(incarcerations, (d) => +d.total))
+      .range([yBottom, yTop2])
 
     // ---------SMALL TIMELINE draw axis-----------------------------------------------------------------
 
@@ -176,18 +266,38 @@ export function Timeline() {
       .append('rect')
       .attr('class', 'textured-bg-rects')
       .attr('x', (d: any) => miniYearIntoXScale(d.startYear))
-      .attr('y', 350)
+      .attr('y', yTop2)
       .attr('height', 100)
       .attr(
         'width',
         (d: any) =>
           miniYearIntoXScale(d.endYear) - miniYearIntoXScale(d.startYear)
+        // why is it when i take minus startYear out it still works but the final chunk becomes longer?
       )
       .attr('fill', (d, i) => {
-        const red = textures.lines().lighter().size(8).stroke(textureColors[i])
-        svg.call(red)
-        return red.url()
+        const color = textures
+          .lines()
+          .lighter()
+          .size(8)
+          .stroke(textureColors[i])
+        svg.call(color)
+        return color.url()
       })
+
+    svg
+      .append('g')
+      .attr('class', 'period-text')
+      .selectAll('text.period')
+      .data(periodChunks)
+      .join('text')
+      .attr('class', 'period')
+      .attr('x', (d: any) => miniYearIntoXScale(d.startYear))
+      .attr('y', yTop2 - 15) // move up a bit
+      .attr('text-anchor', 'start')
+      .attr('fill', (d, i) => textureColors[i])
+      .attr('font-size', '11.5px')
+      .attr('font-weight', 700)
+      .text((d: any) => d.name)
 
     // ---------SMALL TIMELINE draw lines-----------------------------------------------------------------
 
@@ -203,13 +313,39 @@ export function Timeline() {
       .attr('stroke-width', 2)
       .attr('stroke', 'lightgray')
 
+    // ---------SMALL TIMELINE draw area line -----------------------------------------------------------------
+    // const mini_yScaleCount = d3
+    //   .scaleLinear()
+    //   .domain(d3.extent(incarcerations, (d) => +d.total))
+    //   .range([yBottom, yTop2])
+
+    const mini_area = d3
+      .area()
+      .x((d: any) => miniYearIntoXScale(+d.year))
+      .y0(yBottom)
+      .y1((d: any) => mini_yScaleCount(+d.total))
+      .curve(d3.curveCardinal)
+
+    svg
+      .append('g')
+      .attr('class', 'mini-incarcerations-group')
+      .selectAll('path.miniarea')
+      .data([incarcerations])
+      .join('path')
+      .attr('class', 'miniarea')
+      .attr('d', (d: any) => mini_area(d))
+      .attr('fill', 'white')
+      .attr('stroke', 'white')
+      .attr('stroke-opacity', 1)
+      .attr('fill-opacity', 0.1)
+
     // ---------SMALL TIMELINE draw brush-----------------------------------------------------------------
 
     const brush = d3
       .brushX()
       .extent([
-        [0, svgHeight - 150], // [x0, y0] is the top-left corner and
-        [svgWidth - 10, svgHeight - 10], //[x1, y1] is the bottom-right corner (the -10 makes it stop at end, not sure why 10)
+        [0, yTop2], // [x0, y0] is the top-left corner and
+        [svgWidth, yBottom], //[x1, y1] is the bottom-right corner
       ])
       .on('brush', brushed)
 
@@ -248,7 +384,7 @@ export function Timeline() {
             label: d.description,
             align: 'middle',
             orientation: 'leftright',
-            wrap: 260,
+            wrap: 210, //change when change font size
             padding: 0,
             bgPadding: { top: 0, bottom: 0, left: 0, right: 0 },
           },
@@ -281,7 +417,7 @@ export function Timeline() {
     // annotation styles ==========
     allAnnotationText
       .attr('fill', 'lightgray')
-      .attr('font-size', '10px')
+      .attr('font-size', '11px')
       .attr('font-family', 'JosefinSans')
       .attr('transform', 'translate(15,15)')
 
@@ -308,7 +444,7 @@ export function Timeline() {
       }) // hard coding this (estimating the height of a title)
       .style('cursor', 'pointer')
 
-    titles.style('cursor', 'pointer')
+    titles.style('cursor', 'pointer').attr('font-size', '12px')
 
     // annotation mouse overs ========
 
@@ -325,6 +461,7 @@ export function Timeline() {
       openAnnotation(this)
     })
   }, [])
+
   useEffect(() => {
     drawBrushableTimeline()
     drawTimeline()
@@ -333,6 +470,16 @@ export function Timeline() {
   const updateTimeline = useCallback(() => {
     const newxscale = getXScale(yearMin, yearMax)
     const newYearIntoXScale = (year) => newxscale(new Date(year, 0, 0))
+    // const selected_line = d3.line()
+    //           .x((d: any)=>newYearIntoXScale(+d.year))
+    //           .y((d: any)=>yScaleCount(+d.total))
+    //           .curve(d3.curveCardinal);
+    const selected_area = d3
+      .area()
+      .x((d: any) => newYearIntoXScale(+d.year))
+      .y0(bigTimelineHeight)
+      .y1((d: any) => yScaleCount(+d.total))
+      .curve(d3.curveCardinal)
 
     // upate axis
     d3.select('.big-axis').call(d3.axisBottom(newxscale))
@@ -341,6 +488,9 @@ export function Timeline() {
     d3.selectAll('.big-timeline-line')
       .attr('x1', (d: any) => newYearIntoXScale(d.startYear))
       .attr('x2', (d: any) => newYearIntoXScale(d.startYear))
+
+    // update count path
+    d3.selectAll('path.area').attr('d', (d: any) => selected_area(d))
 
     // update backgrounds
     d3.selectAll('.big-tm-textured-bg')
@@ -363,7 +513,29 @@ export function Timeline() {
 
   return (
     <Container>
-      <Svg />
+      <div ref={wrapperRef}>
+        <ToggleWrapper>
+          <Label htmlFor="absolute-number">total population</Label>
+          <Radio
+            id="absolute-number"
+            type="radio"
+            value="on"
+            name="number-rate"
+            checked={lineData === 'rate'}
+            onClick={() => setLineData('rate')}
+          />
+          <Label htmlFor="incarceration-rate">incarceration rate</Label>
+          <Radio
+            id="incarceration-rate"
+            type="radio"
+            value="off"
+            name="number-rate"
+            checked={lineData === 'absolute'}
+            onClick={() => setLineData('absolute')}
+          />
+        </ToggleWrapper>
+        <Svg />
+      </div>
     </Container>
   )
 }
@@ -375,5 +547,27 @@ const Container = styled.div`
   justify-items: center;
 `
 const Svg = styled.svg`
+  width: 80vw;
+  margin: 30px;
+`
+const ToggleWrapper = styled.div`
   margin-top: 100px;
+  margin: 30px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+`
+
+const Label = styled.label`
+  color: linen;
+  margin: 10px;
+`
+const Radio = styled.input`
+  cursor: pointer;
+  color: red;
+  background: green;
+  &:checked {
+    color: red;
+    background: pink;
+  }
 `

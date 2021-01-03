@@ -33,12 +33,12 @@ export const drawAreaGraph = (type, minX, maxX) => {
     .attr('fill-opacity', 0.1)
 }
 
-export function getYScaleForArea(isMini) {
+export function getYScaleForArea(isMini, isRate = true) {
   const bottom = isMini ? miniYBottom : bigTimelineHeight
   const top = isMini ? miniYTop : 0
 
   return d3
     .scaleLinear()
-    .domain(d3.extent(incarcerations, (d) => d.total))
+    .domain(d3.extent(incarcerations, (d) => (isRate ? d.rate : d.total)))
     .range([bottom, top])
 }

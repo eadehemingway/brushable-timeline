@@ -9,11 +9,9 @@ import {
   bigTimelineHeight,
   maxYearInData,
   miniYBottom,
-  miniYTop,
   minYearInData,
 } from './variables'
 import { getYScaleForArea } from './drawAreaGraph'
-import { incarcerations } from '../data'
 
 export function Timeline() {
   const [isRate, setIsRate] = useState(true)
@@ -55,15 +53,12 @@ export function Timeline() {
   }, [yearMin, yearMax])
 
   const updateArea = useCallback(
-    (minX, maxX, bottom, top, areaClassName) => {
+    (minX, maxX, areaClassName, isMini) => {
       const newxscale = getXScale(minX, maxX)
       const newYearIntoXScale = (year) => newxscale(new Date(year, 0, 0))
 
-      const yScaleForArea = d3
-        .scaleLinear()
-        .domain(d3.extent(incarcerations, (d) => (isRate ? d.rate : d.total)))
-        .range([bottom, top])
-
+      const yScaleForArea = getYScaleForArea(isMini, isRate)
+      const bottom = isMini ? miniYBottom : bigTimelineHeight
       const selected_area = d3
         .area()
         .x((d: any) => newYearIntoXScale(+d.year))
@@ -76,21 +71,15 @@ export function Timeline() {
 
       d3.selectAll(areaClassName).attr('d', (d: any) => selected_area(d))
     },
-    [yearMin, yearMax, isRate]
+    [isRate]
   )
 
   useEffect(() => {
     updateTimeline()
 
-    updateArea(
-      minYearInData,
-      maxYearInData,
-      miniYBottom,
-      miniYTop,
-      '.mini-area'
-    )
-    updateArea(yearMin, yearMax, bigTimelineHeight, 0, '.big-area')
-  }, [updateTimeline, updateArea])
+    updateArea(minYearInData, maxYearInData, '.mini-area', true)
+    updateArea(yearMin, yearMax, '.big-area', false)
+  }, [updateTimeline, updateArea, yearMax, yearMin])
 
   return (
     <Container>

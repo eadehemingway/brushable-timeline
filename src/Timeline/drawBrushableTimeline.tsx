@@ -10,7 +10,6 @@ import {
   miniYTop,
   minYearInData,
   smallTimelineHeight,
-  svgHeight,
   svgWidth,
   textureColors,
 } from './variables'

@@ -9,7 +9,7 @@ import { bigTimelineHeight } from './variables'
 import { getYScaleForArea } from './drawAreaGraph'
 
 export function Timeline() {
-  const [lineData, setLineData] = useState('rate')
+  const [isRate, setIsRate] = useState(true)
   const [yearMin, setYearMin] = useState<number>()
   const [yearMax, setYearMax] = useState<number>()
 
@@ -51,7 +51,12 @@ export function Timeline() {
       .area()
       .x((d: any) => newYearIntoXScale(+d.year))
       .y0(bigTimelineHeight)
-      .y1((d: any) => yScaleForArea(d.total))
+      .y1((d: any) => {
+        console.log(d)
+
+        const data = isRate ? d.rate : d.total
+        return yScaleForArea(data)
+      })
       .curve(d3.curveCardinal)
 
     d3.selectAll('.big-area').attr('d', (d: any) => selected_area(d))
@@ -70,8 +75,8 @@ export function Timeline() {
           type="radio"
           value="on"
           name="number-rate"
-          checked={lineData === 'rate'}
-          onClick={() => setLineData('rate')}
+          checked={isRate}
+          onClick={() => setIsRate(true)}
         />
         <Label htmlFor="incarceration-rate">incarceration rate</Label>
         <Radio
@@ -79,8 +84,8 @@ export function Timeline() {
           type="radio"
           value="off"
           name="number-rate"
-          checked={lineData === 'absolute'}
-          onClick={() => setLineData('absolute')}
+          checked={!isRate}
+          onClick={() => setIsRate(false)}
         />
       </ToggleWrapper>
       <Svg />

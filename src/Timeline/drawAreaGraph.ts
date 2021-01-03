@@ -39,6 +39,6 @@ export function getYScaleForArea(isMini) {
 
   return d3
     .scaleLinear()
-    .domain(d3.extent(incarcerations, (d) => +d.total))
+    .domain(d3.extent(incarcerations, (d) => d.total))
     .range([bottom, top])
 }

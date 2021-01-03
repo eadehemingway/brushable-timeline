@@ -8,3 +8,5 @@ export const startYears = data.map((d) => d.startYear)
 
 export const minYearInData = Math.min(...startYears)
 export const maxYearInData = Math.max(...startYears)
+
+export const bigTimelineHeight = 250

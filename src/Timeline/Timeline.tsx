@@ -5,8 +5,9 @@ import '../styles.css'
 import _ from 'lodash'
 import { drawTimeline } from './drawTimeline'
 import { drawBrushableTimeline } from './drawBrushableTimeline'
-import { svgWidth } from './variables'
 import { getXScale } from './xScale'
+import { bigTimelineHeight } from './variables'
+import { incarcerations } from '../data'
 
 export function Timeline() {
   const [lineData, setLineData] = useState('rate')
@@ -16,7 +17,7 @@ export function Timeline() {
   useEffect(() => {
     drawBrushableTimeline(setYearMin, setYearMax, yearMin, yearMax)
     drawTimeline(yearMax, yearMin)
-  }, [drawTimeline, drawBrushableTimeline])
+  }, [])
 
   const updateTimeline = useCallback(() => {
     const newxscale = getXScale(yearMin, yearMax)
@@ -43,7 +44,22 @@ export function Timeline() {
     d3.selectAll('.label').attr('transform', (d: any) => {
       return `translate(${newYearIntoXScale(d.data.startYear)}, ${d.y})`
     })
-  }, [yearMin, yearMax, getXScale])
+
+    //update area graph
+    const yScaleCount = d3
+      .scaleLinear()
+      .domain(d3.extent(incarcerations, (d) => +d.total))
+      .range([bigTimelineHeight, 0])
+
+    const selected_area = d3
+      .area()
+      .x((d: any) => newYearIntoXScale(+d.year))
+      .y0(bigTimelineHeight)
+      .y1((d: any) => yScaleCount(+d.total))
+      .curve(d3.curveCardinal)
+
+    d3.selectAll('path.big-area').attr('d', (d: any) => selected_area(d))
+  }, [yearMin, yearMax])
 
   useEffect(() => {
     updateTimeline()
@@ -86,7 +102,6 @@ const Container = styled.div`
 `
 const Svg = styled.svg`
   margin: 30px;
-  border: 2px solid red;
 `
 const ToggleWrapper = styled.div`
   margin-top: 100px;

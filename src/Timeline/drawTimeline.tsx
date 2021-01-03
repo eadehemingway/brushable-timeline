@@ -2,12 +2,16 @@ import * as d3 from 'd3'
 import textures from 'textures'
 import { data, periodChunks } from '../data'
 import { drawAnnotations } from './drawAnnotations'
-import { svgHeight, svgWidth, textureColors } from './variables'
+import { drawAreaGraph } from './drawBigAreaGraph'
+import {
+  bigTimelineHeight,
+  svgHeight,
+  svgWidth,
+  textureColors,
+} from './variables'
 import { getXScale } from './xScale'
 
 export const drawTimeline = (yearMax, yearMin) => {
-  const bigTimelineHeight = 250
-
   const bigTimelineGroup = d3
     .select('svg')
     .attr('height', svgHeight)
@@ -70,4 +74,12 @@ export const drawTimeline = (yearMax, yearMin) => {
 
   // ---------BIG TIMELINE draw labels-----------------------------------------------------------------
   drawAnnotations(yearIntoXScale, yScale)
+
+  drawAreaGraph(
+    yearMin,
+    yearMax,
+    bigTimelineHeight,
+    '.big-timeline',
+    'big-area'
+  )
 }

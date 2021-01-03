@@ -4,7 +4,7 @@ import { RaceContext } from './RaceContext'
 import './styles.css'
 import './index.css'
 import { TimeContext } from './TimeContext'
-import { Timeline } from './Timeline'
+import { Timeline } from './Timeline/Timeline'
 import { WorldContextMatrix } from './WorldContextTwo'
 
 function App() {

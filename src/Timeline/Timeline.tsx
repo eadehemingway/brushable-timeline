@@ -2,12 +2,11 @@ import React, { useCallback, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import * as d3 from 'd3'
 import '../styles.css'
-import _ from 'lodash'
 import { drawTimeline } from './drawTimeline'
 import { drawBrushableTimeline } from './drawBrushableTimeline'
 import { getXScale } from './xScale'
 import { bigTimelineHeight } from './variables'
-import { incarcerations } from '../data'
+import { getYScaleForArea } from './drawAreaGraph'
 
 export function Timeline() {
   const [lineData, setLineData] = useState('rate')
@@ -46,16 +45,13 @@ export function Timeline() {
     })
 
     //update area graph
-    const yScaleCount = d3
-      .scaleLinear()
-      .domain(d3.extent(incarcerations, (d) => +d.total))
-      .range([bigTimelineHeight, 0])
+    const yScaleForArea = getYScaleForArea(false)
 
     const selected_area = d3
       .area()
       .x((d: any) => newYearIntoXScale(+d.year))
       .y0(bigTimelineHeight)
-      .y1((d: any) => yScaleCount(+d.total))
+      .y1((d: any) => yScaleForArea(d.total))
       .curve(d3.curveCardinal)
 
     d3.selectAll('.big-area').attr('d', (d: any) => selected_area(d))

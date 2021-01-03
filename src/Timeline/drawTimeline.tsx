@@ -77,5 +77,5 @@ export const drawTimeline = () => {
   // ---------BIG TIMELINE draw labels-----------------------------------------------------------------
   drawAnnotations(yearIntoXScale, yScale)
 
-  drawAreaGraph('big', bigTimelineHeight, 0, initialMinYear, initialMaxYear)
+  drawAreaGraph('big', initialMinYear, initialMaxYear)
 }

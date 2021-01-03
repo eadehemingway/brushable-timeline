@@ -13,3 +13,8 @@ export const bigTimelineHeight = 250
 
 export const initialMinYear = 1950
 export const initialMaxYear = 1970
+
+const bottomPadding = 50
+export const smallTimelineHeight = 100
+export const miniYBottom = svgHeight - bottomPadding
+export const miniYTop = svgHeight - smallTimelineHeight - bottomPadding

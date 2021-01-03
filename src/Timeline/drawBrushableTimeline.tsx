@@ -6,7 +6,10 @@ import {
   initialMaxYear,
   initialMinYear,
   maxYearInData,
+  miniYBottom,
+  miniYTop,
   minYearInData,
+  smallTimelineHeight,
   svgHeight,
   svgWidth,
   textureColors,
@@ -21,19 +24,18 @@ export const drawBrushableTimeline = (setYearMin, setYearMax) => {
   const mini_xScale = getXScale(minYearInData, maxYearInData)
 
   const miniYearIntoXScale = (year) => mini_xScale(new Date(year, 0, 0))
-  const bottomPadding = 50
-  const smallTimelineHeight = 100
-  const yBottom = svgHeight - bottomPadding
-  const yTop = svgHeight - smallTimelineHeight - bottomPadding
 
-  const mini_yScale = d3.scaleLinear().domain([0, 4]).range([yBottom, yTop])
+  const mini_yScale = d3
+    .scaleLinear()
+    .domain([0, 4])
+    .range([miniYBottom, miniYTop])
 
   // ---------SMALL TIMELINE draw axis-----------------------------------------------------------------
 
   svg
     .append('g')
     .attr('class', 'axis')
-    .attr('transform', 'translate(0,' + yBottom + ')')
+    .attr('transform', 'translate(0,' + miniYBottom + ')')
     .call(d3.axisBottom(mini_xScale))
 
   // ---------SMALL TIMELINE draw textured bgs-----------------------------------------------------------------
@@ -45,7 +47,7 @@ export const drawBrushableTimeline = (setYearMin, setYearMax) => {
     .append('rect')
     .attr('class', 'textured-bg-rects')
     .attr('x', (d: any) => miniYearIntoXScale(d.startYear))
-    .attr('y', yTop)
+    .attr('y', miniYTop)
     .attr('height', smallTimelineHeight)
     .attr(
       'width',
@@ -67,7 +69,7 @@ export const drawBrushableTimeline = (setYearMin, setYearMax) => {
     .join('text')
     .attr('class', 'period')
     .attr('x', (d: any) => miniYearIntoXScale(d.startYear))
-    .attr('y', yTop - 10)
+    .attr('y', miniYTop - 10)
     .attr('text-anchor', 'start')
     .attr('fill', (d, i) => textureColors[i])
     .attr('font-size', '11.5px')
@@ -93,8 +95,8 @@ export const drawBrushableTimeline = (setYearMin, setYearMax) => {
   const brush = d3
     .brushX()
     .extent([
-      [0, yTop], // [x0, y0] is the top-left corner and
-      [svgWidth - 10, yBottom], //[x1, y1] is the bottom-right corner (the -10 makes it stop at end, not sure why 10)
+      [0, miniYTop], // [x0, y0] is the top-left corner and
+      [svgWidth - 10, miniYBottom], //[x1, y1] is the bottom-right corner (the -10 makes it stop at end, not sure why 10)
     ])
     .on('brush', brushed)
 
@@ -115,5 +117,5 @@ export const drawBrushableTimeline = (setYearMin, setYearMax) => {
     setYearMax(xYearMax)
   }
 
-  drawAreaGraph('mini', yBottom, yTop, minYearInData, maxYearInData)
+  drawAreaGraph('mini', minYearInData, maxYearInData)
 }

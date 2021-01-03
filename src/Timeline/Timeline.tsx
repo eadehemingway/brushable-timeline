@@ -5,7 +5,13 @@ import '../styles.css'
 import { drawTimeline } from './drawTimeline'
 import { drawBrushableTimeline } from './drawBrushableTimeline'
 import { getXScale } from './xScale'
-import { bigTimelineHeight } from './variables'
+import {
+  bigTimelineHeight,
+  maxYearInData,
+  miniYBottom,
+  miniYTop,
+  minYearInData,
+} from './variables'
 import { getYScaleForArea } from './drawAreaGraph'
 import { incarcerations } from '../data'
 
@@ -46,10 +52,18 @@ export function Timeline() {
     })
 
     //update area graph
+  }, [yearMin, yearMax])
 
+  const updateBigArea = useCallback(() => {
+    const newxscale = getXScale(yearMin, yearMax)
+    const newYearIntoXScale = (year) => newxscale(new Date(year, 0, 0))
     const yScaleForArea = d3
       .scaleLinear()
-      .domain(d3.extent(incarcerations, (d) => +d.total))
+      .domain(
+        d3.extent(incarcerations, (d) => {
+          return isRate ? d.rate : d.total
+        })
+      )
       .range([bigTimelineHeight, 0])
 
     const selected_area = d3
@@ -60,16 +74,46 @@ export function Timeline() {
         console.log(d)
 
         const data = isRate ? d.rate : d.total
-        return yScaleForArea(d.total)
+        return yScaleForArea(data)
       })
       .curve(d3.curveCardinal)
 
     d3.selectAll('.big-area').attr('d', (d: any) => selected_area(d))
-  }, [yearMin, yearMax])
+  }, [yearMin, yearMax, isRate])
+
+  const updateMiniArea = useCallback(() => {
+    const newxscale = getXScale(minYearInData, maxYearInData)
+    const newYearIntoXScale = (year) => newxscale(new Date(year, 0, 0))
+
+    const yScaleForArea = d3
+      .scaleLinear()
+      .domain(
+        d3.extent(incarcerations, (d) => {
+          return isRate ? d.rate : d.total
+        })
+      )
+      .range([miniYBottom, miniYTop])
+
+    const selected_area = d3
+      .area()
+      .x((d: any) => newYearIntoXScale(+d.year))
+      .y0(miniYBottom)
+      .y1((d: any) => {
+        console.log(d)
+
+        const data = isRate ? d.rate : d.total
+        return yScaleForArea(data)
+      })
+      .curve(d3.curveCardinal)
+
+    d3.selectAll('.mini-area').attr('d', (d: any) => selected_area(d))
+  }, [yearMin, yearMax, isRate])
 
   useEffect(() => {
     updateTimeline()
-  }, [updateTimeline])
+    updateBigArea()
+    updateMiniArea()
+  }, [updateTimeline, updateBigArea, updateMiniArea])
 
   return (
     <Container>

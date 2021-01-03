@@ -17,7 +17,7 @@ export const drawBrushableTimeline = (
   yearMin,
   yearMax
 ) => {
-  const svg = d3.select('svg').append('g').attr('class', 'small-timeline')
+  const svg = d3.select('svg').append('g').attr('class', 'mini-timeline')
 
   // ---------SMALL TIMELINE create scales-----------------------------------------------------------------
 
@@ -118,12 +118,5 @@ export const drawBrushableTimeline = (
     setYearMax(xYearMax)
   }
 
-  drawAreaGraph(
-    '.small-timeline',
-    'mini-area',
-    yBottom,
-    yTop,
-    minYearInData,
-    maxYearInData
-  )
+  drawAreaGraph('mini', yBottom, yTop, minYearInData, maxYearInData)
 }

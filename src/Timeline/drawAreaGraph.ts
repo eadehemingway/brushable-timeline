@@ -2,14 +2,7 @@ import { getXScale } from './xScale'
 import * as d3 from 'd3'
 import { incarcerations } from '../data'
 
-export const drawAreaGraph = (
-  timelineGroup,
-  areaName,
-  yBottom,
-  yTop,
-  minX,
-  maxX
-) => {
+export const drawAreaGraph = (type, yBottom, yTop, minX, maxX) => {
   const xScale = getXScale(minX, maxX)
 
   const yearIntoXScale = (year) => xScale(new Date(year, 0, 0))
@@ -26,13 +19,13 @@ export const drawAreaGraph = (
     .y1((d: any) => yScaleCount(d.total))
     .curve(d3.curveCardinal)
 
-  d3.select(timelineGroup)
+  d3.select(`.${type}-timeline`)
     .append('g')
     .attr('class', 'incarcerations-group')
-    .selectAll(areaName)
+    .selectAll(`${type}-area`)
     .data([incarcerations])
     .join('path')
-    .attr('class', areaName)
+    .attr('class', `${type}-area`)
     .attr('d', (d: any) => area(d))
     .attr('fill', 'white')
     .attr('stroke', 'white')

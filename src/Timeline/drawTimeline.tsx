@@ -2,7 +2,7 @@ import * as d3 from 'd3'
 import textures from 'textures'
 import { data, periodChunks } from '../data'
 import { drawAnnotations } from './drawAnnotations'
-import { drawAreaGraph } from './drawBigAreaGraph'
+import { drawAreaGraph } from './drawAreaGraph'
 import {
   bigTimelineHeight,
   svgHeight,

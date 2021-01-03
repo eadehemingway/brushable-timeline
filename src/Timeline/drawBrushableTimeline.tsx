@@ -5,6 +5,7 @@ import {
   maxYearInData,
   minYearInData,
   svgHeight,
+  svgWidth,
   textureColors,
 } from './variables'
 import { getXScale } from './xScale'
@@ -12,7 +13,6 @@ import { getXScale } from './xScale'
 export const drawBrushableTimeline = (
   setYearMin,
   setYearMax,
-  svgWidth,
   yearMin,
   yearMax
 ) => {

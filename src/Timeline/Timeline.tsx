@@ -14,7 +14,7 @@ export function Timeline() {
   const [yearMax, setYearMax] = useState<number>(1960)
 
   useEffect(() => {
-    drawBrushableTimeline(setYearMin, setYearMax, svgWidth, yearMin, yearMax)
+    drawBrushableTimeline(setYearMin, setYearMax, yearMin, yearMax)
     drawTimeline(yearMax, yearMin)
   }, [drawTimeline, drawBrushableTimeline])
 

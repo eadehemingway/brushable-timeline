@@ -3,6 +3,8 @@ import textures from 'textures'
 import { data, periodChunks } from '../data'
 import { drawAreaGraph } from './drawAreaGraph'
 import {
+  initialMaxYear,
+  initialMinYear,
   maxYearInData,
   minYearInData,
   svgHeight,
@@ -11,12 +13,7 @@ import {
 } from './variables'
 import { getXScale } from './xScale'
 
-export const drawBrushableTimeline = (
-  setYearMin,
-  setYearMax,
-  yearMin,
-  yearMax
-) => {
+export const drawBrushableTimeline = (setYearMin, setYearMax) => {
   const svg = d3.select('svg').append('g').attr('class', 'mini-timeline')
 
   // ---------SMALL TIMELINE create scales-----------------------------------------------------------------
@@ -102,8 +99,8 @@ export const drawBrushableTimeline = (
     .on('brush', brushed)
 
   const defaultSelection = [
-    miniYearIntoXScale(yearMin),
-    miniYearIntoXScale(yearMax),
+    miniYearIntoXScale(initialMinYear),
+    miniYearIntoXScale(initialMaxYear),
   ] // on page load what it selects
 
   svg.append('g').call(brush).call(brush.move, defaultSelection)

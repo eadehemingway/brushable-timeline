@@ -11,12 +11,12 @@ import { incarcerations } from '../data'
 
 export function Timeline() {
   const [lineData, setLineData] = useState('rate')
-  const [yearMin, setYearMin] = useState<number>(1950)
-  const [yearMax, setYearMax] = useState<number>(1960)
+  const [yearMin, setYearMin] = useState<number>()
+  const [yearMax, setYearMax] = useState<number>()
 
   useEffect(() => {
-    drawBrushableTimeline(setYearMin, setYearMax, yearMin, yearMax)
-    drawTimeline(yearMax, yearMin)
+    drawTimeline()
+    drawBrushableTimeline(setYearMin, setYearMax)
   }, [])
 
   const updateTimeline = useCallback(() => {
@@ -58,7 +58,7 @@ export function Timeline() {
       .y1((d: any) => yScaleCount(+d.total))
       .curve(d3.curveCardinal)
 
-    d3.selectAll('path.big-area').attr('d', (d: any) => selected_area(d))
+    d3.selectAll('.big-area').attr('d', (d: any) => selected_area(d))
   }, [yearMin, yearMax])
 
   useEffect(() => {
@@ -67,7 +67,6 @@ export function Timeline() {
 
   return (
     <Container>
-      {/* <div ref={wrapperRef}> */}
       <ToggleWrapper>
         <Label htmlFor="absolute-number">total population</Label>
         <Radio
@@ -89,7 +88,6 @@ export function Timeline() {
         />
       </ToggleWrapper>
       <Svg />
-      {/* </div> */}
     </Container>
   )
 }

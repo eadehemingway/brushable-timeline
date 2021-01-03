@@ -5,13 +5,15 @@ import { drawAnnotations } from './drawAnnotations'
 import { drawAreaGraph } from './drawAreaGraph'
 import {
   bigTimelineHeight,
+  initialMaxYear,
+  initialMinYear,
   svgHeight,
   svgWidth,
   textureColors,
 } from './variables'
 import { getXScale } from './xScale'
 
-export const drawTimeline = (yearMax, yearMin) => {
+export const drawTimeline = () => {
   const bigTimelineGroup = d3
     .select('svg')
     .attr('height', svgHeight)
@@ -23,7 +25,7 @@ export const drawTimeline = (yearMax, yearMin) => {
 
   // ---------BIG TIMELINE create scales-----------------------------------------------------------------
 
-  const xScale = getXScale(yearMin, yearMax)
+  const xScale = getXScale(initialMinYear, initialMaxYear)
   const yearIntoXScale = (year) => xScale(new Date(year, 0, 0))
 
   const yScale = d3.scaleLinear().domain([-1, 5]).range([bigTimelineHeight, 0])
@@ -75,5 +77,5 @@ export const drawTimeline = (yearMax, yearMin) => {
   // ---------BIG TIMELINE draw labels-----------------------------------------------------------------
   drawAnnotations(yearIntoXScale, yScale)
 
-  drawAreaGraph('big', bigTimelineHeight, 0, yearMin, yearMax)
+  drawAreaGraph('big', bigTimelineHeight, 0, initialMinYear, initialMaxYear)
 }

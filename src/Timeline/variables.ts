@@ -10,3 +10,6 @@ export const minYearInData = Math.min(...startYears)
 export const maxYearInData = Math.max(...startYears)
 
 export const bigTimelineHeight = 250
+
+export const initialMinYear = 1950
+export const initialMaxYear = 1970

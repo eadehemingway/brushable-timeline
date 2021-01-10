@@ -1,6 +1,6 @@
 import * as d3 from 'd3'
 import textures from 'textures'
-import { data, periodChunks } from '../data'
+import { data, incarcerations, periodChunks } from '../data'
 import { drawAnnotations } from './drawAnnotations'
 import { drawAreaGraph } from './drawAreaGraph'
 import {
@@ -9,11 +9,20 @@ import {
   initialMinYear,
   svgHeight,
   svgWidth,
-  textureColors,
+  textureColors
 } from './variables'
 import { getXScale } from './xScale'
 
 export const drawTimeline = () => {
+
+
+  // ---------BIG TIMELINE create scales-----------------------------------------------------------------
+
+  const xScale = getXScale(initialMinYear, initialMaxYear)
+  const yearIntoXScale = (year) => xScale(new Date(year, 0, 0))
+
+  const yScale = d3.scaleLinear().domain([-1, 5]).range([bigTimelineHeight, 0])
+
   const bigTimelineGroup = d3
     .select('svg')
     .attr('height', svgHeight)
@@ -22,13 +31,6 @@ export const drawTimeline = () => {
     .attr('class', 'big-timeline')
     .attr('overflow', 'hidden')
     .attr('width', 100)
-
-  // ---------BIG TIMELINE create scales-----------------------------------------------------------------
-
-  const xScale = getXScale(initialMinYear, initialMaxYear)
-  const yearIntoXScale = (year) => xScale(new Date(year, 0, 0))
-
-  const yScale = d3.scaleLinear().domain([-1, 5]).range([bigTimelineHeight, 0])
 
   // ---------BIG TIMELINE draw textured bgs-----------------------------------------------------------------
 
@@ -57,6 +59,7 @@ export const drawTimeline = () => {
     .attr('class', 'big-axis')
     .attr('transform', `translate(0,${svgHeight / 2})`)
     .call(d3.axisBottom(xScale))
+
 
   // ---------BIG TIMELINE plot lines-----------------------------------------------------------------
   bigTimelineGroup

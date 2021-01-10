@@ -10,6 +10,7 @@ import {
   maxYearInData,
   miniYBottom,
   minYearInData,
+  svgWidth
 } from './variables'
 import { getYScaleForArea } from './drawAreaGraph'
 
@@ -17,6 +18,11 @@ export function Timeline() {
   const [isRate, setIsRate] = useState(true)
   const [yearMin, setYearMin] = useState<number>()
   const [yearMax, setYearMax] = useState<number>()
+  const yAxis = d3.select('.big-timeline')
+        .append('g')
+        .attr('class', 'big-axis-y')
+        .attr('transform', `translate(${svgWidth},0)`);
+
 
   useEffect(() => {
     drawTimeline()
@@ -64,12 +70,23 @@ export function Timeline() {
         .x((d: any) => newYearIntoXScale(+d.year))
         .y0(bottom)
         .y1((d: any) => {
-          const data = isRate ? d.rate : d.total
+          const data = isRate ? d.percent : d.total
           return yScaleForArea(data)
         })
         .curve(d3.curveCardinal)
 
-      d3.selectAll(areaClassName).attr('d', (d: any) => selected_area(d))
+      d3.selectAll(areaClassName).transition().attr('d', (d: any) => selected_area(d))
+
+      if(isRate){
+        d3.select(".big-axis-y")
+        // .transition().duration(1000)
+        .call(d3.axisLeft(yScaleForArea).ticks(6, "s").tickFormat(d => d + "%"));
+      }else{
+        d3.select(".big-axis-y")
+        // .transition().duration(1000)
+        .call(d3.axisLeft(yScaleForArea).ticks(6, "s"));
+      }
+
     },
     [isRate]
   )
@@ -84,7 +101,7 @@ export function Timeline() {
   return (
     <Container>
       <ToggleWrapper>
-        <Label htmlFor="absolute-number">total population</Label>
+        <Label htmlFor="absolute-number">Incarceration rate</Label>
         <Radio
           id="absolute-number"
           type="radio"
@@ -93,7 +110,7 @@ export function Timeline() {
           checked={isRate}
           onClick={() => setIsRate(true)}
         />
-        <Label htmlFor="incarceration-rate">incarceration rate</Label>
+        <Label htmlFor="incarceration-rate">Total population</Label>
         <Radio
           id="incarceration-rate"
           type="radio"

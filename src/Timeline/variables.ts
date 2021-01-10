@@ -1,8 +1,10 @@
 import { data } from '../data'
+import * as d3 from 'd3'
+
 
 export const textureColors = ['#EB6A5B', '#4d5382', '#813405', '#f9a03f']
 
-export const svgWidth = 1000
+export const svgWidth = 1330
 export const svgHeight = 500
 export const startYears = data.map((d) => d.startYear)
 

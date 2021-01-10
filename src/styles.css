@@ -9,16 +9,25 @@
 .big-axis text {
   fill: linen;
 }
-.axis line {
+.axis line{
   stroke: linen;
 }
 
-.axis path {
+.axis path,.big-axis-y path {
   stroke: linen;
 }
 
-.axis text {
+.axis text,.big-axis-y text {
   fill: linen;
+}
+
+.big-axis-y text{
+  font-weight: 700;
+  font-size:12px;
+}
+
+.tick line{
+  stroke: linen;
 }
 
 foreignObject {

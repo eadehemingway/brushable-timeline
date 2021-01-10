@@ -104,7 +104,6 @@ export const drawBrushableTimeline = (setYearMin, setYearMax) => {
     miniYearIntoXScale(initialMaxYear),
   ] // on page load what it selects
 
-  svg.append('g').call(brush).call(brush.move, defaultSelection)
 
   function brushed({ selection }) {
     // the value we get from the inverse xscale is for example Sat Dec 31 1864 00:00:00
@@ -117,4 +116,7 @@ export const drawBrushableTimeline = (setYearMin, setYearMax) => {
   }
 
   drawAreaGraph('mini', minYearInData, maxYearInData)
+  svg.append('g').call(brush).call(brush.move, defaultSelection)
+  //call this after the drawAreaGraph otherwise the area will block the brush and the overlapping areas become unselectable
+
 }

@@ -38,16 +38,7 @@ export const drawAreaGraph = (type, minX, maxX) => {
     .attr('stroke-opacity', 1)
     .attr('fill-opacity', 0.1)
 
-    // ---------BIG TIMELINE draw the y axis-----------------------------------------------------------------
 
-    // if(type=='big'){
-    //   d3.select(`.${type}-timeline`)
-    //     .append('g')
-    //     .attr('class', 'big-axis-y')
-    //     .attr('transform', `translate(${svgWidth},0)`)
-    //     .transition().duration(1000)
-    //     .call(d3.axisLeft(yScaleForArea).ticks(10, "s"));
-    // }
 
     if(type=='big'){
       d3.select(".big-axis-y")
@@ -56,8 +47,6 @@ export const drawAreaGraph = (type, minX, maxX) => {
 
 }
 
-
-// const yScaleCount = d3.scaleLinear().domain(d3.extent(incarcerations, d=> +d.total)).range([bigTimelineHeight, 0]);
 
 
 export function getYScaleForArea(isMini, isRate = true) {

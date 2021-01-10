@@ -76,7 +76,7 @@ export const drawAnnotations = (yearIntoXScale, yScale) => {
       const description = d.note.label.trim()
       return description.length ? '#f9a03f' : '#956025'
     })
-    .attr('width', 210) // hard coding this because the wrap above seems to make the rect too big
+    .attr('width', 224) // hard coding this because the wrap above seems to make the rect too big
     .attr('height', (d: any) => {
       return getClosedLabelHeight(d.note.title)
     }) // hard coding this (estimating the height of a title)
@@ -114,13 +114,25 @@ const openAnnotation = (textOrRectSelection) => {
     .attr('fill-opacity', 1)
     .attr('height', (d: any) => {
       const title = d.note.title
-      const titleLength = title.trim().length
-      const descriptionLength = d.note.label.trim().length
+        const titleLength = title.trim().length
+        const descriptionLength = d.note.label.trim().length
 
-      if (!descriptionLength) return getClosedLabelHeight(title)
-      const textHeight = titleLength + descriptionLength
-      const rectHeight = textHeight / 2.7 + 60 // bit hacky - using the text length to try to calculate the rect height
-      return Math.max(rectHeight, 50)
+        if (!descriptionLength) return getClosedLabelHeight(title)
+
+        const textHeight = titleLength + descriptionLength
+        let rectHeight = textHeight / 2.7 + 40; // bit hacky - using the text length to try to calculate the rect height
+
+        if ( title.length >= 60 ) {
+            rectHeight = textHeight / 2.7 + 60;
+        }else if(title.length >= 30 ){
+            rectHeight = textHeight / 2.7 + 50;
+        }else{
+            rectHeight = textHeight / 2.7 + 40;
+        } // also hacky, I use the length of the title to calculate the height of the rect
+        //originally I want to use the number of children (tspan) that corresponds to the number of rows the title takes up, but couldn't figure out how to select it
+        //title.children().length >= 3
+
+        return Math.max(rectHeight, 70)
     })
 
   const descriptions = labelParentGroup.select('.annotation-note-label')

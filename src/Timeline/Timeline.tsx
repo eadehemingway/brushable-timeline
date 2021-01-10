@@ -25,8 +25,8 @@ export function Timeline() {
 
 
   useEffect(() => {
+    drawBrushableTimeline(setYearMin, setYearMax) //draw first so the annotations from the big timeline will open in front of the mini timeline
     drawTimeline()
-    drawBrushableTimeline(setYearMin, setYearMax)
   }, [])
 
   const updateTimeline = useCallback(() => {
@@ -100,26 +100,28 @@ export function Timeline() {
 
   return (
     <Container>
-      <ToggleWrapper>
-        <Label htmlFor="absolute-number">Incarceration rate</Label>
-        <Radio
-          id="absolute-number"
-          type="radio"
-          value="on"
-          name="number-rate"
-          checked={isRate}
-          onClick={() => setIsRate(true)}
-        />
-        <Label htmlFor="incarceration-rate">Total population</Label>
-        <Radio
-          id="incarceration-rate"
-          type="radio"
-          value="off"
-          name="number-rate"
-          checked={!isRate}
-          onClick={() => setIsRate(false)}
-        />
-      </ToggleWrapper>
+    <div className="itemWrapper toggleWrapper">
+        <p className="item" id="absolute">Total Prison Population</p>
+        <div className='toggle item' id="filter">
+           <input
+           id="incarceration-rate"
+           type="radio"
+           value="off"
+           name="number-rate"
+           checked={!isRate}
+           onClick={() => setIsRate(false)}
+           />
+           <input
+           id="absolute-number"
+           type="radio"
+           value="on"
+           name="number-rate"
+           checked={isRate}
+           onClick={() => setIsRate(true)}/>
+           <div className="toggle__pointer"></div>
+        </div>
+        <p className="item" id="rate">Incarceration Rate</p>
+      </div>
       <Svg />
     </Container>
   )

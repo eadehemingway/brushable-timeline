@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import * as d3 from 'd3'
+import { orange } from './styles'
 
 interface Props {
   percentage: number
@@ -58,7 +59,7 @@ export default function ForceDirected({
       .append('circle')
       .attr('r', radius)
       .attr('class', `circle-${forceId}`)
-      .attr('stroke', 'coral')
+      .attr('stroke', orange)
       .attr('stroke-width', 2)
       .attr('opacity', 1)
       .attr('fill', (d) => d.fillColor)

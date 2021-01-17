@@ -1,11 +1,11 @@
 import React from 'react'
 import styled from 'styled-components'
-import { RaceContext } from './RaceContext'
+import { RaceContext } from './RaceContext/RaceContext'
 import './styles.css'
 import './index.css'
-import { TimeContext } from './TimeContext'
+import { TimeContext } from './TimeContext/TimeContext'
 import { Timeline } from './Timeline/Timeline'
-import { WorldContextMatrix } from './WorldContextTwo'
+import { WorldContextMatrix } from './WorldContext/WorldContextTwo'
 import { svgWidth } from './Timeline/variables'
 
 function App() {

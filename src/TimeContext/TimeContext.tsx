@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect } from 'react'
 import styled from 'styled-components'
 import _ from 'lodash'
 import * as d3 from 'd3'
-import { cream, orange, Subheading, SubheadingWrapper, Svg } from './styles'
+import { cream, orange, Subheading, SubheadingWrapper, Svg } from '../styles'
 
 export function TimeContext() {
   const svgRef = useRef()

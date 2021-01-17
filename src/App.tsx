@@ -9,21 +9,28 @@ import { WorldContextMatrix } from './WorldContextTwo'
 
 function App() {
   return (
-    <Container>
+    <AppContainer>
+      {/* <InnerContainer> */}
       <Timeline />
       {/* would be good to add in a bar chart or soemthing that compares us incarceration rate to other countries... cant seem to get data in right structure (only in pdfs) */}
       <WorldContextMatrix />
       <TimeContext />
       <RaceContext />
-    </Container>
+      {/* </InnerContainer> */}
+    </AppContainer>
   )
 }
 
 export default App
 
-const Container = styled.div`
+const AppContainer = styled.div`
   background-color: #282c34;
   min-height: 100vh;
-  display: grid;
-  justify-items: center;
 `
+// const InnerContainer = styled.div`
+//   width: 80vh;
+//   margin: auto;
+//   display: grid;
+//   justify-items: center;
+//   border: 2px solid white;
+// `

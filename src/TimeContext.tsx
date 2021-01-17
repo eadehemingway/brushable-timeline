@@ -2,6 +2,7 @@ import React, { useRef, useState, useEffect } from 'react'
 import styled from 'styled-components'
 import _ from 'lodash'
 import * as d3 from 'd3'
+import { Subheading, SubheadingWrapper, Svg } from './styles'
 
 export function TimeContext() {
   const svgRef = useRef()
@@ -70,21 +71,16 @@ export function TimeContext() {
 
   return (
     <>
-      <p>
-        {' '}
-        - 1972 was 300,000 2016 2.3 mil (could show as line graph, could do in
-        parallel with timeline?) should show in relation to increase in
-        population
-      </p>
+      <SubheadingWrapper>
+        <Subheading>
+          {' '}
+          - 1972 was 300,000 2016 2.3 mil (could show as line graph, could do in
+          parallel with timeline?) should show in relation to increase in
+          population
+        </Subheading>
+      </SubheadingWrapper>
 
       <Svg ref={svgRef}></Svg>
     </>
   )
 }
-
-const Svg = styled.svg`
-  width: 80vw;
-  height: 400px;
-  border: 1px solid #f9a03f;
-  margin: 30px;
-`

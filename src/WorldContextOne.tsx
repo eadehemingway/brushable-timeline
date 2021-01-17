@@ -2,6 +2,7 @@ import React, { useRef, useState } from 'react'
 import styled from 'styled-components'
 import _ from 'lodash'
 import ForceDirected from './ForceDirected'
+import { Subheading, SubheadingWrapper, Svg } from './styles'
 
 export function WorldContextForce() {
   const svgId = 'world-context'
@@ -12,11 +13,13 @@ export function WorldContextForce() {
 
   return (
     <>
-      <p>
-        {' '}
-        - US is 5% of world pop but 25% of worlds prison population (I.e. 1 in 4
-        prisoners are American, highest in the world)
-      </p>
+      <SubheadingWrapper>
+        <Subheading>
+          {' '}
+          - US is 5% of world pop but 25% of worlds prison population (I.e. 1 in
+          4 prisoners are American, highest in the world)
+        </Subheading>
+      </SubheadingWrapper>
       <ForceDirected
         percentage={5}
         svgId={svgId}
@@ -33,10 +36,3 @@ export function WorldContextForce() {
     </>
   )
 }
-
-const Svg = styled.svg`
-  width: 80vw;
-  height: 400px;
-  border: 1px solid #f9a03f;
-  margin: 30px;
-`

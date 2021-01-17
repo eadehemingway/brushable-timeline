@@ -12,6 +12,7 @@ import {
   minYearInData,
 } from './variables'
 import { getYScaleForArea } from './drawAreaGraph'
+import { cream, Svg } from '../styles'
 
 export function Timeline() {
   const [isRate, setIsRate] = useState(true)
@@ -114,9 +115,6 @@ const Container = styled.div`
   display: grid;
   justify-items: center;
 `
-const Svg = styled.svg`
-  margin: 30px;
-`
 const ToggleWrapper = styled.div`
   margin-top: 100px;
   margin: 30px;
@@ -126,7 +124,7 @@ const ToggleWrapper = styled.div`
 `
 
 const Label = styled.label`
-  color: linen;
+  color: ${cream};
   margin: 10px;
 `
 const Radio = styled.input`

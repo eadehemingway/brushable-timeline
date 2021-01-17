@@ -3,7 +3,7 @@ import * as d3 from 'd3'
 import { manBodyD } from './assets/man-icon'
 import manIcon from './assets/man-icon.png'
 import manIconSvg from './assets/man-icon.svg'
-import { orange } from './styles'
+import { cream, orange } from './styles'
 
 interface Props {
   percentage: number
@@ -25,7 +25,7 @@ export default function Matrix({
     const data = d3.range(range).map((n, i) => {
       let fillColor
       if (n >= Math.ceil(percentage)) fillColor = orange
-      if (n < Math.floor(percentage)) fillColor = 'linen'
+      if (n < Math.floor(percentage)) fillColor = cream
 
       return { id: i, fillColor, svgId }
     })

@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import _ from 'lodash'
 
 import Matrix from '../VisualisationTemplates/Matrix'
-import { Subheading, SubheadingWrapper, Svg } from '../styles'
+import { Heading, Subheading, SubheadingWrapper, Svg } from '../styles'
 
 export function WorldContextMatrix() {
   const svgId = 'world-context'
@@ -15,6 +15,8 @@ export function WorldContextMatrix() {
   return (
     <>
       <SubheadingWrapper>
+        <Heading>World context</Heading>
+
         <Subheading>
           {' '}
           - US is 5% of world pop but 25% of worlds prison population (I.e. 1 in

@@ -2,7 +2,7 @@ import React, { useRef, useState } from 'react'
 import styled from 'styled-components'
 import _ from 'lodash'
 import Matrix from '../VisualisationTemplates/Matrix'
-import { Subheading, SubheadingWrapper, Svg } from '../styles'
+import { Heading, Subheading, SubheadingWrapper, Svg } from '../styles'
 
 export function RaceContext() {
   const svgId = 'race-context'
@@ -13,6 +13,8 @@ export function RaceContext() {
   return (
     <>
       <SubheadingWrapper>
+        <Heading>Race context</Heading>
+
         <Subheading>
           - (if white 1 in 17 chance of imprisonment, if black 1 in 3)
         </Subheading>

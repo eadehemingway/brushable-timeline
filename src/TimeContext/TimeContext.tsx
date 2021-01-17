@@ -2,7 +2,14 @@ import React, { useRef, useState, useEffect } from 'react'
 import styled from 'styled-components'
 import _ from 'lodash'
 import * as d3 from 'd3'
-import { cream, orange, Subheading, SubheadingWrapper, Svg } from '../styles'
+import {
+  cream,
+  Heading,
+  orange,
+  Subheading,
+  SubheadingWrapper,
+  Svg,
+} from '../styles'
 
 export function TimeContext() {
   const svgRef = useRef()
@@ -72,6 +79,8 @@ export function TimeContext() {
   return (
     <>
       <SubheadingWrapper>
+        <Heading>Time context</Heading>
+
         <Subheading>
           {' '}
           - 1972 was 300,000 2016 2.3 mil (could show as line graph, could do in

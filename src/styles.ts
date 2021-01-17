@@ -9,14 +9,14 @@ export const cream = 'linen'
 export const Heading = styled.h2`
   color: ${cream};
 `
-export const Subheading = styled.h4`
-  color: ${orange};
+export const Subheading = styled.p`
+  color: ${cream};
 `
 
 export const SubheadingWrapper = styled.div`
   width: 100%;
   margin: auto;
-  border-bottom: 3px solid ${orange};
+  border-bottom: 1px solid ${cream};
 `
 
 export const Svg = styled.svg`

@@ -12,7 +12,7 @@ import {
   minYearInData,
 } from './variables'
 import { getYScaleForArea } from './drawAreaGraph'
-import { cream, Svg } from '../styles'
+import { cream, Heading, Subheading, SubheadingWrapper, Svg } from '../styles'
 
 export function Timeline() {
   const [isRate, setIsRate] = useState(true)
@@ -84,27 +84,29 @@ export function Timeline() {
 
   return (
     <Container>
-      <ToggleWrapper>
-        <Label htmlFor="absolute-number">total population</Label>
-        <Radio
-          id="absolute-number"
-          type="radio"
-          value="on"
-          name="number-rate"
-          checked={isRate}
-          onClick={() => setIsRate(true)}
-        />
-        <Label htmlFor="incarceration-rate">incarceration rate</Label>
-        <Radio
-          id="incarceration-rate"
-          type="radio"
-          value="off"
-          name="number-rate"
-          checked={!isRate}
-          onClick={() => setIsRate(false)}
-        />
-      </ToggleWrapper>
-      <Svg />
+      <div>
+        <ToggleWrapper>
+          <Label htmlFor="absolute-number">total population</Label>
+          <Radio
+            id="absolute-number"
+            type="radio"
+            value="on"
+            name="number-rate"
+            checked={isRate}
+            onClick={() => setIsRate(true)}
+          />
+          <Label htmlFor="incarceration-rate">incarceration rate</Label>
+          <Radio
+            id="incarceration-rate"
+            type="radio"
+            value="off"
+            name="number-rate"
+            checked={!isRate}
+            onClick={() => setIsRate(false)}
+          />
+        </ToggleWrapper>
+        <Svg />
+      </div>
     </Container>
   )
 }
@@ -116,8 +118,6 @@ const Container = styled.div`
   justify-items: center;
 `
 const ToggleWrapper = styled.div`
-  margin-top: 100px;
-  margin: 30px;
   display: flex;
   justify-content: flex-end;
   align-items: center;

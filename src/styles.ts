@@ -11,6 +11,8 @@ export const Heading = styled.h2`
 `
 export const Subheading = styled.p`
   color: ${cream};
+  width: 40%;
+  margin-left: 0;
 `
 
 export const SubheadingWrapper = styled.div`

@@ -6,6 +6,9 @@ export const purple = '#4d5382'
 export const sienna = '#813405'
 export const cream = 'linen'
 
+export const Heading = styled.h2`
+  color: ${cream};
+`
 export const Subheading = styled.h4`
   color: ${orange};
 `

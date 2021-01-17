@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import * as d3 from 'd3'
-import { orange } from './styles'
+import { orange } from '../styles'
 
 interface Props {
   percentage: number

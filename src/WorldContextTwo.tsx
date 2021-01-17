@@ -2,7 +2,7 @@ import React, { useRef, useState } from 'react'
 import styled from 'styled-components'
 import _ from 'lodash'
 
-import Matrix from './Matrix'
+import Matrix from './VisualisationTemplates/Matrix'
 import { Subheading, SubheadingWrapper, Svg } from './styles'
 
 export function WorldContextMatrix() {

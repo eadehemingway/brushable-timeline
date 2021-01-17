@@ -1,6 +1,6 @@
 import * as d3 from 'd3'
 import textures from 'textures'
-import { data, periodChunks } from './../data'
+import { data, periodChunks } from '../data/data'
 import { drawAreaGraph } from './drawAreaGraph'
 import {
   initialMaxYear,

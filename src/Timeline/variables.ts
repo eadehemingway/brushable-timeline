@@ -1,4 +1,4 @@
-import { data } from '../../public/data'
+import { data } from './../data'
 import { purple, red, sienna, orange } from '../styles'
 
 export const textureColors = [red, purple, sienna, orange]

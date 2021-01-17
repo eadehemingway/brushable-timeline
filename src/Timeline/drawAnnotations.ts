@@ -1,4 +1,4 @@
-import { data } from '../../public/data'
+import { data } from './../data'
 import * as d3 from 'd3'
 // import { textwrap } from 'd3-textwrap'
 import { annotation, annotationLabel } from 'd3-svg-annotation'

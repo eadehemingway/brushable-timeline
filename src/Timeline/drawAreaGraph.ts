@@ -1,6 +1,6 @@
 import { getXScale } from './xScale'
 import * as d3 from 'd3'
-import { incarcerations } from '../../public/data'
+import { incarcerations } from './../data'
 import { bigTimelineHeight, miniYBottom, miniYTop } from './variables'
 
 export const drawAreaGraph = (type, minX, maxX) => {

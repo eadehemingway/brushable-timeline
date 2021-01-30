@@ -98,13 +98,20 @@ export const ScrollMatrix = () => {
         progress: true,
       })
       .onStepProgress((res: any) => {
-        // const progressOneToTen = res.progress.toFixed(1) * 10
+        // make them go coral as you scroll down.
         const progressOneToTen = (res.progress * 100).toFixed(0)
-        // console.log('TEST:', TEST)
-
         const svg = d3.select('#scroll-matrix')
-
         svg.select(`#icon-${progressOneToTen}`).attr('fill', 'coral')
+        d3.range(Number(progressOneToTen)).forEach((n) => {
+          svg.select(`#icon-${n}`).attr('fill', 'coral')
+        })
+
+        // return to blue when you scroll back up
+        const blueIcons = d3.range(Number(progressOneToTen) + 1, 101)
+
+        blueIcons.forEach((n) => {
+          svg.select(`#icon-${n}`).attr('fill', 'lightsteelblue')
+        })
       })
     //   .onStepEnter((res: any) => {
     //     console.log('res:', res)

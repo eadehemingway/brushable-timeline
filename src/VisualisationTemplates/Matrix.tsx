@@ -1,8 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import * as d3 from 'd3'
 import { manBodyD } from '../assets/man-icon'
-import manIcon from './assets/man-icon.png'
-import manIconSvg from './assets/man-icon.svg'
 import { cream, orange } from '../styles'
 
 interface Props {
@@ -57,6 +55,7 @@ export default function Matrix({
       .append('g')
       .attr('class', `${matrixId}-icons`)
 
+    // draw bodies of men
     iconGroups
       .append('path')
       .attr('d', manBodyD)
@@ -68,6 +67,7 @@ export default function Matrix({
         return 'translate(' + x + ',' + y + ') scale(0.3)'
       })
 
+    // draw heads of men
     iconGroups
       .append('circle')
       .attr('cx', 18)

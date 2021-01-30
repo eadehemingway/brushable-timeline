@@ -8,6 +8,7 @@ import { Timeline } from './Timeline/Timeline'
 import { WorldContextMatrix } from './WorldContext/WorldContextTwo'
 import { svgWidth } from './Timeline/variables'
 import { cream } from './styles'
+import { ScrollMatrix } from './ScrollMatrix'
 
 function App() {
   return (
@@ -16,9 +17,10 @@ function App() {
         <Title>13th Ammendment</Title>
         <Timeline />
         {/* would be good to add in a bar chart or soemthing that compares us incarceration rate to other countries... cant seem to get data in right structure (only in pdfs) */}
-        <WorldContextMatrix />
-        <TimeContext />
-        <RaceContext />
+        {/* <WorldContextMatrix /> */}
+        {/* <TimeContext />
+        <RaceContext /> */}
+        <ScrollMatrix />
       </InnerContainer>
     </AppContainer>
   )

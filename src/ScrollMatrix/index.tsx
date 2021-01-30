@@ -13,7 +13,7 @@ export const ScrollMatrix = () => {
   }, [])
 
   function drawPeople() {
-    const dotsPerRow = 12
+    const dotsPerRow = 20
     const iconWidth = 20
     const iconHeight = 40
     const leftBoxPadding = 40
@@ -100,7 +100,9 @@ export const ScrollMatrix = () => {
       })
   }
 
-  const steps = ['first paragraph']
+  const steps = [
+    `Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book`,
+  ]
   return (
     <>
       <Intro />
@@ -114,7 +116,7 @@ export const ScrollMatrix = () => {
             )
           })}
         </Article>
-        <Chart id="scroll-matrix"></Chart>
+        <Svg id="scroll-matrix" />
       </Scroll>
       <Outro />
     </>
@@ -136,12 +138,15 @@ const Box = styled.div`
   margin: 0 auto 700px auto;
   border: 1px solid #333;
   position: relative;
-  height: 2000px;
+  height: 400px;
 `
 const Article = styled.div`
   position: relative;
-  padding: 0 1rem;
-  width: 30rem;
+  padding: 50px;
+  margin: 0 50px;
+  width: 200px;
+  border-right: 2px solid linen;
+  color: linen;
 `
 const Intro = styled.div`
   max-width: 40rem;
@@ -149,14 +154,8 @@ const Intro = styled.div`
   text-align: center;
   margin-bottom: 100px;
 `
-const Chart = styled.svg`
+const Svg = styled.svg`
   position: sticky;
-  width: 50%;
   top: 200px;
   height: 500px;
-  right: 2rem;
-  -webkit-transform: translate3d(0, 0, 0);
-  -moz-transform: translate3d(0, 0, 0);
-  transform: translate3d(0, 0, 0);
-  border: 1px solid coral;
 `

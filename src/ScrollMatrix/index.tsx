@@ -85,23 +85,39 @@ export const ScrollMatrix = () => {
         const progressOneToHundred = Number((res.progress * 100).toFixed(0))
         const svg = d3.select('#scroll-matrix')
 
-        d3.range(progressOneToHundred + 1).forEach((n) => {
-          svg.select(`#head-${n}`).attr('fill', 'coral')
-          svg.select(`#body-${n}`).attr('fill', 'coral')
-        })
+        if (res.index === 0) {
+          d3.range(progressOneToHundred + 1).forEach((n) => {
+            if (n < 6) {
+              svg.select(`#head-${n}`).attr('fill', 'coral')
+              svg.select(`#body-${n}`).attr('fill', 'coral')
+            }
+          })
+        }
+
+        if (res.index === 1) {
+          d3.range(progressOneToHundred + 1).forEach((n) => {
+            if (n < 26) {
+              svg.select(`#head-${n}`).attr('fill', 'coral')
+              svg.select(`#body-${n}`).attr('fill', 'coral')
+            }
+          })
+        }
 
         // return to blue when you scroll back up
         const blueIcons = d3.range(Number(progressOneToHundred) + 1, 101)
 
         blueIcons.forEach((n) => {
-          svg.select(`#head-${n}`).attr('fill', 'lightsteelblue')
-          svg.select(`#body-${n}`).attr('fill', 'lightsteelblue')
+          if ((res.index === 1 && n < 6) || res.index === 0) {
+            svg.select(`#head-${n}`).attr('fill', 'lightsteelblue')
+            svg.select(`#body-${n}`).attr('fill', 'lightsteelblue')
+          }
         })
       })
   }
 
   const steps = [
-    `Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book`,
+    `US is 5% of world pop so you might expect them to make up 5% of the worlds prison population.`,
+    `but they make up 25% of worlds prison population meaning 1 in 4 prisoners are American, highest incarceration rate in the world. `,
   ]
   return (
     <>
@@ -111,7 +127,7 @@ export const ScrollMatrix = () => {
           {steps.map((s, i) => {
             return (
               <Box className="step" key={i}>
-                {s}
+                <P>{s}</P>
               </Box>
             )
           })}
@@ -136,8 +152,11 @@ const Outro = styled.div`
 `
 const Box = styled.div`
   margin: 0 auto 700px auto;
-  border: 1px solid #333;
-  position: relative;
+  border: 2px solid pink;
+`
+const P = styled.p`
+  position: sticky;
+  top: 200px;
   height: 400px;
 `
 const Article = styled.div`

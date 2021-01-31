@@ -136,24 +136,3 @@ const Container = styled.div`
 const Svg = styled.svg`
   margin: 30px;
 `
-const ToggleWrapper = styled.div`
-  margin-top: 100px;
-  margin: 30px;
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-`
-
-const Label = styled.label`
-  color: linen;
-  margin: 10px;
-`
-const Radio = styled.input`
-  cursor: pointer;
-  color: red;
-  background: green;
-  &:checked {
-    color: red;
-    background: pink;
-  }
-`

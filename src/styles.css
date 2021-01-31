@@ -212,3 +212,96 @@ p.item{
 .toggleWrapper{
   margin-top:100px;
 }
+
+navbar{
+  position:fixed;
+  display:flex;
+  top:0;
+  right:0;
+  z-index: 1;
+}
+
+navbar a{
+  display:block;
+  font-size: 20px;
+  padding:20px;
+}
+
+.pageTitle{
+  text-align: center;
+  font-size: 22px;
+  margin: 90px 0 10px;
+  visibility: hidden;
+}
+.description{
+  max-width: 600px;
+  margin: 10px auto 30px;
+  font-size: 22px;
+  line-height: 28px;
+  color:white;
+}
+.description a{
+  color:grey;
+}
+
+.pageSubtitle{
+  text-align: center;
+  font-size: 22px;
+  color:#888;
+}
+
+.intro{
+  width: 60vw;
+  margin-left: 20vw;
+  margin-right: 20vw;
+  text-align: center;
+  font-size: 22px;
+  color:white;
+}
+
+.graphicContainer{
+  width: 80vw;
+  margin-left: 10vw;
+  margin-right: 10vw;
+  /* padding: 40vh 2vw 70vh; */
+  display: flex;
+  justify-content: space-between;
+}
+.graphic{
+  flex-basis: 60%;
+  position: sticky;
+  width:100%;
+  height:60vh;
+  top:20vh;
+  background-color: #aaa;
+  display:flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.graphic p{
+  font-size: 5rem;
+  font-weight: 700;
+  text-align: center;
+  color: #fff;
+}
+
+.scroller{
+  flex-basis: 35%;
+}
+.step{
+  margin: 0 auto 3rem auto;
+  padding: 180px 0;
+  border: 1px solid #333;
+}
+
+.step p{
+  text-align: center;
+  padding: 1rem;
+  font-size: 1.8rem;
+  margin:0;
+}
+
+.step p:last-child{
+  margin-bottom: 0;
+}

@@ -157,10 +157,11 @@ const Box = styled.div`
 const P = styled.p`
   position: sticky;
   top: 200px;
-  height: 400px;
+  height: 100px;
+  border: 2px solid red;
+  margin-bottom: 400px;
 `
 const Article = styled.div`
-  position: relative;
   padding: 50px;
   margin: 0 50px;
   width: 200px;

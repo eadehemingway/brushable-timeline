@@ -44,7 +44,7 @@ const makeForceData = (percentage) => { //if you want the x & y positions to be 
     const colored = i <percentage
     return {
       index: i,
-      x: colored ? 150 : 450,
+      x: colored ? 100 : 300,
       y: height / 2,
     }
   })
@@ -53,17 +53,17 @@ const makeForceData = (percentage) => { //if you want the x & y positions to be 
 const drawCircles = (innerdata, radius, number, color) => {
 
   simulation = d3
-   .forceSimulation(forceData) //change to innerdata if want to use x and y force
-   .force('collide', d3.forceCollide().radius(11).strength(1)) //collide is to prevent overlap
-   .force('bounds',forceBounds(200)) // if I add arguments  here it doesn't work so I need to do it directly in the source file
-   // .force('x', d3.forceX(d=>d.x).strength(0.1))
-   // .force('y',d3.forceY(d=>d.y).strength(0.1))
-   // .alphaDecay(.03);
+   .forceSimulation(innerdata) //change to innerdata if want to use x and y force
+   .force('collide', d3.forceCollide().radius(9).strength(1)) //collide is to prevent overlap
+   //.force('bounds',forceBounds(200)) // if I add arguments  here it doesn't work so I need to do it directly in the source file
+   .force('x', d3.forceX(d=>d.x).strength(0.1))
+   .force('y',d3.forceY(d=>d.y).strength(0.1))
+   .alphaDecay(.03);
 
    simulation.on('tick', forceTick)
 
    svg.selectAll(".circles")
-      .data(forceData) //change to innerdata if want to use x and y force
+      .data(innerdata) //change to innerdata if want to use x and y force
       .join('circle')
       .attr("class", "circles")
       .attr('cx', (d: any) => d.x)
@@ -71,7 +71,7 @@ const drawCircles = (innerdata, radius, number, color) => {
       .transition().duration(1000)
       .attr("r", radius)
       .attr("stroke","black")
-      .attr("stroke-width","0.5px")
+      .attr("stroke-width","0.1px")
       .attr('fill', (d, i) => (i <= number ? color:'#fff'))
 }
 
@@ -93,25 +93,25 @@ const onStepEnter = ({ data }) => {
 
   if(data == 1){
 
-    drawCircles(makeForceData(5),10,4,'#4c8eb0')
+    drawCircles(makeForceData(5),7,4,'#4c8eb0')
 
   }
 
   if(data==2){
 
-    drawCircles(makeForceData(25),10,24,'#4c8eb0')
+    drawCircles(makeForceData(25),7,24,'#4c8eb0')
   }
 
   if(data==3){
 
-    drawCircles(makeForceData(6.5),10,6,'#8cd2b5')
+    drawCircles(makeForceData(6.5),7,6,'#8cd2b5')
 
   }
 
   if(data==4){
 
 
-    drawCircles(makeForceData(41),10,40,'#8cd2b5')
+    drawCircles(makeForceData(41),7,40,'#8cd2b5')
 
   }
 };

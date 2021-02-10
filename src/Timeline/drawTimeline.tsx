@@ -29,8 +29,8 @@ export const drawTimeline = () => {
     .attr('width', svgWidth)
     .append('g')
     .attr('class', 'big-timeline')
-    .attr('overflow', 'hidden')
-    .attr('width', 100)
+    // .attr('overflow', 'hidden')
+    // .attr('width', 100)
 
   // ---------BIG TIMELINE draw textured bgs-----------------------------------------------------------------
 
@@ -47,8 +47,9 @@ export const drawTimeline = () => {
       'width',
       (d: any) => yearIntoXScale(d.endYear) - yearIntoXScale(d.startYear)
     )
+    .attr("fill-opacity",0.8)
     .attr('fill', (d, i) => {
-      const color = textures.lines().lighter().size(8).stroke(textureColors[i])
+      const color = textures.lines().size(8).strokeWidth(1).stroke(textureColors[i])
       d3.select('svg').call(color)
       return color.url()
     })

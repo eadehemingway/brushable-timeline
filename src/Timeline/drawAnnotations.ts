@@ -68,14 +68,11 @@ export const drawAnnotations = (yearIntoXScale, yScale) => {
   backgroundRects
     .attr('fill', '#282c34')
     .attr('fill-opacity', 0.7)
-    .attr('stroke-dasharray', (d: any) => {
-      const description = d.note.label.trim()
-      return description.length ? 2 : null
-    })
-    .attr('stroke', (d: any) => {
-      const description = d.note.label.trim()
-      return description.length ? '#f9a03f' : '#956025'
-    })
+    // .attr('stroke-dasharray', (d: any) => {
+    //   const description = d.note.label.trim()
+    //   return description.length ? 2 : null
+    // })
+    .attr('stroke', '#dddada')
     .attr('width', 224) // hard coding this because the wrap above seems to make the rect too big
     .attr('height', (d: any) => {
       return getClosedLabelHeight(d.note.title)

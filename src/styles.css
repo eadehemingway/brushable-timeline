@@ -1,3 +1,8 @@
+@import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400;600&display=swap');
+
+body{
+  font-family: 'Source Sans Pro', sans-serif;
+}
 .big-axis line {
   stroke: linen;
 }
@@ -40,7 +45,7 @@ foreignObject > * {
 
 h1 {
   text-align: center;
-  font-family: Tahoma, Arial, sans-serif;
+  font-family: 'Source Sans Pro', sans-serif;
   color: #06d85f;
   margin: 80px 0;
 }
@@ -73,7 +78,7 @@ h1 {
   -ms-transition: all 0.5s ease;
   transition: all 0.5s ease;
   padding: 12px 30px;
-  font-family: 'Roboto', san-serif;
+  font-family: 'Source Sans Pro', sans-serif;
   margin-left: auto;
   margin-right: auto;
 }
@@ -177,7 +182,7 @@ h1 {
   width: 20px;
   height: 20px;
   border-radius: 15px;
-  background-color: #fd8d3c;
+  background-color: #4c8eb0;
   -webkit-transition: left .15s ease-out;
   transition: left .15s ease-out;
 }
@@ -273,7 +278,8 @@ navbar a{
   width:100%;
   height:60vh;
   top:20vh;
-  background-color: #aaa;
+  background-color: none;
+  /* #aaa */
   display:flex;
   align-items: center;
   justify-content: center;
@@ -287,11 +293,11 @@ navbar a{
 }
 
 .scroller{
-  flex-basis: 35%;
+  flex-basis: 30%;
 }
 .step{
-  margin: 0 auto 3rem auto;
-  padding: 180px 0;
+  margin: 10rem auto 10rem auto;
+  padding: 150px 0;
   border: 1px solid #333;
 }
 
@@ -304,4 +310,8 @@ navbar a{
 
 .step p:last-child{
   margin-bottom: 0;
+}
+
+.scroll{
+  margin-bottom: 200px;
 }

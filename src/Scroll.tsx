@@ -1,166 +1,117 @@
 import React, { useRef, useState, useEffect } from 'react'
+import textures from 'textures'
 import './styles.css'
 import { Scrollama, Step } from 'react-scrollama';
 import * as d3 from 'd3';
 import ResizeObserver from "resize-observer-polyfill";
+import forceBounds from "./bounds"
 
 
 export function Scroll() {
-
-
 
 const width = 700;
 const height = 400;
 const svgRef = useRef()
 
-const forceNodes = [
-  ...Array(100)
-    .fill(1)
-    .map((index) => ({ id: index })),
-]
-const forceData = forceNodes.map((d, i) => {
-  const isColored = i <5
-  return {
-    index: i,
-    x: isColored ? 200 : 400,
-    y: height / 2,
-  }
-})
 
-
-const [data, setData] = useState(0);
-const [nodeData, setNodeData] = useState(forceData)
-const [steps, setSteps] = useState([10, 20, 30]);
+const [data, setData] = useState(0); // to track current step
+const [steps, setSteps] = useState([1, 2, 3, 4]); // to track the steps
 const [progress, setProgress] = useState(0);
 
 var svg;
 var circles;
 var simulation;
 
+ // dummy data
+var forceNodes = [
+  ...Array(100)
+    .fill(1)
+    .map((index) => ({ id: index })),
+]
+
+
+var forceData = forceNodes.map((d, i) => {
+ return {
+   index: i,
+   x: width/2,
+   y: height / 2,
+ }
+})
+
+const makeForceData = (percentage) => { //if you want the x & y positions to be different at every step
+
+   return forceNodes.map((d, i) => {
+    const colored = i <percentage
+    return {
+      index: i,
+      x: colored ? 150 : 450,
+      y: height / 2,
+    }
+  })
+}
+
+const drawCircles = (innerdata, radius, number, color) => {
+
+  simulation = d3
+   .forceSimulation(forceData) //change to innerdata if want to use x and y force
+   .force('collide', d3.forceCollide().radius(11).strength(1)) //collide is to prevent overlap
+   .force('bounds',forceBounds(200)) // if I add arguments  here it doesn't work so I need to do it directly in the source file
+   // .force('x', d3.forceX(d=>d.x).strength(0.1))
+   // .force('y',d3.forceY(d=>d.y).strength(0.1))
+   // .alphaDecay(.03);
+
+   simulation.on('tick', forceTick)
+
+   svg.selectAll(".circles")
+      .data(forceData) //change to innerdata if want to use x and y force
+      .join('circle')
+      .attr("class", "circles")
+      .attr('cx', (d: any) => d.x)
+      .attr('cy', (d: any) => d.y)
+      .transition().duration(1000)
+      .attr("r", radius)
+      .attr("stroke","black")
+      .attr("stroke-width","0.5px")
+      .attr('fill', (d, i) => (i <= number ? color:'#fff'))
+}
 
 useEffect(() => {
 
-   setNodeData(forceData);
    svg = d3.select(svgRef.current).attr("width",width).attr("height",height)
-
-   circles = svg.selectAll(".circles")
-      .data(nodeData)
-      .join('circle')
-      .attr('cx', (d: any) => d.x)
-      .attr('cy', (d: any) => d.y)
-      .attr("class", "circles")
-      .attr("r", 10)
-      .attr("stroke","black")
-      .attr("stroke-width","0.1px")
-      .attr('fill', (d, i) => (i == 0 ? 'linen' : 'coral'))
-
-
-   simulation = d3
-    .forceSimulation(nodeData) //.force(name, method)
-    .force('collide', d3.forceCollide().radius(10)) //collide is to prevent overlap
-    .force('x', d3.forceX(d=>d.x))
-    .force('y',d3.forceY(d=>d.y))
-
-      simulation.on('tick', forceTick)
-
-
+   drawCircles(makeForceData(5),0,4,'#4c8eb0')
 //
-}, []) //at first I placed nodeData here but whenever I use setNodeData I get an error
-// what is the best way to update the force data?
-
-
+}, [])
 
 
 function forceTick() {
   svg.selectAll(".circles").attr('cx', (d: any) => d.x).attr('cy', (d: any) => d.y)
 }
 
-
 const onStepEnter = ({ data }) => {
+
   setData(data);
 
+  if(data == 1){
 
-  if(data == 10){
+    drawCircles(makeForceData(5),10,4,'#4c8eb0')
 
   }
 
-  if(data==20){
+  if(data==2){
 
-
-        const forceData2 = forceNodes.map((d, i) => {
-          const isColored = i <25
-          return {
-            index: i,
-            x: isColored ? 200 : 400,
-            y: height / 2,
-          }
-        })
-
-        simulation = d3.forceSimulation(forceData2);
-        simulation //.force(name, method)
-         .force('collide', d3.forceCollide().radius(10)) //collide is to prevent overlap
-         .force('x', d3.forceX(d=>d.x))
-         .force('y',d3.forceY(d=>d.y))
-
-        circles
-        .data(forceData2)
-        .join('circle')
-        .attr("class", "circles")
-        .attr('cx', (d: any) => d.x)
-        .attr('cy', (d: any) => d.y)
-        .attr("r", 10)
-        .attr("stroke","black")
-        .attr("stroke-width","0.5px");
+    drawCircles(makeForceData(25),10,24,'#4c8eb0')
   }
 
-  if(data==30){
+  if(data==3){
 
-    // circles
-    // .data(forceData2)
-    // .join('circle',
-    // update => update
-    // .attr("fill", "red"),
-    //     enter => enter
-    //         .attr("fill", "green")
-    //         .attr("r", 20)) //only either update or enter is read, whichever one comes first, why?
-    // .attr("class", "circles")
-    // .attr('cx', (d: any) => d.x)
-    // .attr('cy', (d: any) => d.y)
-    // .attr("r", 10)
-    // .attr("stroke","black")
-    // .attr("stroke-width","0.5px");
+    drawCircles(makeForceData(6.5),10,6,'#8cd2b5')
 
-    const forceNodes3 = [
-      ...Array(28)
-        .fill(1)
-        .map((index) => ({ id: index })),
-    ]
-    const forceData3 = forceNodes3.map((d, i) => {
-      const isColored = i === 0
-      return {
-        index: i,
-        x: isColored ? 200 : 300,
-        y: height / 2,
-      }
-    })
+  }
 
-    simulation = d3.forceSimulation(forceData3);
-    simulation //.force(name, method)
-     .force('collide', d3.forceCollide().radius(20)) //collide is to prevent overlap
-     .force('x', d3.forceX(d=>d.x))
-     .force('y',d3.forceY(d=>d.y))
+  if(data==4){
 
-      circles = svg.selectAll(".circles").data(forceData3);
-      circles.exit().transition().duration(600).attr("r", 0).remove();
-      circles.transition().duration(600)
-              .attr("fill","red")
-              .attr("r", 10)
-              .attr("opacity", 1);
 
-      circles.enter().append("circle").attr("class", "circles")
-          .attr("fill","green")
-          .attr("r", 20)
-          .attr("opacity", 1);
+    drawCircles(makeForceData(41),10,40,'#8cd2b5')
 
   }
 };
@@ -180,9 +131,9 @@ const onStepProgress = ({ progress }) => {
 
 
 return (
-<div>
+<div className="scroll">
   <p className="intro">
-    Art party irony synth, scenester man bun jean shorts tacos copper mug try-hard whatever. Bitters small batch vegan fanny pack, meditation occupy locavore pickled raclette deep v cornhole marfa butcher fixie ennui. Snackwave iPhone prism bushwick chia.
+   Here are some numbers that shows a prison system without boundaries and that is inherently biased.
   </p>
   <p className="pageSubtitle">Scroll ↓</p>
   <div className="graphicContainer">
@@ -193,21 +144,22 @@ return (
         progress
         onStepProgress={onStepProgress}
         offset={0.4}
-        debug
       >
         {steps.map(value => {
           const isVisible = value === data;
-          const background = isVisible
-            ? `rgba(44,127,184, ${progress})`
-            : 'white';
+          const background = '#dddada';
+          const opacity = isVisible? 1:0.4;
+          //isVisible? '#afdefc':'#dddada';
+            //{Math.round(progress * 1000) / 10 + '%'}
           const visibility = isVisible ? 'visible' : 'hidden';
+          const content = [' US is 5% of world population',
+                           'but 25% of worlds prison population',
+                           'Black males account for 6.5% of us pop',
+                           'but 40.2% of prison pop']
           return (
             <Step data={value} key={value}>
-              <div className="step" style={{ background }}>
-                <p>step value: {value}</p>
-                <p style={{ visibility }}>
-                  {Math.round(progress * 1000) / 10 + '%'}
-                </p>
+              <div className="step" style={{ background, opacity }}>
+                <p> {content[value-1]}</p>
               </div>
             </Step>
           );
@@ -215,7 +167,6 @@ return (
       </Scrollama>
     </div>
     <div className="graphic">
-      <p>{data}</p>
       <svg ref={svgRef} />
     </div>
   </div>

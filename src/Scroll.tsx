@@ -1,175 +1,136 @@
 import React, { useRef, useState, useEffect } from 'react'
-import textures from 'textures'
 import './styles.css'
-import { Scrollama, Step } from 'react-scrollama';
-import * as d3 from 'd3';
-import ResizeObserver from "resize-observer-polyfill";
-import forceBounds from "./bounds"
-
+import { Scrollama, Step } from 'react-scrollama'
+import * as d3 from 'd3'
+import forceBounds from './bounds'
 
 export function Scroll() {
+  const width = 700
+  const height = 400
 
-const width = 700;
-const height = 400;
-const svgRef = useRef()
+  const [currentStep, setCurrentStep] = useState(0) // to track current step
+  const steps = [1, 2, 3, 4]
 
+  let simulation
 
-const [data, setData] = useState(0); // to track current step
-const [steps, setSteps] = useState([1, 2, 3, 4]); // to track the steps
-const [progress, setProgress] = useState(0);
+  // dummy data
+  const forceData = [
+    ...Array(100)
+      .fill(1)
+      .map((index) => ({
+        id: index,
+        index: index
+      }))
+  ]
 
-var svg;
-var circles;
-var simulation;
+  useEffect(() => {
+    d3.select('#scroll-svg').attr('width', width).attr('height', height)
+    drawCircles(0, 4, '#4c8eb0')
+  }, [])
 
- // dummy data
-var forceNodes = [
-  ...Array(100)
-    .fill(1)
-    .map((index) => ({ id: index })),
-]
+  const drawCircles = (radius, number, color) => {
+    simulation = d3
+      .forceSimulation(forceData) //change to innerdata if want to use x and y force
+      .force('collide', d3.forceCollide().radius(11).strength(1)) //collide is to prevent overlap
+      .force('bounds', forceBounds(200)) // if I add arguments  here it doesn't work so I need to do it directly in the source file
 
+    simulation.on('tick', forceTick)
 
-var forceData = forceNodes.map((d, i) => {
- return {
-   index: i,
-   x: width/2,
-   y: height / 2,
- }
-})
-
-const makeForceData = (percentage) => { //if you want the x & y positions to be different at every step
-
-   return forceNodes.map((d, i) => {
-    const colored = i <percentage
-    return {
-      index: i,
-      x: colored ? 150 : 450,
-      y: height / 2,
-    }
-  })
-}
-
-const drawCircles = (innerdata, radius, number, color) => {
-
-  simulation = d3
-   .forceSimulation(forceData) //change to innerdata if want to use x and y force
-   .force('collide', d3.forceCollide().radius(11).strength(1)) //collide is to prevent overlap
-   .force('bounds',forceBounds(200)) // if I add arguments  here it doesn't work so I need to do it directly in the source file
-   // .force('x', d3.forceX(d=>d.x).strength(0.1))
-   // .force('y',d3.forceY(d=>d.y).strength(0.1))
-   // .alphaDecay(.03);
-
-   simulation.on('tick', forceTick)
-
-   svg.selectAll(".circles")
+    d3.select('#scroll-svg')
+      .selectAll('.circles')
       .data(forceData) //change to innerdata if want to use x and y force
       .join('circle')
-      .attr("class", "circles")
+      .attr('class', 'circles')
+      .transition()
+      .duration(1000)
+      .attr('r', radius)
+      .attr('stroke', 'black')
+      .attr('stroke-width', '0.5px')
+      .attr('fill', (d, i) => (i <= number ? color : '#fff'))
+  }
+
+  function forceTick() {
+    d3.select('#scroll-svg')
+      .selectAll('.circles')
       .attr('cx', (d: any) => d.x)
       .attr('cy', (d: any) => d.y)
-      .transition().duration(1000)
-      .attr("r", radius)
-      .attr("stroke","black")
-      .attr("stroke-width","0.5px")
-      .attr('fill', (d, i) => (i <= number ? color:'#fff'))
-}
-
-useEffect(() => {
-
-   svg = d3.select(svgRef.current).attr("width",width).attr("height",height)
-   drawCircles(makeForceData(5),0,4,'#4c8eb0')
-//
-}, [])
-
-
-function forceTick() {
-  svg.selectAll(".circles").attr('cx', (d: any) => d.x).attr('cy', (d: any) => d.y)
-}
-
-const onStepEnter = ({ data }) => {
-
-  setData(data);
-
-  if(data == 1){
-
-    drawCircles(makeForceData(5),10,4,'#4c8eb0')
-
   }
 
-  if(data==2){
+  const onStepEnter = ({ data }) => {
+    setCurrentStep(data)
+    let color
+    let amountColor
+    const circleSize = 10
 
-    drawCircles(makeForceData(25),10,24,'#4c8eb0')
+    switch (data) {
+      case 1:
+        color = '#4c8eb0'
+        amountColor = 4
+        break
+
+      case 2:
+        color = '#4c8eb0'
+        amountColor = 24
+        break
+
+      case 3:
+        color = '#8cd2b5'
+        amountColor = 6
+        break
+
+      case 4:
+        color = '#8cd2b5'
+        amountColor = 40
+        break
+    }
+
+    drawCircles(circleSize, amountColor, color)
   }
 
-  if(data==3){
-
-    drawCircles(makeForceData(6.5),10,6,'#8cd2b5')
-
+  const onStepExit = ({ direction, exitingStep }) => {
+    if (direction === 'up' && exitingStep === steps[0]) {
+      setCurrentStep(0)
+    }
   }
 
-  if(data==4){
-
-
-    drawCircles(makeForceData(41),10,40,'#8cd2b5')
-
-  }
-};
-
-const onStepExit = ({ direction, data }) => {
-  if (direction === 'up' && data === steps[0]) {
-    setData(0);
-  }
-};
-
-const onStepProgress = ({ progress }) => {
-  setProgress(progress);
-};
-
-
-
-
-
-return (
-<div className="scroll">
-  <p className="intro">
-   Here are some numbers that shows a prison system without boundaries and that is inherently biased.
-  </p>
-  <p className="pageSubtitle">Scroll ↓</p>
-  <div className="graphicContainer">
-    <div className="scroller">
-      <Scrollama
-        onStepEnter={onStepEnter}
-        onStepExit={onStepExit}
-        progress
-        onStepProgress={onStepProgress}
-        offset={0.4}
-      >
-        {steps.map(value => {
-          const isVisible = value === data;
-          const background = '#dddada';
-          const opacity = isVisible? 1:0.4;
-          //isVisible? '#afdefc':'#dddada';
-            //{Math.round(progress * 1000) / 10 + '%'}
-          const visibility = isVisible ? 'visible' : 'hidden';
-          const content = [' US is 5% of world population',
-                           'but 25% of worlds prison population',
-                           'Black males account for 6.5% of us pop',
-                           'but 40.2% of prison pop']
-          return (
-            <Step data={value} key={value}>
-              <div className="step" style={{ background, opacity }}>
-                <p> {content[value-1]}</p>
-              </div>
-            </Step>
-          );
-        })}
-      </Scrollama>
+  return (
+    <div className="scroll">
+      <p className="intro">
+        Here are some numbers that shows a prison system without boundaries and
+        that is inherently biased.
+      </p>
+      <p className="pageSubtitle">Scroll ↓</p>
+      <div className="graphicContainer">
+        <div className="scroller">
+          <Scrollama
+            onStepEnter={onStepEnter}
+            onStepExit={onStepExit}
+            offset={0.4}
+          >
+            {steps.map((step) => {
+              const isVisible = step === currentStep
+              const background = '#dddada'
+              const opacity = isVisible ? 1 : 0.4
+              const content = [
+                ' US is 5% of world population',
+                'but 25% of worlds prison population',
+                'Black males account for 6.5% of us pop',
+                'but 40.2% of prison pop'
+              ]
+              return (
+                <Step data={step} key={step}>
+                  <div className="step" style={{ background, opacity }}>
+                    <p> {content[step - 1]}</p>
+                  </div>
+                </Step>
+              )
+            })}
+          </Scrollama>
+        </div>
+        <div className="graphic">
+          <svg id="scroll-svg" />
+        </div>
+      </div>
     </div>
-    <div className="graphic">
-      <svg ref={svgRef} />
-    </div>
-  </div>
-</div>
-)
+  )
 }

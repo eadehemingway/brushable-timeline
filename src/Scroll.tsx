@@ -56,9 +56,7 @@ const drawCircles = (innerdata, radius, number, color) => {
    .forceSimulation(forceData) //change to innerdata if want to use x and y force
    .force('collide', d3.forceCollide().radius(11).strength(1)) //collide is to prevent overlap
    .force('bounds',forceBounds(200)) // if I add arguments  here it doesn't work so I need to do it directly in the source file
-   // .force('x', d3.forceX(d=>d.x).strength(0.1))
-   // .force('y',d3.forceY(d=>d.y).strength(0.1))
-   // .alphaDecay(.03);
+
 
    simulation.on('tick', forceTick)
 

@@ -1,9 +1,8 @@
-import React, { useRef, useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import textures from 'textures'
 import './styles.css'
 import { Scrollama, Step } from 'react-scrollama';
 import * as d3 from 'd3';
-import ResizeObserver from "resize-observer-polyfill";
 import forceBounds from "./bounds"
 
 
@@ -11,112 +10,97 @@ export function Scroll() {
 
 const width = 700;
 const height = 400;
-const svgRef = useRef()
 
+const [currentStepIndex, setCurrentStepIndex] = useState(0); // to track current step
+const steps = [1, 2, 3, 4]; // to track the steps
 
-const [data, setData] = useState(0); // to track current step
-const [steps, setSteps] = useState([1, 2, 3, 4]); // to track the steps
-const [progress, setProgress] = useState(0);
-
-var svg;
-var circles;
-var simulation;
+let simulation;
 
  // dummy data
-var forceNodes = [
+var forceData = [
   ...Array(100)
     .fill(1)
-    .map((index) => ({ id: index })),
+    .map((index) => ({
+      id: index,
+      index: index
+    })),
 ]
-
-
-var forceData = forceNodes.map((d, i) => {
- return {
-   index: i,
-   x: width/2,
-   y: height / 2,
- }
-})
 
 
 const drawCircles = (radius, number, color) => {
 
+  d3.select('#scroll-svg').selectAll(".circles")
+     .data(forceData)
+     .join('circle')
+     .attr("class", "circles")
+     .transition().duration(500)
+     .attr("r", radius)
+     .attr("stroke","black")
+     .attr("stroke-width","0.1px")
+     .attr('fill', (d, i) => (i <= number ? color:'#fff'))
+
   simulation = d3
    .forceSimulation(forceData) //change to innerdata if want to use x and y force
    .force('collide', d3.forceCollide().radius(9).strength(1)) //collide is to prevent overlap
-   //.force('bounds',forceBounds(200)) // if I add arguments  here it doesn't work so I need to do it directly in the source file
-   .force('x', d3.forceX((d,i)=>i <= number?100:300).strength(0.1))
+   .force('x', d3.forceX((d,i)=>i <= number?100:350).strength(0.1))
    .force('y',d3.forceY(height / 2).strength(0.1))
    .alphaDecay(.03);
 
    simulation.on('tick', forceTick)
 
-   svg.selectAll(".circles")
-      .data(forceData) //change to innerdata if want to use x and y force
-      .join('circle')
-      .attr("class", "circles")
-      .attr('cx', (d: any) => d.x)
-      .attr('cy', (d: any) => d.y)
-      .transition().duration(1000)
-      .attr("r", radius)
-      .attr("stroke","black")
-      .attr("stroke-width","0.1px")
-      .attr('fill', (d, i) => (i <= number ? color:'#fff'))
 }
 
 useEffect(() => {
 
-   svg = d3.select(svgRef.current).attr("width",width).attr("height",height)
+   d3.select('#scroll-svg').attr("width",width).attr("height",height)
    drawCircles(0,4,'#4c8eb0')
 //
 }, [])
 
 
 function forceTick() {
-  svg.selectAll(".circles").attr('cx', (d: any) => d.x).attr('cy', (d: any) => d.y)
+  d3.select('#scroll-svg').selectAll(".circles").attr('cx', (d: any) => d.x).attr('cy', (d: any) => d.y)
 }
 
 const onStepEnter = ({ data }) => {
 
-  setData(data);
+  setCurrentStepIndex(data);
 
-  if(data == 1){
+  const circleSize = 7;
+  let amountColored;
+  let color;
 
-    drawCircles(7,4,'#4c8eb0')
+  switch (data) {
+      case 1:
+        color = '#4c8eb0'
+        amountColored = 4
+        break
 
-  }
+      case 2:
+        color = '#4c8eb0'
+        amountColored = 24
+        break
 
-  if(data==2){
+      case 3:
+        color = '#8cd2b5'
+        amountColored = 6
+        break
 
-    drawCircles(7,24,'#4c8eb0')
-  }
+      case 4:
+        color = '#8cd2b5'
+        amountColored = 40
+        break
+    }
 
-  if(data==3){
+    drawCircles(circleSize,amountColored,color)
 
-    drawCircles(7,6,'#8cd2b5')
-
-  }
-
-  if(data==4){
-
-
-    drawCircles(7,40,'#8cd2b5')
-
-  }
 };
 
 const onStepExit = ({ direction, data }) => {
-  if (direction === 'up' && data === steps[0]) {
-    setData(0);
+  if (direction === 'up' && data === steps[0]) { //if it's the first step
+    setCurrentStepIndex(0);
   }
 };
-
-const onStepProgress = ({ progress }) => {
-  setProgress(progress);
-};
-
-
-
 
 
 return (
@@ -130,25 +114,20 @@ return (
       <Scrollama
         onStepEnter={onStepEnter}
         onStepExit={onStepExit}
-        progress
-        onStepProgress={onStepProgress}
         offset={0.4}
       >
-        {steps.map(value => {
-          const isVisible = value === data;
+        {steps.map(step => {
+          const isVisible = step === currentStepIndex;
           const background = '#dddada';
           const opacity = isVisible? 1:0.4;
-          //isVisible? '#afdefc':'#dddada';
-            //{Math.round(progress * 1000) / 10 + '%'}
-          const visibility = isVisible ? 'visible' : 'hidden';
           const content = [' US is 5% of world population',
                            'but 25% of worlds prison population',
                            'Black males account for 6.5% of us pop',
                            'but 40.2% of prison pop']
           return (
-            <Step data={value} key={value}>
+            <Step data={step} key={step}>
               <div className="step" style={{ background, opacity }}>
-                <p> {content[value-1]}</p>
+                <p> {content[step-1]}</p>
               </div>
             </Step>
           );
@@ -156,7 +135,7 @@ return (
       </Scrollama>
     </div>
     <div className="graphic">
-      <svg ref={svgRef} />
+      <svg id="scroll-svg" />
     </div>
   </div>
 </div>

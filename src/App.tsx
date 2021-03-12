@@ -15,11 +15,11 @@ function App() {
     <AppContainer>
       <InnerContainer>
         <Title>13th Ammendment</Title>
-        <Timeline />
+        {/* <Timeline /> */}
         {/* would be good to add in a bar chart or soemthing that compares us incarceration rate to other countries... cant seem to get data in right structure (only in pdfs) */}
-        <WorldContextMatrix />
+        {/* <WorldContextMatrix />
         <TimeContext />
-        <RaceContext />
+        <RaceContext /> */}
         <ScrollMatrix />
       </InnerContainer>
     </AppContainer>

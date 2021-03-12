@@ -4,72 +4,35 @@ import * as d3 from 'd3'
 import 'intersection-observer'
 import scrollama from 'scrollama' // or...
 import { manBodyD } from '../assets/man-icon'
+import { draw100People } from './draw100People'
+import { stepZero } from './step0'
+import { stepOne } from './step1'
+import { stepTwo } from './step2'
+import { stepThree } from './step3'
+import { stepFour } from './step4'
+import { stepFive } from './step5'
+import { stepSix } from './step6'
+import { stepSeven } from './step7'
+import { stepEight } from './step8'
+import { stepNine } from './step9'
+import { stepTen } from './step10'
 
 export const ScrollMatrix = () => {
   const data = d3.range(100)
   useEffect(() => {
-    drawPeople()
-    setUpScroll()
-  }, [])
-
-  function drawPeople() {
-    const dotsPerRow = 20
-    const iconWidth = 20
-    const iconHeight = 40
-    const leftBoxPadding = 40
-    const topBoxPadding = 40
-
     const svgWidth = 700
     const svgHeight = 500
     const svg = d3
-      .select('#scroll-matrix')
-      .attr('width', svgWidth)
-      .attr('height', svgHeight)
+    .select('#scroll-matrix')
+    .attr('width', svgWidth)
+    .attr('height', svgHeight)
+    draw100People(0, 'world-pop', 'lightsteelblue')
+    setUpScroll()
+  }, [])
 
-    svg
-      .selectAll('path')
-      .data(data)
-      .enter()
-      .append('path')
-      .attr('d', manBodyD)
-      .attr('id', (d, i) => `body-${i + 1}`)
-      .attr('transform', (d, i) => {
-        const x = leftBoxPadding + getX2Coordinate(i, dotsPerRow, iconWidth)
 
-        const y = getY2Coordinate(i, dotsPerRow, iconHeight) + topBoxPadding
-        return 'translate(' + x + ',' + y + ') scale(0.3)'
-      })
-      .attr('fill', 'lightsteelblue')
 
-    svg
-      .selectAll('circle')
-      .data(data)
-      .enter()
-      .append('circle')
-      .attr('id', (d, i) => `head-${i + 1}`)
-      .attr(
-        'cx',
-        (d, i) => leftBoxPadding + getX2Coordinate(i, dotsPerRow, iconWidth) + 5
-      )
-      .attr(
-        'cy',
-        (d, i) => getY2Coordinate(i, dotsPerRow, iconHeight) + topBoxPadding
-      )
-      .attr('r', 2.5)
-      .attr('fill', 'lightsteelblue')
-  }
 
-  function getY2Coordinate(index, dotsPerRow, height) {
-    const placeInCol = Math.floor(index / dotsPerRow)
-    const padding = 5
-    return placeInCol * (padding + height)
-  }
-
-  function getX2Coordinate(index, dotsPerRow, width) {
-    const placeInRow = index % dotsPerRow
-    const padding = 5
-    return placeInRow * (width + padding)
-  }
 
   function setUpScroll() {
     const scroller = scrollama()
@@ -85,39 +48,69 @@ export const ScrollMatrix = () => {
         const progressOneToHundred = Number((res.progress * 100).toFixed(0))
         const svg = d3.select('#scroll-matrix')
 
-        if (res.index === 0) {
-          d3.range(progressOneToHundred + 1).forEach((n) => {
-            if (n < 6) {
-              svg.select(`#head-${n}`).attr('fill', 'coral')
-              svg.select(`#body-${n}`).attr('fill', 'coral')
-            }
-          })
+        switch (res.index){
+        case 0 :
+        stepZero(svg, progressOneToHundred)
+        return;
+        case 1:
+        stepOne(svg, progressOneToHundred)
+        return
+        case 2:
+        stepTwo(svg, progressOneToHundred)
+        return
+        case 3:
+        stepThree(svg, progressOneToHundred)
+        return
+        case 4:
+        stepFour(svg, progressOneToHundred)
+        return
+        case 5:
+        stepFive(svg, progressOneToHundred)
+        return
+        case 6:
+        stepSix(svg, progressOneToHundred)
+        return
+        case 7:
+        stepSeven(svg, progressOneToHundred)
+        return
+        case 8:
+        stepEight(svg, progressOneToHundred)
+        return
+        case 9:
+        stepNine(svg, progressOneToHundred)
+        return
+        case 10:
+        stepTen(svg, progressOneToHundred)
+        return
+
         }
 
-        if (res.index === 1) {
-          d3.range(progressOneToHundred + 1).forEach((n) => {
-            if (n < 26) {
-              svg.select(`#head-${n}`).attr('fill', 'coral')
-              svg.select(`#body-${n}`).attr('fill', 'coral')
-            }
-          })
-        }
 
-        // return to blue when you scroll back up
-        const blueIcons = d3.range(Number(progressOneToHundred) + 1, 101)
 
-        blueIcons.forEach((n) => {
-          if ((res.index === 1 && n < 6) || res.index === 0) {
-            svg.select(`#head-${n}`).attr('fill', 'lightsteelblue')
-            svg.select(`#body-${n}`).attr('fill', 'lightsteelblue')
-          }
-        })
+      //   // return to blue when you scroll back up
+      //   const blueIcons = d3.range(Number(progressOneToHundred) + 1, 101)
+
+      //   blueIcons.forEach((n) => {
+      //     if ((res.index === 1 && n < 6) || res.index === 0) {
+      //       svg.select(`#head-${n}`).attr('fill', 'lightsteelblue')
+      //       svg.select(`#body-${n}`).attr('fill', 'lightsteelblue')
+      //     }
+      //   })
       })
   }
 
   const steps = [
-    `US is 5% of world pop so you might expect them to make up 5% of the worlds prison population.`,
-    `but they make up 25% of worlds prison population meaning 1 in 4 prisoners are American, highest incarceration rate in the world. `,
+"of the 7bn people in the world, america makes up 5%",
+"if their prison population was proportional to this, you would expect their prison population to be 5%",
+"but it is five times higher. 25% of the worlds prison population are american.",
+"that means that 1 in 4 prisoners are american. This is the highest incarceration rate in the world. ",
+"of americas population, afro americans make up 13% ",
+"if the prison population was proportional it would be about the same ",
+"but it is much higher (say what percentage of prison population are black - male and female) ~33%",
+"and this is even more disproportionate for black males (6.5% of pop and 40.2% of prison pop)",
+"if you are black in america you have a one in three chance of going to prixon",
+"compared to a one in17 chance if you are white. "
+
   ]
   return (
     <>

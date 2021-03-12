@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import styled from 'styled-components'
 import * as d3 from 'd3'
 import 'intersection-observer'
 import scrollama from 'scrollama' // or...
-import { manBodyD } from '../assets/man-icon'
 import { draw100People } from './draw100People'
 import { stepZero } from './step0'
 import { stepOne } from './step1'
@@ -17,12 +16,10 @@ import { stepEight } from './step8'
 import { stepNine } from './step9'
 
 export const ScrollMatrix = () => {
-  const data = d3.range(100)
   useEffect(() => {
     const svgWidth = 700
     const svgHeight = 500
-    const svg = d3
-      .select('#scroll-matrix')
+    d3.select('#scroll-matrix')
       .attr('width', svgWidth)
       .attr('height', svgHeight)
     draw100People(0, 'world-pop', 'lightsteelblue', 'lightsteelblue')
@@ -31,6 +28,7 @@ export const ScrollMatrix = () => {
 
   function setUpScroll() {
     const scroller = scrollama()
+    const svg = d3.select('#scroll-matrix')
     scroller
       .setup({
         step: '.step',
@@ -39,9 +37,8 @@ export const ScrollMatrix = () => {
         progress: true
       })
       .onStepProgress((res: any) => {
-        // make them go coral as you scroll down.
+        // scrolling down behaviour
         const progressOneToHundred = Number((res.progress * 100).toFixed(0))
-        const svg = d3.select('#scroll-matrix')
 
         switch (res.index) {
           case 0:
@@ -75,16 +72,6 @@ export const ScrollMatrix = () => {
             stepNine(svg, progressOneToHundred)
             return
         }
-
-        //   // return to blue when you scroll back up
-        //   const blueIcons = d3.range(Number(progressOneToHundred) + 1, 101)
-
-        //   blueIcons.forEach((n) => {
-        //     if ((res.index === 1 && n < 6) || res.index === 0) {
-        //       svg.select(`#head-${n}`).attr('fill', 'lightsteelblue')
-        //       svg.select(`#body-${n}`).attr('fill', 'lightsteelblue')
-        //     }
-        //   })
       })
   }
 

@@ -44,7 +44,7 @@ export function stepThree(svg, progressOneToHundred) {
   }
 }
 
-function getXFromIndex(index) {
+export function getXFromIndex(index) {
   switch (true) {
     case index < 25:
       return 80

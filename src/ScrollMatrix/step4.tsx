@@ -6,12 +6,7 @@ import { getHatchBodyTexture, getHatchHeadTexture } from './utils'
 export function stepFour(svg, progressOneToHundred) {
   // make people on page disappear
 
-  d3.selectAll('.hundred-prison-pop-body')
-    .attr('opacity', 1)
-    .transition()
-    .attr('opacity', 0)
-    .remove()
-  d3.selectAll('.hundred-prison-pop-head')
+  d3.selectAll('.hundred-prison-pop')
     .attr('opacity', 1)
     .transition()
     .attr('opacity', 0)

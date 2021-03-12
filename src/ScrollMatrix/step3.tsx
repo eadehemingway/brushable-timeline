@@ -3,12 +3,7 @@ import * as d3 from 'd3'
 export function stepThree(svg, progressOneToHundred) {
   // remove the world-pop hundred on the left
 
-  d3.selectAll('.hundred-world-pop-body')
-    .attr('opacity', 1)
-    .transition()
-    .attr('opacity', 0)
-    .remove()
-  d3.selectAll('.hundred-world-pop-head')
+  d3.selectAll('.hundred-world-pop')
     .attr('opacity', 1)
     .transition()
     .attr('opacity', 0)

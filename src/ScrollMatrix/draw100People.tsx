@@ -18,7 +18,7 @@ export function draw100People(x1, id, headColor, bodyColor) {
     .data(data)
     .enter()
     .append('path')
-    .attr('class', `hundred-${id}-body`)
+    .attr('class', `hundred-${id}-body hundred-${id} hundred`)
     .attr('d', manBodyD)
     .attr('id', (d, i) => `${id}-body-${i + 1}`)
     .attr('transform', (d, i) => {
@@ -33,7 +33,7 @@ export function draw100People(x1, id, headColor, bodyColor) {
     .data(data)
     .enter()
     .append('circle')
-    .attr('class', `hundred-${id}-head`)
+    .attr('class', `hundred-${id}-head hundred-${id} hundred`)
     .attr('id', (d, i) => `${id}-head-${i + 1}`)
     .attr(
       'cx',

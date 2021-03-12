@@ -14,22 +14,7 @@ export function stepEight(svg, progressOneToHundred) {
   //white americans have a one in seventeen chance in going to prison
 
   // remove the men on screen
-  d3.selectAll('.hundred-americas-pop-body')
-    .attr('opacity', 1)
-    .transition()
-    .attr('opacity', 0)
-    .remove()
-  d3.selectAll('.hundred-americas-prison-pop-body')
-    .attr('opacity', 1)
-    .transition()
-    .attr('opacity', 0)
-    .remove()
-  d3.selectAll('.hundred-americas-pop-head')
-    .attr('opacity', 1)
-    .transition()
-    .attr('opacity', 0)
-    .remove()
-  d3.selectAll('.hundred-americas-prison-pop-head')
+  d3.selectAll('.hundred')
     .attr('opacity', 1)
     .transition()
     .attr('opacity', 0)

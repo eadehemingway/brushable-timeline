@@ -26,7 +26,7 @@ export const ScrollMatrix = () => {
     .select('#scroll-matrix')
     .attr('width', svgWidth)
     .attr('height', svgHeight)
-    draw100People(0, 'world-pop', 'lightsteelblue')
+    draw100People(0, 'world-pop', 'lightsteelblue', 'lightsteelblue')
     setUpScroll()
   }, [])
 
@@ -120,7 +120,7 @@ export const ScrollMatrix = () => {
           {steps.map((s, i) => {
             return (
               <Box className="step" key={i}>
-                <P>{s}</P>
+                <P>{i+1} - {s}</P>
               </Box>
             )
           })}

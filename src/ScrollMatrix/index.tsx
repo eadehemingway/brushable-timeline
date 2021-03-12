@@ -16,23 +16,18 @@ import { stepSeven } from './step7'
 import { stepEight } from './step8'
 import { stepNine } from './step9'
 
-
 export const ScrollMatrix = () => {
   const data = d3.range(100)
   useEffect(() => {
     const svgWidth = 700
     const svgHeight = 500
     const svg = d3
-    .select('#scroll-matrix')
-    .attr('width', svgWidth)
-    .attr('height', svgHeight)
+      .select('#scroll-matrix')
+      .attr('width', svgWidth)
+      .attr('height', svgHeight)
     draw100People(0, 'world-pop', 'lightsteelblue', 'lightsteelblue')
     setUpScroll()
   }, [])
-
-
-
-
 
   function setUpScroll() {
     const scroller = scrollama()
@@ -41,74 +36,69 @@ export const ScrollMatrix = () => {
         step: '.step',
         debug: true, // this being true is what makes their dotted line show
         offset: 0.2, // where the dotted line shows up
-        progress: true,
+        progress: true
       })
       .onStepProgress((res: any) => {
         // make them go coral as you scroll down.
         const progressOneToHundred = Number((res.progress * 100).toFixed(0))
         const svg = d3.select('#scroll-matrix')
 
-        switch (res.index){
-        case 0 :
-        stepZero(svg, progressOneToHundred)
-        return;
-        case 1:
-        stepOne(svg, progressOneToHundred)
-        return
-        case 2:
-        stepTwo(svg, progressOneToHundred)
-        return
-        case 3:
-        stepThree(svg, progressOneToHundred)
-        return
-        case 4:
-        stepFour(svg, progressOneToHundred)
-        return
-        case 5:
-        stepFive(svg, progressOneToHundred)
-        return
-        case 6:
-        stepSix(svg, progressOneToHundred)
-        return
-        case 7:
-        stepSeven(svg, progressOneToHundred)
-        return
-        case 8:
-        stepEight(svg, progressOneToHundred)
-        return
-        case 9:
-        stepNine(svg, progressOneToHundred)
-        return
-
-
+        switch (res.index) {
+          case 0:
+            stepZero(svg, progressOneToHundred)
+            return
+          case 1:
+            stepOne(svg, progressOneToHundred)
+            return
+          case 2:
+            stepTwo(svg, progressOneToHundred)
+            return
+          case 3:
+            stepThree(svg, progressOneToHundred)
+            return
+          case 4:
+            stepFour(svg, progressOneToHundred)
+            return
+          case 5:
+            stepFive(svg, progressOneToHundred)
+            return
+          case 6:
+            stepSix(svg, progressOneToHundred)
+            return
+          case 7:
+            stepSeven(svg, progressOneToHundred)
+            return
+          case 8:
+            stepEight(svg, progressOneToHundred)
+            return
+          case 9:
+            stepNine(svg, progressOneToHundred)
+            return
         }
 
+        //   // return to blue when you scroll back up
+        //   const blueIcons = d3.range(Number(progressOneToHundred) + 1, 101)
 
-
-      //   // return to blue when you scroll back up
-      //   const blueIcons = d3.range(Number(progressOneToHundred) + 1, 101)
-
-      //   blueIcons.forEach((n) => {
-      //     if ((res.index === 1 && n < 6) || res.index === 0) {
-      //       svg.select(`#head-${n}`).attr('fill', 'lightsteelblue')
-      //       svg.select(`#body-${n}`).attr('fill', 'lightsteelblue')
-      //     }
-      //   })
+        //   blueIcons.forEach((n) => {
+        //     if ((res.index === 1 && n < 6) || res.index === 0) {
+        //       svg.select(`#head-${n}`).attr('fill', 'lightsteelblue')
+        //       svg.select(`#body-${n}`).attr('fill', 'lightsteelblue')
+        //     }
+        //   })
       })
   }
 
   const steps = [
-"of the 7bn people in the world, america makes up 5%",
-"if their prison population was proportional to this, you would expect their prison population to be 5%",
-"but it is five times higher. 25% of the worlds prison population are american.",
-"that means that 1 in 4 prisoners are american. This is the highest incarceration rate in the world. ",
-"of americas population, afro americans make up 13% ",
-"if the prison population was proportional it would be about the same ",
-"but it is much higher (say what percentage of prison population are black - male and female) ~33%",
-"and this is even more disproportionate for black males (6.5% of pop and 40.2% of prison pop)",
-"if you are black in america you have a one in three chance of going to prixon",
-"compared to a one in17 chance if you are white. "
-
+    'of the 7bn people in the world, america makes up 5%',
+    'if their prison population was proportional to this, you would expect their prison population to be 5%',
+    'but it is five times higher. 25% of the worlds prison population are american.',
+    'that means that 1 in 4 prisoners are american. This is the highest incarceration rate in the world. ',
+    'of americas population, afro americans make up 13% ',
+    'if the prison population was proportional it would be about the same ',
+    'but it is much higher (say what percentage of prison population are black - male and female) ~33%',
+    'and this is even more disproportionate for black males (6.5% of pop and 40.2% of prison pop)',
+    'if you are a white american you have a one in 17 chance of going to prison ',
+    'if you are black your chances are one in three'
   ]
   return (
     <>
@@ -118,7 +108,9 @@ export const ScrollMatrix = () => {
           {steps.map((s, i) => {
             return (
               <Box className="step" key={i}>
-                <P>{i} - {s}</P>
+                <P>
+                  {i} - {s}
+                </P>
               </Box>
             )
           })}

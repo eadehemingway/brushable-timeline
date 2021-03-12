@@ -1,20 +1,16 @@
 
 import * as d3 from 'd3'
-import textures from 'textures'
+import { getBodyTexture, getHeadTexture } from './utils'
 
 export function stepTwo (svg, progressOneToHundred) {
-  const bodyColor = textures.lines().orientation("horizontal").size(8).strokeWidth(1).stroke('coral')
-  svg.call(bodyColor)
-
-
-  const headColor = textures.lines().lighter().orientation("horizontal").size(3).strokeWidth(1).stroke('coral')
-  svg.call(headColor)
+  const bodyColor = getBodyTexture(svg, 'coral')
+  const headColor = getHeadTexture(svg, 'coral')
 
 d3.range(progressOneToHundred + 1).forEach((n) => {
-  if (n < 6) {
+  if (n < 26) {
 
-    svg.select(`#prison-pop-head-${n}`).attr('fill', headColor.url())
-    svg.select(`#prison-pop-body-${n}`).attr('fill', bodyColor.url())
+    svg.select(`#prison-pop-head-${n}`).attr('fill', headColor)
+    svg.select(`#prison-pop-body-${n}`).attr('fill', bodyColor)
   }
 })
 

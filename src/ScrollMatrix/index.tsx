@@ -120,7 +120,7 @@ export const ScrollMatrix = () => {
           {steps.map((s, i) => {
             return (
               <Box className="step" key={i}>
-                <P>{i+1} - {s}</P>
+                <P>{i} - {s}</P>
               </Box>
             )
           })}
@@ -145,13 +145,13 @@ const Outro = styled.div`
 `
 const Box = styled.div`
   margin: 0 auto 700px auto;
-  border: 2px solid pink;
+  // border: 2px solid pink;
 `
 const P = styled.p`
   position: sticky;
   top: 200px;
   height: 100px;
-  border: 2px solid red;
+  // border: 2px solid red;
   margin-bottom: 400px;
 `
 const Article = styled.div`

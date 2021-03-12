@@ -3,6 +3,7 @@
 import { manBodyD } from '../assets/man-icon'
 import * as d3 from 'd3'
 import textures from 'textures'
+import { getX2Coordinate, getY2Coordinate } from './utils'
 
 
   export function draw100People(x1, id, headColor, bodyColor) {
@@ -18,6 +19,7 @@ import textures from 'textures'
     .select('#scroll-matrix')
 
     const data = d3.range(100)
+
 
     svg
     .selectAll(`.hundred-${id}-body`)
@@ -54,16 +56,4 @@ import textures from 'textures'
       )
       .attr('r', 2.5)
       .attr('fill', headColor)
-  }
-
-  function getY2Coordinate(index, dotsPerRow, height) {
-    const placeInCol = Math.floor(index / dotsPerRow)
-    const padding = 5
-    return placeInCol * (padding + height)
-  }
-
-  function getX2Coordinate(index, dotsPerRow, width) {
-    const placeInRow = index % dotsPerRow
-    const padding = 5
-    return placeInRow * (width + padding)
   }

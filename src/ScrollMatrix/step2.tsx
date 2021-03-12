@@ -1,10 +1,10 @@
 
 import * as d3 from 'd3'
-import { getBodyTexture, getHeadTexture } from './utils'
+import { getLineBodyTexture, getLineHeadTexture } from './utils'
 
 export function stepTwo (svg, progressOneToHundred) {
-  const bodyColor = getBodyTexture(svg, 'coral')
-  const headColor = getHeadTexture(svg, 'coral')
+  const bodyColor = getLineBodyTexture(svg, 'coral')
+  const headColor = getLineHeadTexture(svg, 'coral')
 
 d3.range(progressOneToHundred + 1).forEach((n) => {
   if (n < 26) {

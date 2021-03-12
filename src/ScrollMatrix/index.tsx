@@ -15,7 +15,7 @@ import { stepSix } from './step6'
 import { stepSeven } from './step7'
 import { stepEight } from './step8'
 import { stepNine } from './step9'
-import { stepTen } from './step10'
+
 
 export const ScrollMatrix = () => {
   const data = d3.range(100)
@@ -79,9 +79,7 @@ export const ScrollMatrix = () => {
         case 9:
         stepNine(svg, progressOneToHundred)
         return
-        case 10:
-        stepTen(svg, progressOneToHundred)
-        return
+
 
         }
 

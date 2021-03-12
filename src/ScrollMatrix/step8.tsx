@@ -1,6 +1,7 @@
 
 import * as d3 from 'd3'
 import { manBodyD } from '../assets/man-icon'
+import { drawBigPeople } from './drawBigPeople'
 import { getHatchBodyTexture, getHatchHeadTexture, getLineBodyTexture, getLineHeadTexture } from './utils'
 
 export function stepEight (svg, progressOneToHundred) {
@@ -20,38 +21,10 @@ const bodyColor = getHatchBodyTexture(svg, 'sienna')
 const prisonBodyColor = getLineBodyTexture(svg, 'white')
 const prisonHeadColor = getLineHeadTexture(svg, 'white')
 
-    svg
-    .selectAll(`.three-body`)
-    .data(data)
-    .enter()
-    .append('path')
-    .attr('class',`three-body` )
-    .attr('d', manBodyD)
+function fill (d, i) {
+return i === 0 ? prisonBodyColor : bodyColor
+}
 
-    .attr('transform', (d, i) => {
+    drawBigPeople(svg, data, fill, "black-americans", 0)
 
-
-
-        return 'translate(' + i * 60 +',' + 100+ ') scale(1)'
-      })
-      .attr('fill', (d,i) => i === 0 ?prisonBodyColor :  bodyColor
-      )
-
-    svg
-      .selectAll(`three-head`)
-      .data(data)
-      .enter()
-      .append('circle')
-      .attr('class' , `three-head`)
-
-      .attr(
-        'cx',
-        (d, i) => (i * 60) +15
-      )
-      .attr(
-        'cy',
-        (d, i) => 100
-      )
-      .attr('r',6)
-      .attr('fill', (d,i) => i === 0 ?prisonHeadColor :  headColor)
 }

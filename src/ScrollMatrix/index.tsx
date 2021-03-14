@@ -14,7 +14,7 @@ import { stepSix } from './step6'
 import { stepSeven } from './step7'
 import { stepEight } from './step8'
 import { stepNine } from './step9'
-import { american, non_american } from './variables'
+import { non_american } from './variables'
 
 export const ScrollMatrix = () => {
   useEffect(() => {
@@ -124,13 +124,15 @@ const Outro = styled.div`
 const Box = styled.div`
   margin: 0 auto 100px auto;
   border: 2px solid pink;
+  height: 700px;
 `
 const P = styled.p`
   position: sticky;
   top: 200px;
   height: 100px;
   // border: 2px solid red;
-  margin-bottom: 400px;
+  // margin-bottom: 400px;
+  margin: auto;
 `
 const Article = styled.div`
   padding: 50px;

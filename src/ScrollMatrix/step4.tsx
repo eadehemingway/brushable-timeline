@@ -3,17 +3,10 @@ import { draw100People } from './draw100People'
 import { getXFromIndex } from './step3'
 
 import {
-  getHatchBodyTexture,
-  getHatchHeadTexture,
-  getLineBodyTexture,
-  getLineHeadTexture
-} from './utils'
-import {
   american_prisoner,
   black_american,
   non_american_prisoner,
-  non_black_american,
-  non_black_american_prisoner
+  non_black_american
 } from './variables'
 
 export function stepFour(svg, progressOneToHundred) {
@@ -64,8 +57,7 @@ export function stepFour(svg, progressOneToHundred) {
 
     d3.range(progressOneToHundred + 1).forEach((n) => {
       if (n < 14) {
-        svg.select(`#americas-pop-head-${n}`).attr('fill', black_am)
-        svg.select(`#americas-pop-body-${n}`).attr('fill', black_am)
+        svg.selectAll(`.americas-pop-${n}`).attr('fill', black_am)
       }
     })
   }

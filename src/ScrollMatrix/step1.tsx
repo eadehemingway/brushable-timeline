@@ -20,8 +20,7 @@ export function stepOne(svg, progressOneToHundred) {
   d3.range(progressOneToHundred + 1).forEach((n) => {
     const american_pris = american_prisoner(svg)
     if (n < 6) {
-      svg.select(`#prison-pop-head-${n}`).attr('fill', american_pris)
-      svg.select(`#prison-pop-body-${n}`).attr('fill', american_pris)
+      svg.selectAll(`.prison-pop-${n}`).attr('fill', american_pris)
     }
   })
 }

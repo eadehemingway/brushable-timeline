@@ -1,14 +1,7 @@
 import * as d3 from 'd3'
 import { draw100People } from './draw100People'
+
 import {
-  getLineHeadTexture,
-  getLineBodyTexture,
-  getHatchHeadTexture,
-  getHatchBodyTexture
-} from './utils'
-import {
-  american,
-  black_american,
   black_american_prisoner,
   non_black_american_prisoner
 } from './variables'

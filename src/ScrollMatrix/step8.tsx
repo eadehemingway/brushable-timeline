@@ -1,17 +1,9 @@
 import * as d3 from 'd3'
-import { manBodyD } from '../assets/man-icon'
+
 import { draw100People } from './draw100People'
 import { drawBigPeople } from './drawBigPeople'
+
 import {
-  getHatchBodyTexture,
-  getHatchHeadTexture,
-  getLineBodyTexture,
-  getLineHeadTexture,
-  getX2Coordinate,
-  getY2Coordinate
-} from './utils'
-import {
-  american,
   black_american,
   black_american_prisoner,
   non_black_american,

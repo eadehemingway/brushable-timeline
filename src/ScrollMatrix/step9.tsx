@@ -1,12 +1,6 @@
 import * as d3 from 'd3'
-import { manBodyD } from '../assets/man-icon'
 import { drawBigPeople } from './drawBigPeople'
-import {
-  getHatchBodyTexture,
-  getHatchHeadTexture,
-  getLineBodyTexture,
-  getLineHeadTexture
-} from './utils'
+
 import { black_american, black_american_prisoner } from './variables'
 
 export function stepNine(svg, progressOneToHundred) {

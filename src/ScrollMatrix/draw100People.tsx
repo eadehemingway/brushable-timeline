@@ -16,9 +16,11 @@ export function draw100People(x1, id, color) {
     .selectAll(`.hundred-${id}-body`)
     .data(data)
     .join('path')
-    .attr('class', `hundred-${id}-body hundred-${id} hundred`)
+    .attr(
+      'class',
+      (d, i) => `hundred-${id}-body hundred-${id} hundred ${id}-${i + 1}`
+    )
     .attr('d', manBodyD)
-    .attr('id', (d, i) => `${id}-body-${i + 1}`)
     .attr('transform', (d, i) => getTransformForHundredBodies(i, x1))
     .attr('fill', color)
 
@@ -26,8 +28,10 @@ export function draw100People(x1, id, color) {
     .selectAll(`.hundred-${id}-head`)
     .data(data)
     .join('circle')
-    .attr('class', `hundred-${id}-head hundred-${id} hundred`)
-    .attr('id', (d, i) => `${id}-head-${i + 1}`)
+    .attr(
+      'class',
+      (d, i) => `hundred-${id}-head hundred-${id} hundred ${id}-${i + 1}`
+    )
     .attr('cx', (d, i) => getCXForHundredHeads(i, x1))
     .attr('cy', (d, i) => getCYForHundredHeads(i))
     .attr('r', 2.5)

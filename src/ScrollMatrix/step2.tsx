@@ -1,5 +1,4 @@
 import * as d3 from 'd3'
-import { getLineBodyTexture, getLineHeadTexture } from './utils'
 import {
   american_prisoner,
   black_american,
@@ -14,13 +13,11 @@ export function stepTwo(svg, progressOneToHundred) {
 
   d3.range(100).forEach((n) => {
     if (n < 26 && progressOneToHundred > n) {
-      svg.select(`#prison-pop-head-${n}`).attr('fill', american_pris)
-      svg.select(`#prison-pop-body-${n}`).attr('fill', american_pris)
+      svg.selectAll(`.prison-pop-${n}`).attr('fill', american_pris)
     } else {
       // for when scrolling up
       if (n > 5) {
-        svg.select(`#prison-pop-head-${n}`).attr('fill', non_american_pris)
-        svg.select(`#prison-pop-body-${n}`).attr('fill', non_american_pris)
+        svg.selectAll(`.prison-pop-${n}`).attr('fill', non_american_pris)
       }
     }
   })

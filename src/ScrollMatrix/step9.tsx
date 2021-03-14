@@ -24,5 +24,18 @@ export function stepNine(svg, progressOneToHundred) {
     }
   }
 
+  if (progressOneToHundred === 0) {
+    d3.selectAll('.black-americans-body')
+      .attr('opacity', 1)
+      .transition()
+      .attr('opacity', 0)
+      .remove()
+    d3.selectAll('.black-americans-head')
+      .attr('opacity', 1)
+      .transition()
+      .attr('opacity', 0)
+      .remove()
+  }
+
   drawBigPeople(svg, data, fill, 'black-americans', 400)
 }

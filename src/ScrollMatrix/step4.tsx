@@ -55,7 +55,6 @@ export function stepFour(svg, progressOneToHundred) {
     // call draw a hundred people again... this time representing americas population
 
     const colHead = getHatchHeadTexture(svg, 'darkorange')
-
     const colBody = getHatchBodyTexture(svg, 'darkorange')
 
     draw100People(0, 'americas-pop', colHead, colBody)

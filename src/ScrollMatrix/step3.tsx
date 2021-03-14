@@ -1,5 +1,6 @@
 import * as d3 from 'd3'
 import {
+  draw100People,
   getCXForHundredHeads,
   getCYForHundredHeads,
   getTransformForHundredBodies
@@ -14,8 +15,8 @@ export function stepThree(svg, progressOneToHundred) {
     .remove()
 
   if (progressOneToHundred === 0) {
-    // translate back to original order
     // for when scrolling up
+    // translate back to original order of 100 people
     d3.selectAll('.hundred-prison-pop-body')
       .transition()
       .attr('transform', (d, i) => getTransformForHundredBodies(i, 300))
@@ -25,6 +26,9 @@ export function stepThree(svg, progressOneToHundred) {
       .attr('r', 2.5)
       .attr('cx', (d, i) => getCXForHundredHeads(i, 300))
       .attr('cy', (d, i) => getCYForHundredHeads(i))
+
+    // add back in the 100 people on the left
+    draw100People(0, 'world-pop', 'lightsteelblue', 'lightsteelblue')
   } else {
     const y = 100
 

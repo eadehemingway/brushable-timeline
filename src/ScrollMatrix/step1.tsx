@@ -1,26 +1,30 @@
 import * as d3 from 'd3'
 import { draw100People } from './draw100People'
-import { american_prisoner, non_american_prisoner } from './variables'
+import {
+  americanPrisoner,
+  nonAmericanPrisoner,
+  prison_pop_id
+} from './variables'
 
 export function stepOne(svg, progressOneToHundred) {
   // create a second 100 people to the right.
 
   if (progressOneToHundred === 0) {
     // for when scrolling up
-    d3.selectAll('.hundred-prison-pop')
+    d3.selectAll(`.${prison_pop_id}`)
       .attr('opacity', 1)
       .transition()
       .attr('opacity', 0)
       .remove()
   }
 
-  const non_american_pris = non_american_prisoner(svg)
-  draw100People(300, 'prison-pop', non_american_pris)
+  const non_american_pris = nonAmericanPrisoner(svg)
+  draw100People(300, prison_pop_id, non_american_pris)
 
   d3.range(progressOneToHundred + 1).forEach((n) => {
-    const american_pris = american_prisoner(svg)
+    const american_pris = americanPrisoner(svg)
     if (n < 6) {
-      svg.selectAll(`.prison-pop-${n}`).attr('fill', american_pris)
+      svg.selectAll(`.${prison_pop_id}-${n}`).attr('fill', american_pris)
     }
   })
 }

@@ -8,7 +8,8 @@ import {
 import {
   american,
   non_american,
-  non_black_american_prisoner
+  prison_pop_id,
+  world_pop_id
 } from './variables'
 
 function fill(d, i) {
@@ -19,21 +20,21 @@ export function stepThree(svg, progressOneToHundred) {
   if (progressOneToHundred === 0) {
     // for when scrolling up
     // translate back to original order of 100 people
-    d3.selectAll('.hundred-prison-pop-body')
+    d3.selectAll(`.hundred-${prison_pop_id}-body`)
       .transition()
       .attr('transform', (d, i) => getTransformForHundredBodies(i, 300))
 
-    d3.selectAll('.hundred-prison-pop-head')
+    d3.selectAll(`.hundred-${prison_pop_id}-head`)
       .transition()
       .attr('r', 2.5)
       .attr('cx', (d, i) => getCXForHundredHeads(i, 300))
       .attr('cy', (d, i) => getCYForHundredHeads(i))
 
     // add back in the 100 people on the left
-    draw100People(0, 'world-pop', fill)
+    draw100People(0, world_pop_id, fill)
   } else {
     // remove the world-pop hundred on the left
-    d3.selectAll('.hundred-world-pop')
+    d3.selectAll(`.hundred-${world_pop_id}`)
       .attr('opacity', 1)
       .transition()
       .attr('opacity', 0)
@@ -41,17 +42,16 @@ export function stepThree(svg, progressOneToHundred) {
     const y = 100
 
     // make the prison-pop hundred become four people....
-    d3.selectAll('.hundred-prison-pop-body')
+    d3.selectAll(`.hundred-${prison_pop_id}-body`)
       .transition()
-      .attr('transform', (d, i) => {
-        return 'translate(' + getXFromIndex(i) + ',' + y + ') scale(1)'
-      })
-    d3.selectAll('.hundred-prison-pop-head')
+      .attr(
+        'transform',
+        (d, i) => 'translate(' + getXFromIndex(i) + ',' + y + ') scale(1)'
+      )
+    d3.selectAll(`.hundred-${prison_pop_id}-head`)
       .transition()
       .attr('r', 6)
-      .attr('cx', (d, i) => {
-        return getXFromIndex(i) + 17
-      })
+      .attr('cx', (d, i) => getXFromIndex(i) + 17)
       .attr('cy', y + 5)
   }
 }

@@ -4,33 +4,34 @@ import { draw100People } from './draw100People'
 import { drawBigPeople } from './drawBigPeople'
 
 import {
-  black_american,
-  black_american_prisoner,
-  non_black_american,
-  non_black_american_prisoner,
-  white_american,
-  white_american_prisoner
+  americas_pop_id,
+  americas_prison_pop_id,
+  blackAmerican,
+  blackAmericanPrisoner,
+  nonBlackAmerican,
+  nonBlackAmericanPrisoner,
+  whiteAmerican,
+  white_americans_id,
+  whiteAmericanPrisoner
 } from './variables'
 
 export function stepEight(svg, progressOneToHundred) {
   function fillAmPop(d, i) {
-    return i < 40 ? black_american(svg) : non_black_american(svg)
+    return i < 40 ? blackAmerican(svg) : nonBlackAmerican(svg)
   }
   function fillAmPrisPop(d, i) {
-    return i < 40
-      ? black_american_prisoner(svg)
-      : non_black_american_prisoner(svg)
+    return i < 40 ? blackAmericanPrisoner(svg) : nonBlackAmericanPrisoner(svg)
   }
 
   function fill(i, type) {
-    return i === 0 ? white_american_prisoner(svg) : white_american(svg)
+    return i === 0 ? whiteAmericanPrisoner(svg) : whiteAmerican(svg)
   }
   //white americans have a one in seventeen chance in going to prison
   // remove the men on screen
 
   if (progressOneToHundred === 0) {
     // remove the seventeen men
-    d3.selectAll('.white-americans')
+    d3.selectAll(`.${white_americans_id}`)
       .attr('opacity', 1)
       .transition()
       .attr('opacity', 0)
@@ -38,8 +39,8 @@ export function stepEight(svg, progressOneToHundred) {
 
     // add the two hundred people of american and american prisoners
 
-    draw100People(0, 'americas-pop', fillAmPop)
-    draw100People(300, 'americas-prison-pop', fillAmPrisPop)
+    draw100People(0, americas_pop_id, fillAmPop)
+    draw100People(300, americas_prison_pop_id, fillAmPrisPop)
   } else {
     d3.selectAll('.hundred')
       .attr('opacity', 1)
@@ -48,6 +49,6 @@ export function stepEight(svg, progressOneToHundred) {
       .remove()
     const data = d3.range(17)
 
-    drawBigPeople(svg, data, fill, 'white-americans', 0)
+    drawBigPeople(svg, data, fill, white_americans_id, 0)
   }
 }

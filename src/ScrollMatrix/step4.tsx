@@ -8,8 +8,20 @@ import {
   getLineBodyTexture,
   getLineHeadTexture
 } from './utils'
+import {
+  american_prisoner,
+  black_american,
+  non_american_prisoner,
+  non_black_american,
+  non_black_american_prisoner
+} from './variables'
 
 export function stepFour(svg, progressOneToHundred) {
+  function fill(d, i) {
+    const non_american_pris = non_american_prisoner(svg)
+    const american_pris = american_prisoner(svg)
+    return i < 26 ? american_pris : non_american_pris
+  }
   // make people on page disappear
 
   d3.selectAll('.hundred-prison-pop')
@@ -17,15 +29,8 @@ export function stepFour(svg, progressOneToHundred) {
     .transition()
     .attr('opacity', 0)
     .remove()
-  function fillHead(d, i) {
-    const color = i <= 25 ? 'darkorange' : 'white'
-    return getLineHeadTexture(svg, color)
-  }
-  function fillBody(d, i) {
-    const color = i <= 25 ? 'darkorange' : 'white'
-    return getLineBodyTexture(svg, color)
-  }
 
+  const black_am = black_american(svg)
   if (progressOneToHundred === 0) {
     //remove the checkered men
     d3.selectAll('.hundred-americas-pop')
@@ -35,9 +40,8 @@ export function stepFour(svg, progressOneToHundred) {
       .remove()
     // add back the four men that is a hundred layered men...
 
-    draw100People(300, 'prison-pop', fillHead, fillBody)
+    draw100People(300, 'prison-pop', fill)
     const y = 100
-
     // make the prison-pop hundred become four people....
     d3.selectAll('.hundred-prison-pop-body')
       .transition()
@@ -53,21 +57,15 @@ export function stepFour(svg, progressOneToHundred) {
       .attr('cy', y + 5)
   } else {
     // call draw a hundred people again... this time representing americas population
-
-    const colHead = getHatchHeadTexture(svg, 'darkorange')
-    const colBody = getHatchBodyTexture(svg, 'darkorange')
-
-    draw100People(0, 'americas-pop', colHead, colBody)
+    const nonBlackAm = non_black_american(svg)
+    draw100People(0, 'americas-pop', nonBlackAm)
 
     // color in 13% to represent black population
 
     d3.range(progressOneToHundred + 1).forEach((n) => {
       if (n < 14) {
-        const headColor = getHatchHeadTexture(svg, 'sienna')
-
-        const bodyColor = getHatchBodyTexture(svg, 'sienna')
-        svg.select(`#americas-pop-head-${n}`).attr('fill', headColor)
-        svg.select(`#americas-pop-body-${n}`).attr('fill', bodyColor)
+        svg.select(`#americas-pop-head-${n}`).attr('fill', black_am)
+        svg.select(`#americas-pop-body-${n}`).attr('fill', black_am)
       }
     })
   }

@@ -7,30 +7,18 @@ import {
   getLineBodyTexture,
   getLineHeadTexture
 } from './utils'
+import { black_american, black_american_prisoner } from './variables'
 
 export function stepNine(svg, progressOneToHundred) {
   // black americans have a one in three chance of going to prison
   const data = [1, 2, 3]
 
   function fill(i, type) {
-    if (type === 'head') {
-      const headColor = getHatchHeadTexture(svg, 'sienna')
-      const prisonHeadColor = getLineHeadTexture(svg, 'white')
-      return i === 0 ? prisonHeadColor : headColor
-    } else {
-      const prisonBodyColor = getLineBodyTexture(svg, 'white')
-      const bodyColor = getHatchBodyTexture(svg, 'sienna')
-      return i === 0 ? prisonBodyColor : bodyColor
-    }
+    return i === 0 ? black_american_prisoner(svg) : black_american(svg)
   }
 
   if (progressOneToHundred === 0) {
-    d3.selectAll('.black-americans-body')
-      .attr('opacity', 1)
-      .transition()
-      .attr('opacity', 0)
-      .remove()
-    d3.selectAll('.black-americans-head')
+    d3.selectAll('.black-americans')
       .attr('opacity', 1)
       .transition()
       .attr('opacity', 0)

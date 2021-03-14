@@ -7,33 +7,31 @@ const iconHeight = 40
 const leftBoxPadding = 40
 const topBoxPadding = 40
 
-export function draw100People(x1, id, headColor, bodyColor) {
+export function draw100People(x1, id, color) {
+  console.log('draw100People:')
   const svg = d3.select('#scroll-matrix')
-
   const data = d3.range(100)
 
   svg
     .selectAll(`.hundred-${id}-body`)
     .data(data)
-    .enter()
-    .append('path')
+    .join('path')
     .attr('class', `hundred-${id}-body hundred-${id} hundred`)
     .attr('d', manBodyD)
     .attr('id', (d, i) => `${id}-body-${i + 1}`)
     .attr('transform', (d, i) => getTransformForHundredBodies(i, x1))
-    .attr('fill', bodyColor)
+    .attr('fill', color)
 
   svg
     .selectAll(`.hundred-${id}-head`)
     .data(data)
-    .enter()
-    .append('circle')
+    .join('circle')
     .attr('class', `hundred-${id}-head hundred-${id} hundred`)
     .attr('id', (d, i) => `${id}-head-${i + 1}`)
     .attr('cx', (d, i) => getCXForHundredHeads(i, x1))
     .attr('cy', (d, i) => getCYForHundredHeads(i))
     .attr('r', 2.5)
-    .attr('fill', headColor)
+    .attr('fill', color)
 }
 
 export function getTransformForHundredBodies(i, x1) {

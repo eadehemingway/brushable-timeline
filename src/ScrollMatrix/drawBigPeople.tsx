@@ -9,9 +9,8 @@ export function drawBigPeople(svg, data, fill, className, x1) {
   svg
     .selectAll(`.${className}-body`)
     .data(data)
-    .enter()
-    .append('path')
-    .attr('class', `${className}-body`)
+    .join('path')
+    .attr('class', `${className}-body ${className}`)
     .attr('d', manBodyD)
 
     .attr('transform', (d, i) => {
@@ -25,9 +24,8 @@ export function drawBigPeople(svg, data, fill, className, x1) {
   svg
     .selectAll(`.${className}-head`)
     .data(data)
-    .enter()
-    .append('circle')
-    .attr('class', `${className}-head`)
+    .join('circle')
+    .attr('class', `${className}-head ${className}`)
     .attr('cx', (d, i) => {
       return getX2Coordinate(i, dotsPerRow, manWidth) + 15 + x1
     })

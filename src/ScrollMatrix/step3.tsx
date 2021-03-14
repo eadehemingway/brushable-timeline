@@ -5,15 +5,17 @@ import {
   getCYForHundredHeads,
   getTransformForHundredBodies
 } from './draw100People'
+import {
+  american,
+  non_american,
+  non_black_american_prisoner
+} from './variables'
+
+function fill(d, i) {
+  return i < 5 ? american : non_american
+}
 
 export function stepThree(svg, progressOneToHundred) {
-  // remove the world-pop hundred on the left
-  d3.selectAll('.hundred-world-pop')
-    .attr('opacity', 1)
-    .transition()
-    .attr('opacity', 0)
-    .remove()
-
   if (progressOneToHundred === 0) {
     // for when scrolling up
     // translate back to original order of 100 people
@@ -28,8 +30,14 @@ export function stepThree(svg, progressOneToHundred) {
       .attr('cy', (d, i) => getCYForHundredHeads(i))
 
     // add back in the 100 people on the left
-    draw100People(0, 'world-pop', 'lightsteelblue', 'lightsteelblue')
+    draw100People(0, 'world-pop', fill)
   } else {
+    // remove the world-pop hundred on the left
+    d3.selectAll('.hundred-world-pop')
+      .attr('opacity', 1)
+      .transition()
+      .attr('opacity', 0)
+      .remove()
     const y = 100
 
     // make the prison-pop hundred become four people....

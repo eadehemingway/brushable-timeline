@@ -14,6 +14,7 @@ import { stepSix } from './step6'
 import { stepSeven } from './step7'
 import { stepEight } from './step8'
 import { stepNine } from './step9'
+import { american, non_american } from './variables'
 
 export const ScrollMatrix = () => {
   useEffect(() => {
@@ -22,7 +23,7 @@ export const ScrollMatrix = () => {
     d3.select('#scroll-matrix')
       .attr('width', svgWidth)
       .attr('height', svgHeight)
-    draw100People(0, 'world-pop', 'lightsteelblue', 'lightsteelblue')
+    draw100People(0, 'world-pop', non_american)
     setUpScroll()
   }, [])
 
@@ -121,8 +122,8 @@ const Outro = styled.div`
   height: 1200px;
 `
 const Box = styled.div`
-  margin: 0 auto 700px auto;
-  // border: 2px solid pink;
+  margin: 0 auto 100px auto;
+  border: 2px solid pink;
 `
 const P = styled.p`
   position: sticky;

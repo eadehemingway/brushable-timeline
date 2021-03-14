@@ -6,31 +6,27 @@ import {
   getHatchHeadTexture,
   getHatchBodyTexture
 } from './utils'
+import {
+  american,
+  black_american,
+  black_american_prisoner,
+  non_black_american_prisoner
+} from './variables'
 
 export function stepFive(svg, progressOneToHundred) {
   // call draw a hundred people again... this time representing americas prison population
-
+  function fill(d, i) {
+    return i < 14
+      ? black_american_prisoner(svg)
+      : non_black_american_prisoner(svg)
+  }
   if (progressOneToHundred === 0) {
     d3.selectAll('.hundred-americas-prison-pop')
       .attr('opacity', 1)
       .transition()
       .attr('opacity', 0)
       .remove()
-  } else {
-    const colHead = getLineHeadTexture(svg, 'linen')
-    const colBody = getLineBodyTexture(svg, 'linen')
-
-    draw100People(300, 'americas-prison-pop', colHead, colBody)
-
-    // color in 13% to represent black population
-
-    d3.range(progressOneToHundred + 1).forEach((n) => {
-      if (n < 14) {
-        const headColor = getHatchHeadTexture(svg, 'sienna')
-        const bodyColor = getHatchBodyTexture(svg, 'sienna')
-        svg.select(`#americas-prison-pop-head-${n}`).attr('fill', headColor)
-        svg.select(`#americas-prison-pop-body-${n}`).attr('fill', bodyColor)
-      }
-    })
   }
+
+  draw100People(300, 'americas-prison-pop', fill)
 }

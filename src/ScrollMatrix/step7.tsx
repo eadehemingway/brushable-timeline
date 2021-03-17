@@ -1,30 +1,41 @@
 import * as d3 from 'd3'
 
 import {
-  americas_pop_id,
-  americas_prison_pop_id,
+  black_prison_pop_id,
   blackAmericanPrisoner,
-  nonBlackAmerican
+  american,
+  blackAmerican,
+  americanPrisoner
 } from './variables'
 
 export function stepSeven(svg, progressOneToHundred) {
   // black males 6% of pop, and 40% of prison pop
 
-  const non_black_am = nonBlackAmerican(svg)
-  d3.range(100).forEach((n) => {
-    if (n > 7) {
-      svg.selectAll(`.${americas_pop_id}-${n}`).attr('fill', non_black_am)
-    }
-  })
+  if(progressOneToHundred===0){
 
-  // color in 40% of prisoners to represent male black population
+    d3.range(100).forEach((n) => {
+      if (n < 34) {
+        svg.selectAll(`.${black_prison_pop_id}-${n}`).attr('fill',  blackAmericanPrisoner(svg));
+        svg.selectAll(`.hundred-${black_prison_pop_id}-head.${black_prison_pop_id}-${n}`)
+          .attr('fill', blackAmerican)
+      }else{
+        svg.selectAll(`.${black_prison_pop_id}-${n}`).attr('fill',  americanPrisoner(svg));
+        svg.selectAll(`.hundred-${black_prison_pop_id}-head.${black_prison_pop_id}-${n}`)
+          .attr('fill', american)
+      }
+    })
+  }else{
 
-  d3.range(progressOneToHundred + 1).forEach((n) => {
-    const black_am_prisoner = blackAmericanPrisoner(svg)
-    if (n < 40) {
-      svg
-        .selectAll(`.${americas_prison_pop_id}-${n}`)
-        .attr('fill', black_am_prisoner)
-    }
-  })
+    d3.range(100).forEach((n) => {
+      if (n < 41 ) {
+        const black_am = blackAmericanPrisoner(svg)
+  
+        svg.selectAll(`.${black_prison_pop_id}-${n}`).attr('fill',  blackAmericanPrisoner(svg));
+            svg.selectAll(`.hundred-${black_prison_pop_id}-head.${black_prison_pop_id}-${n}`)
+              .attr('fill', blackAmerican)
+  
+      } 
+    })
+  }
+
 }

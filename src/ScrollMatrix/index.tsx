@@ -23,7 +23,7 @@ export const ScrollMatrix = () => {
     d3.select('#scroll-matrix')
       .attr('width', svgWidth)
       .attr('height', svgHeight)
-    draw100People(0, 'world-pop', non_american)
+    draw100People(0, 'world-pop', non_american,40)
     setUpScroll()
   }, [])
 
@@ -34,7 +34,7 @@ export const ScrollMatrix = () => {
       .setup({
         step: '.step',
         debug: true, // this being true is what makes their dotted line show
-        offset: 0.2, // where the dotted line shows up
+        offset: 0.5, // where the dotted line shows up
         progress: true
       })
       .onStepProgress((res: any) => {
@@ -77,16 +77,17 @@ export const ScrollMatrix = () => {
   }
 
   const steps = [
-    'of the 7bn people in the world, america makes up 5%',
-    'if their prison population was proportional to this, you would expect their prison population to be 5%',
-    'but it is five times higher. 25% of the worlds prison population are american.',
-    'that means that 1 in 4 prisoners are american. This is the highest incarceration rate in the world. ',
-    'of americas population, afro americans make up 13% ',
-    'if the prison population was proportional it would be about the same ',
-    'but it is much higher (say what percentage of prison population are black - male and female) ~33%',
-    'and this is even more disproportionate for black males (6.5% of pop and 40.2% of prison pop)',
-    'if you are a white american you have a one in 17 chance of going to prison ',
-    'if you are black your chances are one in three'
+    'Out of the 8 billion people in the world, America makes up 5%',
+    'If their prison population was proportional to this, you would expect their prison population to be 5%',
+    'But in reality it is five times higher, with 25% of the worlds prison population being american',
+    'That means that 1 in 4 prisoners are American. This is the highest incarceration rate in the world',
+    'Out of the US population, African Americans make up 13%',
+    'If the prison population was proportional, you would expect them to make up 13% of the prison population',
+    'But in fact it is much higher than that,as they make up around 33% of US prison population',
+    'And this is even more disproportionate for black males.  Though they make up only 6.5% of the US population, they make up 40.2% of prison population)',
+    'If you are black, you have a 1 in 3 chance of going to prison',
+    'As opposed to if you are a white, you have a 1 in 17 chance of going to prison in the US'
+    
   ]
   return (
     <>
@@ -97,7 +98,7 @@ export const ScrollMatrix = () => {
             return (
               <Box className="step" key={i}>
                 <P>
-                  {i} - {s}
+                  {s}
                 </P>
               </Box>
             )
@@ -111,6 +112,7 @@ export const ScrollMatrix = () => {
 }
 
 const Scroll = styled.div`
+  margin-top:300px;
   position: relative;
   border-top: 2px dashed #000;
   border-bottom: 2px dashed #000;
@@ -122,11 +124,12 @@ const Outro = styled.div`
   height: 1200px;
 `
 const Box = styled.div`
-  margin: 0 auto 100px auto;
-  border: 2px solid pink;
-  height: 700px;
+  margin: 0 auto 50px auto;
+  // border: 2px solid pink;
+  height: 600px;
 `
 const P = styled.p`
+  font-size:20px;
   position: sticky;
   top: 200px;
   height: 100px;

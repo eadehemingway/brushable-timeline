@@ -1,48 +1,39 @@
 import * as d3 from 'd3'
-import { draw100People } from './draw100People'
+import { draw100People, transform100People } from './draw100People'
 import { getXFromIndex } from './step3'
 
 import {
-  americanPrisoner,
-  americas_pop_id,
+  black_prison_pop_id,
+  prison_pop_id,
+  american ,
+  non_american,
   blackAmerican,
-  nonAmericanPrisoner,
-  nonBlackAmerican,
-  prison_pop_id
+  americanPrisoner,
+  nonAmericanPrisoner
 } from './variables'
 
 export function stepFour(svg, progressOneToHundred) {
-  function fill(d, i) {
-    const non_american_pris = nonAmericanPrisoner(svg)
-    const american_pris = americanPrisoner(svg)
-    return i < 26 ? american_pris : non_american_pris
-  }
-  // make people on page disappear
 
-  d3.selectAll(`.hundred-${prison_pop_id}`)
+  const y = 100
+  
+
+  if (progressOneToHundred === 0) {
+    //remove the checkered men
+    d3.selectAll(`.hundred-${black_prison_pop_id}`)
     .attr('opacity', 1)
     .transition()
     .attr('opacity', 0)
     .remove()
-
-  const black_am = blackAmerican(svg)
-  if (progressOneToHundred === 0) {
-    //remove the checkered men
-    d3.selectAll(`.hundred-${americas_pop_id}`)
-      .attr('opacity', 1)
-      .transition()
-      .attr('opacity', 0)
-      .remove()
     // add back the four men that is a hundred layered men...
 
-    draw100People(300, 'prison-pop', fill)
-    const y = 100
+    
     // make the prison-pop hundred become four people....
     d3.selectAll(`.hundred-${prison_pop_id}-body`)
       .transition()
       .attr('transform', (d, i) => {
         return 'translate(' + getXFromIndex(i) + ',' + y + ') scale(1)'
-      })
+      }).attr("fill",(d,i) => i<26?americanPrisoner(svg):nonAmericanPrisoner(svg))
+
     d3.selectAll(`.hundred-${prison_pop_id}-head`)
       .transition()
       .attr('r', 6)
@@ -50,17 +41,31 @@ export function stepFour(svg, progressOneToHundred) {
         return getXFromIndex(i) + 17
       })
       .attr('cy', y + 5)
+      .attr("fill",(d,i) => i<26?american:non_american)  //this part fill not working!!
   } else {
     // call draw a hundred people again... this time representing americas population
-    const nonBlackAm = nonBlackAmerican(svg)
-    draw100People(0, americas_pop_id, nonBlackAm)
+ 
+    transform100People(0, prison_pop_id, american, 40)
+
+    d3.selectAll(`.hundred-${prison_pop_id}-head`)
+      .attr('r', 2.5)
+
+    d3.selectAll(`.hundred-${prison_pop_id}`)
+    .attr('r', 2.5)
+    .attr('fill',american)
 
     // color in 13% to represent black population
 
-    d3.range(progressOneToHundred + 1).forEach((n) => {
+    if(progressOneToHundred>50){
+
+      d3.range(100).forEach((n) => {
       if (n < 14) {
-        svg.selectAll(`.${americas_pop_id}-${n}`).attr('fill', black_am)
+        svg.selectAll(`.${prison_pop_id}-${n}`).attr('fill', blackAmerican)
       }
     })
+
+    }
+
+    
   }
 }

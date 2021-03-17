@@ -1,24 +1,42 @@
 import * as d3 from 'd3'
-import { draw100People } from './draw100People'
+import { draw100People,transform100People } from './draw100People'
 
 import {
-  americas_prison_pop_id,
-  blackAmericanPrisoner,
-  nonBlackAmericanPrisoner
+  prison_pop_id,
+  black_prison_pop_id,
+  american,
+  blackAmerican,
+  americanPrisoner,
+  blackAmericanPrisoner
 } from './variables'
 
 export function stepFive(svg, progressOneToHundred) {
   // call draw a hundred people again... this time representing americas prison population
-  function fill(d, i) {
-    return i < 14 ? blackAmericanPrisoner(svg) : nonBlackAmericanPrisoner(svg)
-  }
+
+  const nonBlackAm = americanPrisoner(svg)
+
   if (progressOneToHundred === 0) {
-    d3.selectAll(`.hundred-${americas_prison_pop_id}`)
+  //if scrolling up remove people on the right (black American prison pop)
+      d3.selectAll(`.hundred-${black_prison_pop_id}`)
       .attr('opacity', 1)
       .transition()
       .attr('opacity', 0)
       .remove()
   }
 
-  draw100People(300, americas_prison_pop_id, fill)
+  const american_pris = americanPrisoner(svg)
+
+  transform100People(0, prison_pop_id, nonBlackAm, 20)
+
+  draw100People(300, black_prison_pop_id, american_pris,20)
+  svg.selectAll(`.hundred-${black_prison_pop_id}-head`)
+    .attr('fill', american)
+
+  d3.range(100).forEach((n) => {
+    if (n < 14) {
+      svg.selectAll(`.${black_prison_pop_id}-${n}`).attr('fill',  blackAmericanPrisoner(svg));
+      svg.selectAll(`.hundred-${black_prison_pop_id}-head.${black_prison_pop_id}-${n}`)
+        .attr('fill', blackAmerican)
+    }
+  })  
 }

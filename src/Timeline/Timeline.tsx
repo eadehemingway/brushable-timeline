@@ -33,12 +33,12 @@ export function Timeline() {
 
     // update lines
     d3.selectAll('.big-timeline-line')
-      .attr('x1', (d: any) => newYearIntoXScale(d.startYear))
-      .attr('x2', (d: any) => newYearIntoXScale(d.startYear))
+      .attr('x1', (d: any) => newYearIntoXScale(d.startYear) || 0)
+      .attr('x2', (d: any) => newYearIntoXScale(d.startYear) || 0)
 
     // update backgrounds
     d3.selectAll('.big-tm-textured-bg')
-      .attr('x', (d: any) => newYearIntoXScale(d.startYear))
+      .attr('x', (d: any) => newYearIntoXScale(d.startYear) || 0)
       .attr('width', (d: any) => {
         const initialVal =
           newYearIntoXScale(d.endYear) - newYearIntoXScale(d.startYear)

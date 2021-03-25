@@ -2,6 +2,7 @@ import * as d3 from 'd3'
 
 import {
   black_prison_pop_id,
+  prison_pop_id,
   american,
   blackAmerican,
   americanPrisoner,
@@ -23,6 +24,7 @@ export function stepSix(svg, progressOneToHundred) {
         svg.selectAll(`.hundred-${black_prison_pop_id}-head.${black_prison_pop_id}-${n}`)
           .attr('fill', american)
       }
+
     })
   }else{
 

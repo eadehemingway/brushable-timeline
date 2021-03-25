@@ -25,12 +25,18 @@ export function stepEight(svg, progressOneToHundred) {
   }
 
   function fillBlackPrisPop(i) {
-    return i === 0 ? blackAmericanPrisoner(svg) : americanPrisoner(svg)
+    return i === 0 ? blackAmericanPrisoner(svg) : blackAmerican
   }
 
   function fillBlackPrisPopHead(i) {
-    return i === 0 ? blackAmerican : american
+    return i === 0 ? blackAmerican : blackAmerican
   }
+
+  function fillPrisPop(d,i) {
+    return i < 40 ? blackAmericanPrisoner(svg) : americanPrisoner(svg)
+  }
+
+ 
 
   const data = [1, 2, 3]
 
@@ -43,11 +49,13 @@ export function stepEight(svg, progressOneToHundred) {
     .remove()
 
 
-    draw100People(300, black_prison_pop_id, fillBlackPrisPop,20) // the three heads move back but not the body
+
+    draw100People(300, black_prison_pop_id, fillPrisPop,20) // the three heads move back but not the body
 
     d3.selectAll(`.hundred-${black_prison_pop_id}-body`)
     .transition()
     .attr('transform', (d, i) => getTransformForHundredBodies(i, 300,20))
+    .attr('fill', (d,i)=>fillPrisPop(d,i))
 
     d3.selectAll(`.hundred-${black_prison_pop_id}-head`)
       .transition()

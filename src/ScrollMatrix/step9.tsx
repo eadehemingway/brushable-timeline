@@ -14,11 +14,11 @@ export function stepNine(svg, progressOneToHundred) {
   const data = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]
 
   function fillWhitePrisPop(i) {
-    return i === 0 ? whiteAmericanPrisoner(svg) : americanPrisoner(svg)
+    return i === 0 ? whiteAmericanPrisoner(svg) : whiteAmerican
   }
 
   function fillWhitePrisPopHead(i) {
-    return i === 0 ? whiteAmerican : american
+    return i === 0 ? whiteAmerican : whiteAmerican
   }
 
   if (progressOneToHundred === 0) {

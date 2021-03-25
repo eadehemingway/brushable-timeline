@@ -1,6 +1,7 @@
 import * as d3 from 'd3'
 
 import {
+  prison_pop_id,
   black_prison_pop_id,
   blackAmericanPrisoner,
   american,
@@ -23,6 +24,16 @@ export function stepSeven(svg, progressOneToHundred) {
         svg.selectAll(`.hundred-${black_prison_pop_id}-head.${black_prison_pop_id}-${n}`)
           .attr('fill', american)
       }
+
+      if (n < 14 ) {
+        svg
+        .selectAll(`.${prison_pop_id}-${n}`)
+        .attr('fill', blackAmerican)
+      }else{
+        svg
+        .selectAll(`.${prison_pop_id}-${n}`)
+        .attr('fill', american)
+      }
     })
   }else{
 
@@ -31,11 +42,22 @@ export function stepSeven(svg, progressOneToHundred) {
         const black_am = blackAmericanPrisoner(svg)
   
         svg.selectAll(`.${black_prison_pop_id}-${n}`).attr('fill',  blackAmericanPrisoner(svg));
-            svg.selectAll(`.hundred-${black_prison_pop_id}-head.${black_prison_pop_id}-${n}`)
-              .attr('fill', blackAmerican)
+        svg.selectAll(`.hundred-${black_prison_pop_id}-head.${black_prison_pop_id}-${n}`)
+          .attr('fill', blackAmerican)
   
       } 
+      if (n < 6 ) {
+        svg
+        .selectAll(`.${prison_pop_id}-${n}`)
+        .attr('fill', blackAmerican)
+      }else{
+        svg
+        .selectAll(`.${prison_pop_id}-${n}`)
+        .attr('fill', american)
+
+      }
     })
+
   }
 
 }
